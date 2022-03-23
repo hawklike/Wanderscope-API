@@ -1,0 +1,8 @@
+{
+  "name": "Wanderscope API",
+  "description": "The REST API for Wanderscope.",
+  "image": "heroku/gradle",
+  "addons": [
+    "heroku-postgresql"
+  ]
+}

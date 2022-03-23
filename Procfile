@@ -1,0 +1,1 @@
+web: build/install/travel-app-api/bin/travel-app-api

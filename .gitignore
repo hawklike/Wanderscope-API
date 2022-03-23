@@ -1,0 +1,14 @@
+/.gradle
+/.idea
+/out
+/build
+*.iml
+*.ipr
+*.iws
+/.idea/
+.DS_Store
+/.env
+/build/
+/application/build/
+/data/build/
+/application/.idea/
