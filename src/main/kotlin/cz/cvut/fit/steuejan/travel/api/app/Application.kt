@@ -4,15 +4,18 @@ import cz.cvut.fit.steuejan.travel.api.app.plugin.*
 import cz.cvut.fit.steuejan.travel.data.config.Hikari
 import cz.cvut.fit.steuejan.travel.data.database.initDatabase
 import io.ktor.application.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import org.koin.ktor.ext.inject
 
-const val baseUrl = "http://localhost:8080"
+lateinit var baseUrl: String
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)
 
+@ExperimentalSerializationApi
 @Suppress("unused") // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
 fun Application.module() {
+    configureBaseUrl()
     configureDI()
     configureStatusPages()
     configureDataConversion()
@@ -22,6 +25,10 @@ fun Application.module() {
     configureRouting()
     configureMonitoring()
     configureDB()
+}
+
+fun Application.configureBaseUrl() {
+    baseUrl = environment.config.property("ktor.deployment.url").getString()
 }
 
 fun Application.configureDB() {
