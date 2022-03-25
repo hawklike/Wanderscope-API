@@ -2,6 +2,7 @@ package cz.cvut.fit.steuejan.travel.api.app.bussines
 
 import cz.cvut.fit.steuejan.travel.api.app.config.EmailConfig
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.apache.commons.mail.SimpleEmail
@@ -31,7 +32,7 @@ class EmailSender(
         message: String,
         sender: String = credentials.emailAccount
     ) = withContext(Dispatchers.IO) {
-        launch() {
+        launch(Job()) {
             email.apply {
                 setFrom(sender)
                 setSubject(subject)
