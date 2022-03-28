@@ -14,7 +14,8 @@ object Users : IntIdTable() {
 }
 
 object Cities : IntIdTable() {
-    val name = varchar("name", 50)
+    val name = varchar("name", 50).uniqueIndex()
+    val population = integer("population").nullable()
 }
 
 class User(id: EntityID<Int>) : IntEntity(id) {
@@ -29,6 +30,7 @@ class City(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<City>(Cities)
 
     var name by Cities.name
+    var population by Cities.population
     val users by User referrersOn Users.city
 }
 

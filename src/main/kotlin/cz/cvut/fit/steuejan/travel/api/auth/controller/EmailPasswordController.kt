@@ -90,7 +90,7 @@ class EmailPasswordController(
         val passwordResetDto = dao.getForgotPassword(hashedToken)
             ?: return Failure(Status.FORBIDDEN, FailureMessages.RESET_PASSWORD_PROHIBITED)
 
-        if (isExpired(passwordResetDto.expiresAt)) {
+        if (passwordResetDto.expiresAt.isExpired()) {
             dao.deleteForgotPassword(hashedToken)
             return Failure(Status.FORBIDDEN, FailureMessages.RESET_PASSWORD_PROHIBITED)
         }
@@ -115,7 +115,7 @@ class EmailPasswordController(
                 Please don't reply to this email.
                 
                 Sincerely,
-                Jan Steuer - author of the travel app
+                Wanderscope team
             """.trimIndent()
     }
 
