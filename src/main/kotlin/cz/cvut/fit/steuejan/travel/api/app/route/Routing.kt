@@ -6,8 +6,11 @@ import cz.cvut.fit.steuejan.travel.api.app.request.Request
 import cz.cvut.fit.steuejan.travel.api.app.response.general.Success
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig.Companion.JWT_AUTHENTICATION
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.UsernamePrincipal
-import cz.cvut.fit.steuejan.travel.data.database.addCity
-import cz.cvut.fit.steuejan.travel.data.database.getCities
+import cz.cvut.fit.steuejan.travel.data.database.addUser
+import cz.cvut.fit.steuejan.travel.data.database.createTrip
+import cz.cvut.fit.steuejan.travel.data.database.deleteTrip
+import cz.cvut.fit.steuejan.travel.data.database.getTrips
+import cz.cvut.fit.steuejan.travel.data.model.Username
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.locations.*
@@ -15,7 +18,13 @@ import io.ktor.response.*
 import io.ktor.routing.*
 
 @kotlinx.serialization.Serializable
-data class City(val name: String) : Request
+data class User(val username: String, val email: String) : Request
+
+@kotlinx.serialization.Serializable
+data class Trip(val username: String, val name: String) : Request
+
+@kotlinx.serialization.Serializable
+data class Username(val username: String) : Request
 
 @KtorExperimentalLocationsAPI
 fun Route.exampleRoutes() {
@@ -28,14 +37,28 @@ fun Route.exampleRoutes() {
         }
     }
 
-    post("/city") {
-        val city = receive<City>("")
-        addCity(city.name)
+    post("/user") {
+        with(receive<User>("")) {
+            addUser(username, email)
+        }
         respond(Success())
     }
 
-    get("cities") {
-        val cities = getCities()
-        respond(Success(message = cities))
+    post("/trip") {
+        with(receive<Trip>("")) {
+            createTrip(name, Username(username))
+        }
+        respond(Success())
+    }
+
+    get("/trips") {
+        val username = call.request.queryParameters["user"]!!
+        respond(Success(message = getTrips(username)))
+    }
+
+    delete("/trip") {
+        val id = call.request.queryParameters["id"]!!
+        deleteTrip(id.toInt())
+        respond(Success())
     }
 }

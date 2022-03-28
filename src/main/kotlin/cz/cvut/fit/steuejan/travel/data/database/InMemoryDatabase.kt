@@ -17,6 +17,6 @@ class InMemoryDatabase {
 fun initDatabase(hikari: Hikari) {
     Database.connect(hikari.init())
     transaction {
-        SchemaUtils.createMissingTablesAndColumns(Users, Cities)
+        SchemaUtils.createMissingTablesAndColumns(UserTable, TripTable, TripUserTable)
     }
 }

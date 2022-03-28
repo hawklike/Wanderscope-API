@@ -11,9 +11,7 @@ inline fun <T> parseBody(func: () -> T, crossinline onError: () -> Nothing): T {
 }
 
 inline fun <T> parseBodyOrBadRequest(message: String, func: () -> T): T {
-    return runCatching { func.invoke() }.getOrElse {
-        throw BadRequestException(message)
-    }
+    return parseBody(func) { throw BadRequestException(message) }
 }
 
 inline fun <T> execOrThrow(exception: Exception, call: () -> T?): T {
