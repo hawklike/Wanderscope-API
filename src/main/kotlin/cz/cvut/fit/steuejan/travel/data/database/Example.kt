@@ -1,72 +1,16 @@
 package cz.cvut.fit.steuejan.travel.data.database
 
-import cz.cvut.fit.steuejan.travel.data.database.UserTable.username
+import cz.cvut.fit.steuejan.travel.data.database.trip.TripEntity
+import cz.cvut.fit.steuejan.travel.data.database.trip.TripTable
+import cz.cvut.fit.steuejan.travel.data.database.tripuser.TripUserEntity
+import cz.cvut.fit.steuejan.travel.data.database.tripuser.TripUserTable
+import cz.cvut.fit.steuejan.travel.data.database.user.UserEntity
+import cz.cvut.fit.steuejan.travel.data.database.user.UserTable
+import cz.cvut.fit.steuejan.travel.data.database.user.UserTable.username
 import cz.cvut.fit.steuejan.travel.data.model.Username
 import cz.cvut.fit.steuejan.travel.data.util.doQuery
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.ColumnSet
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.jodatime.datetime
-import org.joda.time.DateTime
-
-
-object UserTable : IntIdTable("users") {
-    val username = varchar("username", 30).uniqueIndex()
-    val email = text("email")
-}
-
-class UserEntity(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<UserEntity>(UserTable)
-
-    var username by UserTable.username
-    var email by UserTable.email
-
-    val trips by TripUserEntity referrersOn TripUserTable.user
-}
-
-object TripTable : IntIdTable("trips") {
-    val name = text("name")
-    val startDate = datetime("start_date").default(DateTime.now())
-}
-
-class TripEntity(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<TripEntity>(TripTable)
-
-    var name by TripTable.name
-    var startDate by TripTable.startDate
-
-    val users by TripUserEntity referrersOn TripUserTable.trip
-}
-
-object TripUserTable : IntIdTable() {
-    val user = reference("user", UserTable)
-    val trip = reference("trip", TripTable)
-    val canEdit = bool("can_edit").default(true)
-}
-
-class TripUserEntity(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<TripUserEntity>(TripUserTable) {
-        override val dependsOnTables: ColumnSet
-            get() = UserTable.innerJoin(TripUserTable).innerJoin(TripTable)
-
-        override fun createInstance(entityId: EntityID<Int>, row: ResultRow?): TripUserEntity {
-            row?.getOrNull(UserTable.id)?.let {
-                UserEntity.wrap(it, row)
-            }
-            row?.getOrNull(TripTable.id)?.let {
-                TripEntity.wrap(it, row)
-            }
-            return super.createInstance(entityId, row)
-        }
-    }
-
-    var user by UserEntity referencedOn TripUserTable.user
-    var trip by TripEntity referencedOn TripUserTable.trip
-    var canEdit by TripUserTable.canEdit
-}
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.select
 
 suspend fun addUser(username: String, email: String) {
     doQuery {
@@ -77,10 +21,17 @@ suspend fun addUser(username: String, email: String) {
     }
 }
 
-suspend fun getTrips(username: String): String {
+suspend fun getTrips(id: Int): String {
+    val query = TripTable
+        .innerJoin(TripUserTable)
+        .innerJoin(UserTable)
+        .slice(TripTable.columns)
+        .select { UserTable.id eq id }
+        .withDistinct()
+
+
     return doQuery {
-        val user = UserEntity.find { UserTable.username eq username }.first()
-        user.trips.joinToString { it.trip.name }
+        TripEntity.wrapRows(query).joinToString { it.name }
     }
 }
 
@@ -101,9 +52,10 @@ suspend fun createTrip(name: String, owner: Username) {
     }
 }
 
-suspend fun deleteTrip(id: Int) {
+suspend fun deleteTrip(tripId: Int) {
     doQuery {
-        TripEntity.findById(id)?.delete()
+        TripUserTable.deleteWhere { TripUserTable.trip eq tripId }
+        TripEntity.findById(tripId)?.delete()
     }
 }
 

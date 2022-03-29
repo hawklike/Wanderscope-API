@@ -52,8 +52,8 @@ fun Route.exampleRoutes() {
     }
 
     get("/trips") {
-        val username = call.request.queryParameters["user"]!!
-        respond(Success(message = getTrips(username)))
+        val username = call.request.queryParameters["id"]!!
+        respond(Success(message = getTrips(username.toInt())))
     }
 
     delete("/trip") {

@@ -1,6 +1,9 @@
 package cz.cvut.fit.steuejan.travel.data.database
 
 import cz.cvut.fit.steuejan.travel.data.config.Hikari
+import cz.cvut.fit.steuejan.travel.data.database.trip.TripTable
+import cz.cvut.fit.steuejan.travel.data.database.tripuser.TripUserTable
+import cz.cvut.fit.steuejan.travel.data.database.user.UserTable
 import cz.cvut.fit.steuejan.travel.data.dto.ForgotPasswordDto
 import cz.cvut.fit.steuejan.travel.data.dto.TokenDto
 import cz.cvut.fit.steuejan.travel.data.dto.UserDto
