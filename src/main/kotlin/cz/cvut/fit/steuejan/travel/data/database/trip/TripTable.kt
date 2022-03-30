@@ -7,7 +7,7 @@ object TripTable : IntIdTable("trips") {
     val name = varchar("name", 140)
     val startDate = date("start_date").nullable()
     val endDate = date("end_date").nullable()
-    val describtion = text("describtion").nullable()
+    val description = text("description").nullable()
     val linkView = char("link_view", 8).uniqueIndex().nullable()
     val linkEdit = char("link_edit", 8).uniqueIndex().nullable()
 }

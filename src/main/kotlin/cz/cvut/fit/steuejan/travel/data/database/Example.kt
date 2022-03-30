@@ -58,13 +58,19 @@ suspend fun createTrip(name: String, owner: Username) {
 }
 
 suspend fun deleteTrip(tripId: Int) {
+    val trip = transaction {
+        TripEntity.findById(tripId)
+            ?: throw NotFoundException(FailureMessages.TRIP_NOT_FOUND)
+    }
+
     transaction {
         TripUserTable.deleteWhere { TripUserTable.trip eq tripId }
-        TripEntity.findById(tripId)?.delete()
+        trip.places.forEach { it.delete() }
+        trip.delete()
     }
 }
 
-suspend fun addPlace(tripId: Int, placeId: String, description: String) {
+suspend fun addPlace(tripId: Int, placeId: String, name: String) {
     val trip = transaction {
         TripEntity.findById(tripId)
             ?: throw NotFoundException(FailureMessages.TRIP_NOT_FOUND)
@@ -74,7 +80,7 @@ suspend fun addPlace(tripId: Int, placeId: String, description: String) {
         PlaceEntity.new {
             this.trip = trip
             this.googlePlaceId = placeId
-            this.description = description
+            this.name = name
         }
     }
 }
@@ -84,7 +90,7 @@ suspend fun getPlaces(tripId: Int): String {
         val trip = TripEntity.findById(tripId)
             ?: throw NotFoundException(FailureMessages.TRIP_NOT_FOUND)
 
-        trip.places.joinToString { it.googlePlaceId }
+        trip.places.joinToString { it.googlePlaceId ?: "" }
     }
 }
 

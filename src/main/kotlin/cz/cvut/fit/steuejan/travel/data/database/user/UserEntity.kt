@@ -10,4 +10,7 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id) {
     var username by UserTable.username
     var accountType by UserTable.accountType
     var email by UserTable.email
+    var password by UserTable.password
+    var displayName by UserTable.displayName
+    var deleted by UserTable.deleted
 }

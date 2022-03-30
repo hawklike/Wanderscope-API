@@ -25,7 +25,7 @@ data class Trip(val username: String, val name: String) : Request
 data class Username(val username: String) : Request
 
 @kotlinx.serialization.Serializable
-data class Place(val placeId: String, val description: String) : Request
+data class Place(val placeId: String, val name: String) : Request
 
 @KtorExperimentalLocationsAPI
 fun Route.exampleRoutes() {
@@ -66,7 +66,7 @@ fun Route.exampleRoutes() {
     post("/place") {
         val tripId = getQuery("tripId").toInt()
         val place = receive<Place>("")
-        addPlace(tripId, place.placeId, place.description)
+        addPlace(tripId, place.placeId, place.name)
         respond(Success())
     }
 
