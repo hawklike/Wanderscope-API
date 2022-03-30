@@ -1,15 +1,13 @@
 package cz.cvut.fit.steuejan.travel.api.app.route
 
+import cz.cvut.fit.steuejan.travel.api.app.extension.getQuery
 import cz.cvut.fit.steuejan.travel.api.app.extension.receive
 import cz.cvut.fit.steuejan.travel.api.app.extension.respond
 import cz.cvut.fit.steuejan.travel.api.app.request.Request
 import cz.cvut.fit.steuejan.travel.api.app.response.general.Success
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig.Companion.JWT_AUTHENTICATION
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.UsernamePrincipal
-import cz.cvut.fit.steuejan.travel.data.database.addUser
-import cz.cvut.fit.steuejan.travel.data.database.createTrip
-import cz.cvut.fit.steuejan.travel.data.database.deleteTrip
-import cz.cvut.fit.steuejan.travel.data.database.getTrips
+import cz.cvut.fit.steuejan.travel.data.database.*
 import cz.cvut.fit.steuejan.travel.data.model.Username
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -25,6 +23,9 @@ data class Trip(val username: String, val name: String) : Request
 
 @kotlinx.serialization.Serializable
 data class Username(val username: String) : Request
+
+@kotlinx.serialization.Serializable
+data class Place(val placeId: String, val description: String) : Request
 
 @KtorExperimentalLocationsAPI
 fun Route.exampleRoutes() {
@@ -52,13 +53,31 @@ fun Route.exampleRoutes() {
     }
 
     get("/trips") {
-        val username = call.request.queryParameters["id"]!!
+        val username = getQuery("id")
         respond(Success(message = getTrips(username.toInt())))
     }
 
     delete("/trip") {
-        val id = call.request.queryParameters["id"]!!
+        val id = getQuery("id")
         deleteTrip(id.toInt())
+        respond(Success())
+    }
+
+    post("/place") {
+        val tripId = getQuery("tripId").toInt()
+        val place = receive<Place>("")
+        addPlace(tripId, place.placeId, place.description)
+        respond(Success())
+    }
+
+    get("/places") {
+        val tripId = getQuery("tripId").toInt()
+        respond(Success(message = getPlaces(tripId)))
+    }
+
+    delete("/place") {
+        val id = getQuery("id")
+        deletePlace(id.toInt())
         respond(Success())
     }
 }

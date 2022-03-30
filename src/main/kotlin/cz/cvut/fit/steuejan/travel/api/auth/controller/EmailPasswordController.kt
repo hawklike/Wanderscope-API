@@ -104,7 +104,7 @@ class EmailPasswordController(
         }
     }
 
-    @OptIn(KtorExperimentalLocationsAPI::class)
+    @KtorExperimentalLocationsAPI
     private fun getEmailMessage(username: Username, token: String): String {
         return """
                 Hi ${username.it},

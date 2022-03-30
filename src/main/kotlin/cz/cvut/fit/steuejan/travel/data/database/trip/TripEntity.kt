@@ -13,4 +13,8 @@ class TripEntity(id: EntityID<Int>) : IntEntity(id) {
 
     var name by TripTable.name
     var startDate by TripTable.startDate
+    var endDate by TripTable.endDate
+    var description by TripTable.describtion
+    var linkView by TripTable.linkView
+    var linkEdit by TripTable.linkEdit
 }

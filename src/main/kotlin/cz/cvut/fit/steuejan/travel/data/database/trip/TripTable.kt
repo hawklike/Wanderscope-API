@@ -1,10 +1,13 @@
 package cz.cvut.fit.steuejan.travel.data.database.trip
 
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.jodatime.datetime
-import org.joda.time.DateTime
+import org.jetbrains.exposed.sql.jodatime.date
 
 object TripTable : IntIdTable("trips") {
-    val name = text("name")
-    val startDate = datetime("start_date").default(DateTime.now())
+    val name = varchar("name", 140)
+    val startDate = date("start_date").nullable()
+    val endDate = date("end_date").nullable()
+    val describtion = text("describtion").nullable()
+    val linkView = char("link_view", 8).uniqueIndex().nullable()
+    val linkEdit = char("link_edit", 8).uniqueIndex().nullable()
 }

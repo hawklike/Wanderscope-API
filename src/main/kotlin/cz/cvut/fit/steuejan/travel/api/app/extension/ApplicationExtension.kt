@@ -1,5 +1,8 @@
+@file:Suppress("unused")
+
 package cz.cvut.fit.steuejan.travel.api.app.extension
 
+import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.UnauthorizedException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.api.app.request.Request
@@ -29,4 +32,9 @@ suspend fun PipelineContext<*, ApplicationCall>.respond(response: Response) {
 fun PipelineContext<*, ApplicationCall>.getUsername(): Username {
     return call.principal<UsernamePrincipal>()?.username
         ?: throw UnauthorizedException(FailureMessages.JWT_SUB_MISSING)
+}
+
+fun PipelineContext<*, ApplicationCall>.getQuery(queryParam: String): String {
+    return call.request.queryParameters[queryParam]
+        ?: throw BadRequestException(FailureMessages.missingQueryParam(queryParam))
 }
