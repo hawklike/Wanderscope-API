@@ -7,7 +7,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 object ActivityTable : IntIdTable("activities") {
     val trip = reference("trip", TripTable)
 
-    val name = varchar("name", 280)
+    val name = varchar("name", 140)
     val type = enumerationByName("type", 20, ActivityType::class).nullable()
     val googlePlaceId = text("google_place_id").nullable()
     val longitude = varchar("longitude", 15).nullable()

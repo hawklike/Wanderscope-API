@@ -1,5 +1,7 @@
 package cz.cvut.fit.steuejan.travel.data.database.activity
 
+import cz.cvut.fit.steuejan.travel.data.database.document.DocumentEntity
+import cz.cvut.fit.steuejan.travel.data.database.document.DocumentTable
 import cz.cvut.fit.steuejan.travel.data.database.trip.TripEntity
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -9,6 +11,8 @@ class ActivityEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<ActivityEntity>(ActivityTable)
 
     var trip by TripEntity referencedOn ActivityTable.trip
+
+    val documents by DocumentEntity optionalReferrersOn DocumentTable.activity
 
     var name by ActivityTable.name
     var type by ActivityTable.type

@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.jodatime.datetime
 object AccomodationTable : IntIdTable("accomodation") {
     val trip = reference("trip", TripTable)
 
-    val name = varchar("name", 280)
+    val name = varchar("name", 140)
     val googlePlaceId = text("google_place_id").nullable()
     val contact = text("contact").nullable()
     val website = text("website").nullable()

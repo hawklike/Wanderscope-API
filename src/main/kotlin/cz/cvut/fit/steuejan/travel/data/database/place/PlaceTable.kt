@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.jodatime.datetime
 object PlaceTable : IntIdTable("places") {
     val trip = reference("trip", TripTable)
 
-    val name = varchar("name", 280)
+    val name = varchar("name", 140)
     val type = enumerationByName("type", 10, PlaceType::class).default(PlaceType.OTHER)
     val googlePlaceId = text("google_place_id").nullable()
     val wikiBrief = text("wiki_brief").nullable()

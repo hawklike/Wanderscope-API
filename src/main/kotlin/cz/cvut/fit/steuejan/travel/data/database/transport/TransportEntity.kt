@@ -1,5 +1,7 @@
 package cz.cvut.fit.steuejan.travel.data.database.transport
 
+import cz.cvut.fit.steuejan.travel.data.database.document.DocumentEntity
+import cz.cvut.fit.steuejan.travel.data.database.document.DocumentTable
 import cz.cvut.fit.steuejan.travel.data.database.trip.TripEntity
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -11,6 +13,8 @@ class TransportEntity(id: EntityID<Int>) : IntEntity(id) {
     }
 
     var trip by TripEntity referencedOn TransportTable.trip
+
+    val documents by DocumentEntity optionalReferrersOn DocumentTable.transport
 
     var from by TransportTable.from
     var to by TransportTable.to

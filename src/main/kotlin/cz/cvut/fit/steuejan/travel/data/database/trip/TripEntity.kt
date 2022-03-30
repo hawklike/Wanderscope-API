@@ -4,6 +4,8 @@ import cz.cvut.fit.steuejan.travel.data.database.accomodation.AccomodationEntity
 import cz.cvut.fit.steuejan.travel.data.database.accomodation.AccomodationTable
 import cz.cvut.fit.steuejan.travel.data.database.activity.ActivityEntity
 import cz.cvut.fit.steuejan.travel.data.database.activity.ActivityTable
+import cz.cvut.fit.steuejan.travel.data.database.document.DocumentEntity
+import cz.cvut.fit.steuejan.travel.data.database.document.DocumentTable
 import cz.cvut.fit.steuejan.travel.data.database.place.PlaceEntity
 import cz.cvut.fit.steuejan.travel.data.database.place.PlaceTable
 import cz.cvut.fit.steuejan.travel.data.database.transport.TransportEntity
@@ -19,6 +21,8 @@ class TripEntity(id: EntityID<Int>) : IntEntity(id) {
     val transports by TransportEntity referrersOn TransportTable.trip
     val accomodation by AccomodationEntity referrersOn AccomodationTable.trip
     val activities by ActivityEntity referrersOn ActivityTable.trip
+
+    val documents by DocumentEntity referrersOn DocumentTable.trip
 
     var name by TripTable.name
     var startDate by TripTable.startDate
