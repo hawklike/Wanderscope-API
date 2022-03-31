@@ -8,7 +8,6 @@ import cz.cvut.fit.steuejan.travel.api.app.response.general.Success
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig.Companion.JWT_AUTHENTICATION
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.UsernamePrincipal
 import cz.cvut.fit.steuejan.travel.data.database.*
-import cz.cvut.fit.steuejan.travel.data.model.Username
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.locations.*
@@ -19,7 +18,7 @@ import io.ktor.routing.*
 data class User(val username: String, val email: String) : Request
 
 @kotlinx.serialization.Serializable
-data class Trip(val username: String, val name: String) : Request
+data class Trip(val userId: Int, val name: String) : Request
 
 @kotlinx.serialization.Serializable
 data class Username(val username: String) : Request
@@ -47,7 +46,7 @@ fun Route.exampleRoutes() {
 
     post("/trip") {
         with(receive<Trip>("")) {
-            createTrip(name, Username(username))
+            createTrip(name, userId)
         }
         respond(Success())
     }
