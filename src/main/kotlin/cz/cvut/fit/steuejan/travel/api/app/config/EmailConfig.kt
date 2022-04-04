@@ -9,7 +9,7 @@ class EmailConfig(override val config: ApplicationConfig) : AppConfig {
     val port = config.property(EMAIL_PORT).getString().toInt()
 
     companion object {
-        private const val EMAIL_ACCOUNT = "email.email"
+        private const val EMAIL_ACCOUNT = "email.account"
         private const val EMAIL_PASSWORD = "email.password"
         private const val EMAIL_HOST = "email.host"
         private const val EMAIL_PORT = "email.port"

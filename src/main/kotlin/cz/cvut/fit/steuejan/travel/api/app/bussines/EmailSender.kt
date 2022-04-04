@@ -26,7 +26,7 @@ class EmailSender(
             isSSLOnConnect = true
         }
 
-    suspend fun sendEmailAsync(
+    suspend fun sendEmail(
         receiver: String,
         subject: String,
         message: String,

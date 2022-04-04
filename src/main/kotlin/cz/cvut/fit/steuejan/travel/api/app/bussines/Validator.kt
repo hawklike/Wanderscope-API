@@ -4,7 +4,8 @@ import cz.cvut.fit.steuejan.travel.api.app.config.LimitsConfig
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.auth.exception.EmailAlreadyExistsException
 import cz.cvut.fit.steuejan.travel.api.auth.exception.UsernameAlreadyExistsException
-import cz.cvut.fit.steuejan.travel.data.dao.user.UserDao
+import cz.cvut.fit.steuejan.travel.api.auth.model.AccountType
+import cz.cvut.fit.steuejan.travel.data.database.user.dao.UserDao
 import cz.cvut.fit.steuejan.travel.data.model.Username
 import org.apache.commons.validator.routines.EmailValidator
 
@@ -20,17 +21,17 @@ class Validator(private val userDao: UserDao, private val config: LimitsConfig) 
         }
     }
 
-    fun validateEmail(email: String, register: Boolean) {
+    suspend fun validateEmail(email: String, register: Boolean) {
         if (!EmailValidator.getInstance().isValid(email)) {
             throw BadRequestException("Email address has an invalid format.")
         }
 
-        if (register && userDao.findByAccount(email) != null) {
+        if (register && userDao.findByEmail(email, AccountType.EMAIL) != null) {
             throw EmailAlreadyExistsException()
         }
     }
 
-    fun validateUsername(username: Username) = with(config) {
+    suspend fun validateUsername(username: Username) = with(config) {
         if (username.it.isBlank()) {
             throw BadRequestException("Username cannot be blank.")
         }

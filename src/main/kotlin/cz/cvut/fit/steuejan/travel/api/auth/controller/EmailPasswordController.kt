@@ -14,16 +14,18 @@ import cz.cvut.fit.steuejan.travel.api.app.response.general.Status
 import cz.cvut.fit.steuejan.travel.api.app.response.general.Success
 import cz.cvut.fit.steuejan.travel.api.app.util.getRandomString
 import cz.cvut.fit.steuejan.travel.api.app.util.isExpired
+import cz.cvut.fit.steuejan.travel.api.app.util.retryOnError
 import cz.cvut.fit.steuejan.travel.api.auth.exception.InvalidLoginException
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTController
+import cz.cvut.fit.steuejan.travel.api.auth.model.AccountType
 import cz.cvut.fit.steuejan.travel.api.auth.response.AuthResponse
 import cz.cvut.fit.steuejan.travel.api.auth.util.Encryptor
+import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
 import cz.cvut.fit.steuejan.travel.data.model.Credentials
 import cz.cvut.fit.steuejan.travel.data.model.EmailLogin
 import cz.cvut.fit.steuejan.travel.data.model.Username
 import io.ktor.locations.*
-import java.util.*
-import kotlin.time.Duration.Companion.minutes
+import org.joda.time.DateTime
 
 class EmailPasswordController(
     private val daoFactory: DaoFactory,
@@ -33,7 +35,7 @@ class EmailPasswordController(
     private val account: AuthAccount
 ) : AuthController<EmailLogin> {
 
-    override fun register(credentials: Credentials<EmailLogin>): AuthResponse {
+    override suspend fun register(credentials: Credentials<EmailLogin>): AuthResponse {
         val login = credentials.login
 
         with(validator) {
@@ -43,13 +45,18 @@ class EmailPasswordController(
         }
 
         val passwordHash = encryptor.hashPassword(login.password)
-        val user = daoFactory.userDao.addUser(credentials.username, login.email, passwordHash)
+        val user = daoFactory.userDao.addUser(
+            credentials.username,
+            AccountType.EMAIL,
+            login.email,
+            passwordHash
+        )
 
-        val tokens = jwt.createTokens(user.username)
+        val tokens = jwt.createTokens(user.id)
         return AuthResponse.success(tokens.accessToken, tokens.refreshToken)
     }
 
-    override fun login(login: EmailLogin): AuthResponse {
+    override suspend fun login(login: EmailLogin): AuthResponse {
         val email = login.email
 
         with(validator) {
@@ -57,33 +64,38 @@ class EmailPasswordController(
             validatePassword(login.password)
         }
 
-        val user = daoFactory.userDao.findByAccount(email) ?: throw InvalidLoginException()
+        val user = daoFactory.userDao.findByEmail(email, AccountType.EMAIL) ?: throw InvalidLoginException()
+        val userPassword = (user.credentials.login as EmailLogin).password
 
-        if (!encryptor.checkPassword(user.password, login.password)) {
+        if (!encryptor.checkPassword(userPassword, login.password)) {
             throw InvalidLoginException()
         }
 
-        val tokens = jwt.createTokens(user.username)
+        val tokens = jwt.createTokens(user.id)
         return AuthResponse.success(tokens.accessToken, tokens.refreshToken)
     }
 
+    @KtorExperimentalLocationsAPI
     suspend fun forgotPassword(email: String, emailSender: EmailSender): Response {
         validator.validateEmail(email, register = false)
 
-        val userDto = daoFactory.userDao.findByAccount(email) ?: return Success(Status.ACCEPTED)
+        val user = daoFactory.userDao.findByEmail(email, AccountType.EMAIL) ?: return Success(Status.ACCEPTED)
 
-        val randomToken = getRandomString(24)
-        val hashedToken = encryptor.hash(randomToken)
+        val expiresAt = DateTime.now().plusMinutes(FORGOT_PASSWORD_EXPIRATION)
+        lateinit var randomToken: String
 
-        val expiresAt = Date(System.currentTimeMillis() + FORGOT_PASSWORD_EXPIRATION)
-        daoFactory.forgotPasswordDao.addForgotPassword(hashedToken, expiresAt, userDto.username)
+        retryOnError(3) {
+            randomToken = getRandomString(DatabaseConfig.FORGOT_PASSWORD_TOKEN_LENGTH)
+            val hashedToken = encryptor.hash(randomToken)
+            daoFactory.forgotPasswordDao.addForgotPassword(user.id, hashedToken, expiresAt)
+        }
 
-        emailSender.sendEmailAsync(email, SUBJECT, getEmailMessage(userDto.username, randomToken))
+        emailSender.sendEmail(email, SUBJECT, getEmailMessage(user.credentials.username, randomToken))
 
         return Success(Status.ACCEPTED)
     }
 
-    fun resetPassword(token: String, password: ChangePassword): Response {
+    suspend fun resetPassword(token: String, password: ChangePassword): Response {
         val dao = daoFactory.forgotPasswordDao
         val hashedToken = encryptor.hash(token)
 
@@ -96,7 +108,7 @@ class EmailPasswordController(
         }
 
         return try {
-            val response = account.changePassword(passwordResetDto.username, password)
+            val response = account.changePassword(passwordResetDto.userId, password)
             dao.deleteForgotPassword(hashedToken)
             response
         } catch (ex: BadRequestException) {
@@ -120,7 +132,7 @@ class EmailPasswordController(
     }
 
     companion object {
-        private val FORGOT_PASSWORD_EXPIRATION = 60.minutes.inWholeMilliseconds
+        private const val FORGOT_PASSWORD_EXPIRATION = 60
         private const val SUBJECT = "Create new password"
     }
 }

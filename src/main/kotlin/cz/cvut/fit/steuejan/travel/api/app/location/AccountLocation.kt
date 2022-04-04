@@ -26,5 +26,5 @@ object Account {
         }
     }
 
-    const val URL = "/email"
+    const val URL = "/account"
 }

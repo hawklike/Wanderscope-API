@@ -8,7 +8,7 @@ object UserTable : IntIdTable("users") {
     val username = varchar("username", DatabaseConfig.USERNAME_LENGTH).uniqueIndex()
     val accountType = enumerationByName("account_type", 8, AccountType::class)
     val email = varchar("email", DatabaseConfig.EMAIL_LENGTH)
-    val password = varchar("password", DatabaseConfig.PASSWORD_LENGTH).nullable()
+    val password = text("password").nullable()
     val displayName = varchar("display_name", DatabaseConfig.USERNAME_LENGTH).nullable()
     val deleted = bool("deleted").default(false)
 

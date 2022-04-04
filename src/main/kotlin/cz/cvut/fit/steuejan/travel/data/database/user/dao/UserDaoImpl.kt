@@ -14,6 +14,7 @@ import org.jetbrains.exposed.sql.insertIgnoreAndGetId
 import org.jetbrains.exposed.sql.update
 
 class UserDaoImpl : UserDao {
+
     override suspend fun addUser(
         username: Username,
         accountType: AccountType,
@@ -37,20 +38,14 @@ class UserDaoImpl : UserDao {
     }
 
     override suspend fun findByEmail(email: String, accountType: AccountType) = transaction {
-        UserTable.selectFirst {
-            (UserTable.email eq email) and (UserTable.accountType eq accountType)
-        }?.let {
-            UserDto.fromDb(it)
-        }
-    }
+        UserTable.selectFirst { (UserTable.email eq email) and (UserTable.accountType eq accountType) }
+    }?.let { UserDto.fromDb(it) }
 
     override suspend fun findByUsername(username: Username) = transaction {
-        UserTable.selectFirst { UserTable.username eq username.it }?.let {
-            UserDto.fromDb(it)
-        }
-    }
+        UserTable.selectFirst { UserTable.username eq username.it }
+    }?.let { UserDto.fromDb(it) }
 
-    override suspend fun changePassword(userId: Int, newPassword: String): Boolean = transaction {
+    override suspend fun changePassword(userId: Int, newPassword: String) = transaction {
         UserTable.update({ UserTable.id eq userId }) {
             it[password] = newPassword
         } == 1

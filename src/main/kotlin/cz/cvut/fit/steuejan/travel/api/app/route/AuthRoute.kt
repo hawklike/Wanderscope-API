@@ -111,7 +111,8 @@ fun Route.authRoutes() {
             ?: throw BadRequestException(FailureMessages.RESET_PASSWORD_MISSING_COFIRM_PASS)
 
         val emailController = authFactory.emailPasswordController
-        val response = emailController.resetPassword(it.token, ChangePassword(null, password, confirmPassword))
+        val passwordRequest = ChangePassword(null, password, confirmPassword)
+        val response = emailController.resetPassword(it.token, passwordRequest)
 
         val responseText = if (response.isSuccess()) {
             "<h2>Password successfully changed!</h2>"

@@ -1,7 +1,7 @@
 package cz.cvut.fit.steuejan.travel.api.app.util
 
-import java.util.*
+import org.joda.time.DateTime
 
-fun Date.isExpired(): Boolean {
-    return this.before(Date())
+fun DateTime.isExpired(): Boolean {
+    return this.isBeforeNow
 }

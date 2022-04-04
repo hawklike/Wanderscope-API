@@ -1,15 +1,16 @@
 package cz.cvut.fit.steuejan.travel.api.app.route
 
 import cz.cvut.fit.steuejan.travel.api.app.extension.getQuery
+import cz.cvut.fit.steuejan.travel.api.app.extension.getUserId
 import cz.cvut.fit.steuejan.travel.api.app.extension.receive
 import cz.cvut.fit.steuejan.travel.api.app.extension.respond
 import cz.cvut.fit.steuejan.travel.api.app.request.Request
 import cz.cvut.fit.steuejan.travel.api.app.response.general.Success
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig.Companion.JWT_AUTHENTICATION
-import cz.cvut.fit.steuejan.travel.api.auth.jwt.UsernamePrincipal
 import cz.cvut.fit.steuejan.travel.data.database.*
 import io.ktor.application.*
 import io.ktor.auth.*
+import io.ktor.auth.jwt.*
 import io.ktor.locations.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -31,9 +32,10 @@ fun Route.exampleRoutes() {
 
     authenticate(JWT_AUTHENTICATION) {
         get("/test") {
-            val principal = call.principal<UsernamePrincipal>()
-            val expiresAt = principal?.principal?.expiresAt?.time?.minus(System.currentTimeMillis())?.div(1000.0)
-            call.respond("User ${principal?.username} will expire in $expiresAt seconds.")
+            val principal = call.principal<JWTPrincipal>()
+            val userId = getUserId()
+            val expiresAt = principal?.expiresAt?.time?.minus(System.currentTimeMillis())?.div(1000.0)
+            call.respond("User $userId will expire in $expiresAt seconds.")
         }
     }
 

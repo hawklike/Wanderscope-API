@@ -8,36 +8,34 @@ import cz.cvut.fit.steuejan.travel.api.auth.exception.RefreshTokenExpiredExcepti
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTController
 import cz.cvut.fit.steuejan.travel.api.auth.response.AuthResponse
 import cz.cvut.fit.steuejan.travel.api.auth.token.RefreshToken
-import cz.cvut.fit.steuejan.travel.data.dao.token.TokenDao
-import cz.cvut.fit.steuejan.travel.data.model.Username
+import cz.cvut.fit.steuejan.travel.data.database.token.dao.TokenDao
 
 class RefreshTokenController(
     private val jwt: JWTController,
     private val tokenDao: TokenDao
 ) {
-
-    fun refresh(refreshToken: String): Response {
-        val username = validateJWT(refreshToken)
+    suspend fun refresh(refreshToken: String): Response {
+        val userId = validateJWT(refreshToken)
         //find refresh token in db
         tokenDao.findToken(refreshToken)?.let {
             //delete current refresh token from db
             tokenDao.deleteToken(it.refreshToken)
-            //create new access and refresh tokens
-            val tokens = jwt.createTokens(username)
-            //save new refresh token to db
-            tokenDao.addRefreshToken(tokens.refreshToken, username)
+            //create new access and refresh tokens and save to db
+            val tokens = jwt.createTokens(userId)
             //return both tokens
             return AuthResponse.success(tokens.accessToken, tokens.refreshToken)
         } ?: throw InvalidRefreshTokenException()
     }
 
-    private fun validateJWT(refreshToken: String): Username {
+    private suspend fun validateJWT(refreshToken: String): Int {
         try {
             val token = jwt.getVerifier(RefreshToken()).verify(refreshToken)
-            return Username(token.subject)
+            return token.subject.toInt()
         } catch (ex: TokenExpiredException) {
             tokenDao.deleteToken(refreshToken)
             throw RefreshTokenExpiredException()
+        } catch (ex: NumberFormatException) {
+            throw InvalidRefreshTokenException()
         } catch (ex: JWTVerificationException) {
             throw InvalidRefreshTokenException()
         }
