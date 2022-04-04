@@ -1,14 +1,15 @@
 package cz.cvut.fit.steuejan.travel.data.database.user
 
 import cz.cvut.fit.steuejan.travel.api.auth.model.AccountType
+import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
 import org.jetbrains.exposed.dao.id.IntIdTable
 
 object UserTable : IntIdTable("users") {
-    val username = varchar("username", 30).uniqueIndex()
+    val username = varchar("username", DatabaseConfig.USERNAME_LENGTH).uniqueIndex()
     val accountType = enumerationByName("account_type", 8, AccountType::class)
-    val email = varchar("email", 254)
-    val password = varchar("password", 50).nullable()
-    val displayName = varchar("display_name", 30).nullable()
+    val email = varchar("email", DatabaseConfig.EMAIL_LENGTH)
+    val password = varchar("password", DatabaseConfig.PASSWORD_LENGTH).nullable()
+    val displayName = varchar("display_name", DatabaseConfig.USERNAME_LENGTH).nullable()
     val deleted = bool("deleted").default(false)
 
     init {

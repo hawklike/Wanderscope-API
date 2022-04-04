@@ -9,10 +9,10 @@ class JWTConfig(config: ApplicationConfig) {
     val issuer = config.property(ISSUER).getString()
 
     companion object {
-        const val ACCESS_SECRET_KEY = "jwt.key.access"
-        const val REFRESH_SECRET_KEY = "jwt.key.refresh"
-        const val AUDIENCE = "jwt.audience"
-        const val ISSUER = "jwt.issuer"
+        private const val ACCESS_SECRET_KEY = "jwt.key.access"
+        private const val REFRESH_SECRET_KEY = "jwt.key.refresh"
+        private const val AUDIENCE = "jwt.audience"
+        private const val ISSUER = "jwt.issuer"
 
         const val JWT_AUTHENTICATION = "jwt-auth"
     }

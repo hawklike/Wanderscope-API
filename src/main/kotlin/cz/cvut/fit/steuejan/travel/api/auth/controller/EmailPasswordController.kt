@@ -38,19 +38,19 @@ class EmailPasswordController(
 
         with(validator) {
             validatePassword(login.password)
-            validateEmail(login.account, register = true)
+            validateEmail(login.email, register = true)
             validateUsername(credentials.username)
         }
 
         val passwordHash = encryptor.hashPassword(login.password)
-        val user = daoFactory.userDao.addUser(credentials.username, login.account, passwordHash)
+        val user = daoFactory.userDao.addUser(credentials.username, login.email, passwordHash)
 
         val tokens = jwt.createTokens(user.username)
         return AuthResponse.success(tokens.accessToken, tokens.refreshToken)
     }
 
     override fun login(login: EmailLogin): AuthResponse {
-        val email = login.account
+        val email = login.email
 
         with(validator) {
             validateEmail(email, register = false)

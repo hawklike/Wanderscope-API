@@ -9,9 +9,9 @@ class LimitsConfig(override val config: ApplicationConfig) : AppConfig {
     val passwordLengthMax = config.property(PASSWORD_MAX).getString().toInt()
 
     companion object {
-        const val USERNAME_MIN = "limit.username.min"
-        const val USERNAME_MAX = "limit.username.max"
-        const val PASSWORD_MIN = "limit.password.min"
-        const val PASSWORD_MAX = "limit.password.max"
+        private const val USERNAME_MIN = "limit.username.min"
+        private const val USERNAME_MAX = "limit.username.max"
+        private const val PASSWORD_MIN = "limit.password.min"
+        private const val PASSWORD_MAX = "limit.password.max"
     }
 }

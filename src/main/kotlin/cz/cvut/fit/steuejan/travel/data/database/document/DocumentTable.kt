@@ -1,5 +1,6 @@
 package cz.cvut.fit.steuejan.travel.data.database.document
 
+import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
 import cz.cvut.fit.steuejan.travel.data.database.accomodation.AccomodationTable
 import cz.cvut.fit.steuejan.travel.data.database.activity.ActivityTable
 import cz.cvut.fit.steuejan.travel.data.database.place.PlaceTable
@@ -21,9 +22,9 @@ object DocumentTable : IntIdTable("documents") {
     val accomodation = reference("accomodation", AccomodationTable, onDelete = CASCADE, onUpdate = CASCADE).nullable()
     val activity = reference("activity", ActivityTable, onDelete = CASCADE, onUpdate = CASCADE).nullable()
 
-    val name = varchar("name", 140)
+    val name = varchar("name", DatabaseConfig.NAME_LENGTH)
     val created = datetime("created").default(DateTime.now())
-    val extension = varchar("extension", 10)
-    val key = char("key", 5).nullable()
+    val extension = varchar("extension", DatabaseConfig.FILE_EXTENSION_LENGTH)
+    val key = char("key", DatabaseConfig.DOCUMENT_KEY_LENTGH).nullable()
     val data = blob("data").nullable()
 }
