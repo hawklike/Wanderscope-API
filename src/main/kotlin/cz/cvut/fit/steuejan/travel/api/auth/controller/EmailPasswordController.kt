@@ -1,5 +1,6 @@
 package cz.cvut.fit.steuejan.travel.api.auth.controller
 
+import cz.cvut.fit.steuejan.travel.api.account.controller.AccountController
 import cz.cvut.fit.steuejan.travel.api.account.model.ChangePassword
 import cz.cvut.fit.steuejan.travel.api.app.baseUrl
 import cz.cvut.fit.steuejan.travel.api.app.bussines.EmailSender
@@ -32,7 +33,7 @@ class EmailPasswordController(
     private val jwt: JWTController,
     private val encryptor: Encryptor,
     private val validator: Validator,
-    private val account: AuthAccount
+    private val account: AccountController
 ) : AuthController<EmailLogin> {
 
     override suspend fun register(credentials: Credentials<EmailLogin>): AuthResponse {

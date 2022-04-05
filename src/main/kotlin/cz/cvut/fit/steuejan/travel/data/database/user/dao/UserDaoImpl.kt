@@ -23,10 +23,10 @@ class UserDaoImpl : UserDao {
     ): UserDto {
         val userId = transaction {
             UserTable.insertIgnoreAndGetId {
-                it[UserTable.username] = username.it
-                it[UserTable.accountType] = accountType
-                it[UserTable.email] = email
-                it[UserTable.password] = password
+                it[this.username] = username.it
+                it[this.accountType] = accountType
+                it[this.email] = email
+                it[this.password] = password
             } ?: throw BadRequestException(FailureMessages.ADD_USER_FAILURE)
         }
 

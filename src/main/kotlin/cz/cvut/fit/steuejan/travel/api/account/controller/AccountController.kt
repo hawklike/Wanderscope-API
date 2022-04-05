@@ -10,30 +10,29 @@ import cz.cvut.fit.steuejan.travel.api.app.exception.NotFoundException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.api.app.response.general.Response
 import cz.cvut.fit.steuejan.travel.api.app.util.execOrNotFound
-import cz.cvut.fit.steuejan.travel.api.auth.controller.AuthAccount
 import cz.cvut.fit.steuejan.travel.api.auth.exception.PasswordChangeProhibitedException
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTController
 import cz.cvut.fit.steuejan.travel.api.auth.util.Encryptor
 import cz.cvut.fit.steuejan.travel.data.model.EmailLogin
 
-class UserAccountController(
+class AccountController(
     private val daoFactory: DaoFactory,
     private val encryptor: Encryptor,
     private val jwt: JWTController,
     private val validator: Validator
-) : AuthAccount {
+) {
 
-    override suspend fun logout(refreshToken: String): Response {
+    suspend fun logout(refreshToken: String): Response {
         daoFactory.tokenDao.deleteToken(refreshToken)
         return LogoutResponse.success()
     }
 
-    override suspend fun logoutAllDevices(userId: Int): Response {
+    suspend fun logoutAllDevices(userId: Int): Response {
         daoFactory.tokenDao.deleteTokensByUserId(userId)
         return LogoutResponse.success()
     }
 
-    override suspend fun changePassword(userId: Int, passwordRequest: ChangePassword, addToDb: Boolean): Response {
+    suspend fun changePassword(userId: Int, passwordRequest: ChangePassword, addToDb: Boolean): Response {
         val newPassword = passwordRequest.newPassword
         val oldPassword = passwordRequest.oldPassword
 

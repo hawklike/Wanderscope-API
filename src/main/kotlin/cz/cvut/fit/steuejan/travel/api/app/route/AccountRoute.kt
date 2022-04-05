@@ -21,12 +21,12 @@ fun Route.accountRoutes() {
 
     post<Account.Logout> {
         val request = receive<RefreshTokenRequest>(RefreshTokenRequest.MISSING_PARAM)
-        val userAccountController = controllerFactory.userAccountController
+        val userAccountController = controllerFactory.accountController
         respond(userAccountController.logout(request.refreshToken))
     }
 
     authenticate(JWT_AUTHENTICATION) {
-        val userAccountController = controllerFactory.userAccountController
+        val userAccountController = controllerFactory.accountController
 
         get<Account.LogoutAll> {
             respond(userAccountController.logoutAllDevices(getUserId()))

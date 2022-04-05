@@ -1,11 +1,10 @@
 package cz.cvut.fit.steuejan.travel.api.app.di
 
-import cz.cvut.fit.steuejan.travel.api.account.controller.UserAccountController
+import cz.cvut.fit.steuejan.travel.api.account.controller.AccountController
 import cz.cvut.fit.steuejan.travel.api.app.bussines.EmailSender
 import cz.cvut.fit.steuejan.travel.api.app.bussines.Validator
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.AuthControllerFactory
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.JWTControllerFactory
-import cz.cvut.fit.steuejan.travel.api.auth.controller.AuthAccount
 import cz.cvut.fit.steuejan.travel.api.auth.controller.EmailPasswordController
 import cz.cvut.fit.steuejan.travel.api.auth.controller.RefreshTokenController
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTController
@@ -24,7 +23,7 @@ val authModule = module {
 
     single<Encryptor> { ApiEncryptor(config = get()) }
 
-    single { UserAccountController(get(), get(), get(), get()) } bind AuthAccount::class
+    single { AccountController(get(), get(), get(), get()) }
     single { EmailPasswordController(get(), get(), get(), get(), get()) }
     single { RefreshTokenController(get(), get()) }
 

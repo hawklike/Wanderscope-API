@@ -16,6 +16,9 @@ object FailureMessages {
     const val TRIP_NOT_FOUND = "Trip not found."
 
     const val ADD_USER_FAILURE = "Cannot add this user. Check duplicates."
+    const val ADD_TRIP_FAILURE = "Cannot add this trip. Check name length."
+
+
     const val ADD_REFRESH_TOKEN_FAILURE = "Cannot add a new refresh token because of a duplicate."
 
     fun missingQueryParam(param: String) = "Missing query parameter $param."
