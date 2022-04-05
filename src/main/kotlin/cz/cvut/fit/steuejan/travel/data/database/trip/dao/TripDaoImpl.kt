@@ -5,8 +5,10 @@ import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.data.database.trip.TripDto
 import cz.cvut.fit.steuejan.travel.data.database.trip.TripTable
 import cz.cvut.fit.steuejan.travel.data.extension.findById
+import cz.cvut.fit.steuejan.travel.data.extension.isDeleted
 import cz.cvut.fit.steuejan.travel.data.model.Duration
 import cz.cvut.fit.steuejan.travel.data.util.transaction
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insertIgnoreAndGetId
 
 class TripDaoImpl : TripDao {
@@ -35,9 +37,9 @@ class TripDaoImpl : TripDao {
         TripDto.fromDb(it)
     }
 
-    override suspend fun deleteTrip(): Boolean {
-        TODO("Not yet implemented")
-    }
+    override suspend fun deleteTrip(tripId: Int) = transaction {
+        TripTable.deleteWhere { TripTable.id eq tripId }
+    }.isDeleted()
 
     override suspend fun shareTrip() {
         TODO("Not yet implemented")

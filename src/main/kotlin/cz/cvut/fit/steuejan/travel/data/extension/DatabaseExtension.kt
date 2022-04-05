@@ -19,3 +19,5 @@ suspend fun IntIdTable.findById(id: Int, coroutineDispatcher: CoroutineDispatche
 inline fun Table.selectFirst(query: SqlExpressionBuilder.() -> Op<Boolean>): ResultRow? {
     return this.select { SqlExpressionBuilder.query() }.firstOrNull()
 }
+
+fun Int.isDeleted() = this > 0

@@ -13,6 +13,6 @@ interface TripDao {
     ): TripDto
 
     suspend fun findById(id: Int): TripDto?
-    suspend fun deleteTrip(): Boolean
+    suspend fun deleteTrip(tripId: Int): Boolean
     suspend fun shareTrip()
 }
