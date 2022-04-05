@@ -1,6 +1,7 @@
 package cz.cvut.fit.steuejan.travel.data.database.user
 
 import cz.cvut.fit.steuejan.travel.api.auth.model.AccountType
+import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.model.Credentials
 import cz.cvut.fit.steuejan.travel.data.model.EmailLogin
 import cz.cvut.fit.steuejan.travel.data.model.GoogleLogin
@@ -12,7 +13,7 @@ data class UserDto(
     val credentials: Credentials<*>,
     val displayName: String?,
     val deleted: Boolean
-) {
+) : Dto() {
     companion object {
         fun fromDb(resultRow: ResultRow): UserDto {
             val username = Username(resultRow[UserTable.username])

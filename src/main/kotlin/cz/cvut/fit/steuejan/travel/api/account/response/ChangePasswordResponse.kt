@@ -1,13 +1,14 @@
 package cz.cvut.fit.steuejan.travel.api.account.response
 
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Failure
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Response
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Status
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Success
+import cz.cvut.fit.steuejan.travel.api.app.response.Failure
+import cz.cvut.fit.steuejan.travel.api.app.response.Response
+import cz.cvut.fit.steuejan.travel.api.app.response.Status
+import cz.cvut.fit.steuejan.travel.api.app.response.Success
+import kotlinx.serialization.Serializable
 
 @Suppress("unused")
-@kotlinx.serialization.Serializable
+@Serializable
 class ChangePasswordResponse(
     val accessToken: String,
     val refreshToken: String

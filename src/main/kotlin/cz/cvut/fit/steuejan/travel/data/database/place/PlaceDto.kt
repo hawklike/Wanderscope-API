@@ -1,5 +1,6 @@
 package cz.cvut.fit.steuejan.travel.data.database.place
 
+import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
 import cz.cvut.fit.steuejan.travel.data.model.Address
 import cz.cvut.fit.steuejan.travel.data.model.Contact
@@ -18,7 +19,7 @@ data class PlaceDto(
     val wikiBrief: String?,
     val imageUrl: String?,
     val description: String?
-) : PointOfInterestDto {
+) : PointOfInterestDto, Dto() {
     companion object {
         fun fromDb(resultRow: ResultRow) = PlaceDto(
             id = resultRow[PlaceTable.id].value,

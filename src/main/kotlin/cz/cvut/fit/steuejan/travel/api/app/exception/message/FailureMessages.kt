@@ -1,5 +1,7 @@
 package cz.cvut.fit.steuejan.travel.api.app.exception.message
 
+import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
+
 object FailureMessages {
     const val PASSWORDS_DONT_MATCH = "Passwords don't match."
     const val PASSWORDS_ARE_SAME_ERROR = "New password is the same as the old one."
@@ -18,6 +20,7 @@ object FailureMessages {
     const val ADD_USER_FAILURE = "Cannot add this user. Check duplicates."
     const val ADD_TRIP_FAILURE = "Cannot add this trip. Check name length."
 
+    const val NAME_TOO_LONG = "Name is too long. Max length allowed is ${DatabaseConfig.NAME_LENGTH}"
 
     const val ADD_REFRESH_TOKEN_FAILURE = "Cannot add a new refresh token because of a duplicate."
 

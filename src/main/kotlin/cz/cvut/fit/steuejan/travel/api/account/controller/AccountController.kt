@@ -2,13 +2,14 @@ package cz.cvut.fit.steuejan.travel.api.account.controller
 
 import cz.cvut.fit.steuejan.travel.api.account.model.ChangePassword
 import cz.cvut.fit.steuejan.travel.api.account.response.ChangePasswordResponse
-import cz.cvut.fit.steuejan.travel.api.account.response.LogoutResponse
 import cz.cvut.fit.steuejan.travel.api.app.bussines.Validator
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.NotFoundException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Response
+import cz.cvut.fit.steuejan.travel.api.app.response.Response
+import cz.cvut.fit.steuejan.travel.api.app.response.Status
+import cz.cvut.fit.steuejan.travel.api.app.response.Success
 import cz.cvut.fit.steuejan.travel.api.app.util.execOrNotFound
 import cz.cvut.fit.steuejan.travel.api.auth.exception.PasswordChangeProhibitedException
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTController
@@ -24,12 +25,12 @@ class AccountController(
 
     suspend fun logout(refreshToken: String): Response {
         daoFactory.tokenDao.deleteToken(refreshToken)
-        return LogoutResponse.success()
+        return Success(Status.NO_CONTENT)
     }
 
     suspend fun logoutAllDevices(userId: Int): Response {
         daoFactory.tokenDao.deleteTokensByUserId(userId)
-        return LogoutResponse.success()
+        return Success(Status.NO_CONTENT)
     }
 
     suspend fun changePassword(userId: Int, passwordRequest: ChangePassword, addToDb: Boolean): Response {

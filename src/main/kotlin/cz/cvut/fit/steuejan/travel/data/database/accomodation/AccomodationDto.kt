@@ -1,5 +1,6 @@
 package cz.cvut.fit.steuejan.travel.data.database.accomodation
 
+import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
 import cz.cvut.fit.steuejan.travel.data.model.AccomodationType
 import cz.cvut.fit.steuejan.travel.data.model.Address
@@ -16,7 +17,7 @@ data class AccomodationDto(
     val address: Address,
     val contact: Contact,
     val description: String?
-) : PointOfInterestDto {
+) : PointOfInterestDto, Dto() {
     companion object {
         fun fromDb(resultRow: ResultRow) = AccomodationDto(
             id = resultRow[AccomodationTable.id].value,

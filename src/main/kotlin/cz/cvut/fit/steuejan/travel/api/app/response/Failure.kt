@@ -1,4 +1,4 @@
-package cz.cvut.fit.steuejan.travel.api.app.response.general
+package cz.cvut.fit.steuejan.travel.api.app.response
 
 import kotlinx.serialization.Serializable
 

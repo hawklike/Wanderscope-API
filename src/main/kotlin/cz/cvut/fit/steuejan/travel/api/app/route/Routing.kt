@@ -5,7 +5,7 @@ import cz.cvut.fit.steuejan.travel.api.app.extension.getUserId
 import cz.cvut.fit.steuejan.travel.api.app.extension.receive
 import cz.cvut.fit.steuejan.travel.api.app.extension.respond
 import cz.cvut.fit.steuejan.travel.api.app.request.Request
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Success
+import cz.cvut.fit.steuejan.travel.api.app.response.Success
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig.Companion.JWT_AUTHENTICATION
 import cz.cvut.fit.steuejan.travel.data.database.*
 import io.ktor.application.*
@@ -14,17 +14,15 @@ import io.ktor.auth.jwt.*
 import io.ktor.locations.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import kotlinx.serialization.Serializable
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class User(val username: String, val email: String) : Request
 
-@kotlinx.serialization.Serializable
-data class Trip(val userId: Int, val name: String) : Request
-
-@kotlinx.serialization.Serializable
+@Serializable
 data class Username(val username: String) : Request
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class Place(val placeId: String, val name: String) : Request
 
 @KtorExperimentalLocationsAPI
@@ -42,13 +40,6 @@ fun Route.exampleRoutes() {
     post("/user") {
         with(receive<User>("")) {
             addUser(username, email)
-        }
-        respond(Success())
-    }
-
-    post("/trip") {
-        with(receive<Trip>("")) {
-            createTrip(name, userId)
         }
         respond(Success())
     }

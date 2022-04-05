@@ -1,6 +1,8 @@
 package cz.cvut.fit.steuejan.travel.api.auth.model
 
-@kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class AccountType {
     EMAIL, GOOGLE
 }

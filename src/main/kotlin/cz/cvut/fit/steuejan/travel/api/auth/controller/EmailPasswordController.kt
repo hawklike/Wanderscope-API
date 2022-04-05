@@ -9,10 +9,10 @@ import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.api.app.location.Auth
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Failure
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Response
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Status
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Success
+import cz.cvut.fit.steuejan.travel.api.app.response.Failure
+import cz.cvut.fit.steuejan.travel.api.app.response.Response
+import cz.cvut.fit.steuejan.travel.api.app.response.Status
+import cz.cvut.fit.steuejan.travel.api.app.response.Success
 import cz.cvut.fit.steuejan.travel.api.app.util.getRandomString
 import cz.cvut.fit.steuejan.travel.api.app.util.isExpired
 import cz.cvut.fit.steuejan.travel.api.app.util.retryOnError

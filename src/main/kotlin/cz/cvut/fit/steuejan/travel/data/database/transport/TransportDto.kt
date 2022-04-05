@@ -1,5 +1,6 @@
 package cz.cvut.fit.steuejan.travel.data.database.transport
 
+import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
 import cz.cvut.fit.steuejan.travel.data.model.Address
 import cz.cvut.fit.steuejan.travel.data.model.Duration
@@ -16,7 +17,7 @@ data class TransportDto(
     val description: String?,
     val cars: List<String>?,
     val seats: List<String>?
-) : PointOfInterestDto {
+) : PointOfInterestDto, Dto() {
     companion object {
         fun fromDb(resultRow: ResultRow) = TransportDto(
             id = resultRow[TransportTable.id].value,

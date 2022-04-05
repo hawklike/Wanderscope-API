@@ -8,6 +8,8 @@ import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.api.app.extension.receive
 import cz.cvut.fit.steuejan.travel.api.app.extension.respond
 import cz.cvut.fit.steuejan.travel.api.app.location.Auth
+import cz.cvut.fit.steuejan.travel.api.auth.controller.EmailPasswordController
+import cz.cvut.fit.steuejan.travel.api.auth.controller.RefreshTokenController
 import cz.cvut.fit.steuejan.travel.api.auth.model.AccountType
 import cz.cvut.fit.steuejan.travel.api.auth.request.EmailLoginRequest
 import cz.cvut.fit.steuejan.travel.api.auth.request.EmailRegistrationRequest
@@ -24,17 +26,30 @@ import io.ktor.routing.*
 import kotlinx.html.*
 import org.koin.ktor.ext.inject
 
+const val PASSWORD_PARAM = "password"
+const val CONFIRM_PASSWORD_PARAM = "confirmPassword"
 
 @KtorExperimentalLocationsAPI
-fun Route.authRoutes() {
+fun Routing.authRoutes() {
     val authFactory: AuthControllerFactory by inject()
     val emailSender: EmailSender by inject()
 
+    register(authFactory.emailPasswordController)
+    login(authFactory.emailPasswordController)
+
+    refreshToken(authFactory.refreshTokenController)
+
+    sendForgotPasswordEmail(authFactory.emailPasswordController, emailSender)
+    showForgotPasswordForm()
+    resetPassword(authFactory.emailPasswordController)
+}
+
+@KtorExperimentalLocationsAPI
+fun Route.register(emailController: EmailPasswordController) {
     post<Auth.Register> {
         when (it.flow) {
             AccountType.EMAIL -> {
                 val request = receive<EmailRegistrationRequest>(EmailRegistrationRequest.MISSING_PARAM)
-                val emailController = authFactory.emailPasswordController
                 respond(emailController.register(request.getCredentials()))
             }
             AccountType.GOOGLE -> {
@@ -42,12 +57,14 @@ fun Route.authRoutes() {
             }
         }
     }
+}
 
+@KtorExperimentalLocationsAPI
+fun Route.login(emailController: EmailPasswordController) {
     post<Auth.Login> {
         when (it.flow) {
             AccountType.EMAIL -> {
                 val request = receive<EmailLoginRequest>(EmailLoginRequest.MISSING_PARAM)
-                val emailController = authFactory.emailPasswordController
                 respond(emailController.login(request.getLogin()))
             }
             AccountType.GOOGLE -> {
@@ -55,22 +72,26 @@ fun Route.authRoutes() {
             }
         }
     }
+}
 
+@KtorExperimentalLocationsAPI
+fun Route.refreshToken(refreshTokenController: RefreshTokenController) {
     post<Auth.Refresh> {
         val request = receive<RefreshTokenRequest>(RefreshTokenRequest.MISSING_PARAM)
-        val refreshTokenController = authFactory.refreshTokenController
         respond(refreshTokenController.refresh(request.refreshToken))
     }
+}
 
+@KtorExperimentalLocationsAPI
+fun Route.sendForgotPasswordEmail(emailController: EmailPasswordController, emailSender: EmailSender) {
     post<Auth.ForgotPassword.Send> {
         val request = receive<ForgotPasswordRequest>(ForgotPasswordRequest.MISSING_PARAM)
-        val emailController = authFactory.emailPasswordController
         respond(emailController.forgotPassword(request.email, emailSender))
     }
+}
 
-    val passwordParam = "password"
-    val confirmPasswordParam = "confirmPassword"
-
+@KtorExperimentalLocationsAPI
+fun Route.showForgotPasswordForm() {
     get<Auth.ForgotPassword.Create> {
         call.respondHtml {
             body {
@@ -85,13 +106,13 @@ fun Route.authRoutes() {
                     label {
                         +"New password:"
                         p {
-                            passwordInput(name = passwordParam)
+                            passwordInput(name = PASSWORD_PARAM)
                         }
                     }
                     label {
                         +"Confirm new password:"
                         p {
-                            passwordInput(name = confirmPasswordParam)
+                            passwordInput(name = CONFIRM_PASSWORD_PARAM)
                         }
                     }
                     p {
@@ -101,16 +122,18 @@ fun Route.authRoutes() {
             }
         }
     }
+}
 
+@KtorExperimentalLocationsAPI
+fun Route.resetPassword(emailController: EmailPasswordController) {
     post<Auth.ForgotPassword.Reset> {
         val formParams = call.receiveParameters()
 
-        val password = formParams[passwordParam]
+        val password = formParams[PASSWORD_PARAM]
             ?: throw BadRequestException(FailureMessages.RESET_PASSWORD_MISSING_PASS)
-        val confirmPassword = formParams[confirmPasswordParam]
+        val confirmPassword = formParams[CONFIRM_PASSWORD_PARAM]
             ?: throw BadRequestException(FailureMessages.RESET_PASSWORD_MISSING_COFIRM_PASS)
 
-        val emailController = authFactory.emailPasswordController
         val passwordRequest = ChangePassword(null, password, confirmPassword)
         val response = emailController.resetPassword(it.token, passwordRequest)
 
@@ -122,4 +145,3 @@ fun Route.authRoutes() {
         call.respondText(responseText, ContentType.Text.Html)
     }
 }
-

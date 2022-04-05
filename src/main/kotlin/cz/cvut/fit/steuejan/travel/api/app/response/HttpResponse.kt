@@ -1,4 +1,4 @@
-package cz.cvut.fit.steuejan.travel.api.app.response.general
+package cz.cvut.fit.steuejan.travel.api.app.response
 
 import io.ktor.http.*
 
@@ -9,6 +9,10 @@ sealed class HttpResponse<T> {
 
 data class Ok<T : Response>(override val body: T) : HttpResponse<T>() {
     override val code: HttpStatusCode = HttpStatusCode.OK
+}
+
+data class Created<T : Response>(override val body: T) : HttpResponse<T>() {
+    override val code: HttpStatusCode = HttpStatusCode.Created
 }
 
 data class Accepted<T : Response>(override val body: T) : HttpResponse<T>() {
@@ -42,6 +46,7 @@ data class InternalServerError<T : Response>(override val body: T) : HttpRespons
 fun <T : Response> generateHttpResponse(response: T): HttpResponse<T> {
     return when (response.status) {
         Status.SUCCESS -> Ok(response)
+        Status.CREATED -> Created(response)
         Status.ACCEPTED -> Accepted(response)
         Status.NO_CONTENT -> NoContent(response)
         Status.BAD_REQUEST -> BadRequest(response)
@@ -51,4 +56,3 @@ fun <T : Response> generateHttpResponse(response: T): HttpResponse<T> {
         Status.INTERNAL_ERROR -> InternalServerError(response)
     }
 }
-

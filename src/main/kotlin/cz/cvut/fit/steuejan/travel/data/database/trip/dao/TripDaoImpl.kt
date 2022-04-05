@@ -12,6 +12,7 @@ import org.jetbrains.exposed.sql.insertIgnoreAndGetId
 class TripDaoImpl : TripDao {
     override suspend fun createTrip(
         name: String,
+        ownerId: Int,
         duration: Duration,
         description: String?,
         imageUrl: String?
@@ -19,6 +20,7 @@ class TripDaoImpl : TripDao {
         val tripId = transaction {
             TripTable.insertIgnoreAndGetId {
                 it[this.name] = name
+                it[this.owner] = ownerId
                 it[this.startDate] = duration.startDate
                 it[this.endDate] = duration.endDate
                 it[this.description] = description
