@@ -6,11 +6,11 @@ import cz.cvut.fit.steuejan.travel.api.auth.model.AccountType
 import cz.cvut.fit.steuejan.travel.data.database.user.UserDto
 import cz.cvut.fit.steuejan.travel.data.database.user.UserTable
 import cz.cvut.fit.steuejan.travel.data.extension.findById
+import cz.cvut.fit.steuejan.travel.data.extension.insertAndGetIdOrNull
 import cz.cvut.fit.steuejan.travel.data.extension.selectFirst
 import cz.cvut.fit.steuejan.travel.data.model.Username
 import cz.cvut.fit.steuejan.travel.data.util.transaction
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.insertIgnoreAndGetId
 import org.jetbrains.exposed.sql.update
 
 class UserDaoImpl : UserDao {
@@ -20,17 +20,13 @@ class UserDaoImpl : UserDao {
         accountType: AccountType,
         email: String,
         password: String?
-    ): UserDto {
-        val userId = transaction {
-            UserTable.insertIgnoreAndGetId {
-                it[this.username] = username.it
-                it[this.accountType] = accountType
-                it[this.email] = email
-                it[this.password] = password
-            } ?: throw BadRequestException(FailureMessages.ADD_USER_FAILURE)
-        }
-
-        return findById(userId.value)!!
+    ) = transaction {
+        UserTable.insertAndGetIdOrNull {
+            it[this.username] = username.it
+            it[this.accountType] = accountType
+            it[this.email] = email
+            it[this.password] = password
+        }?.value ?: throw BadRequestException(FailureMessages.ADD_USER_FAILURE)
     }
 
     override suspend fun findById(id: Int) = UserTable.findById(id)?.let {

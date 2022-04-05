@@ -10,6 +10,7 @@ import cz.cvut.fit.steuejan.travel.api.app.extension.respond
 import cz.cvut.fit.steuejan.travel.api.app.location.Trip
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig.Companion.JWT_AUTHENTICATION
 import cz.cvut.fit.steuejan.travel.api.trip.controller.TripController
+import cz.cvut.fit.steuejan.travel.api.trip.request.TripInvitationRequest
 import cz.cvut.fit.steuejan.travel.api.trip.request.TripRequest
 import io.ktor.auth.*
 import io.ktor.locations.*
@@ -27,6 +28,7 @@ fun Routing.tripRoutes() {
 
         createTrip(tripController)
         deleteTrip(tripController)
+        inviteToTrip(tripController)
     }
 }
 
@@ -44,5 +46,13 @@ fun Route.deleteTrip(tripController: TripController) {
         val tripId = getQuery("id").toIntOrNull()
             ?: throw BadRequestException(FailureMessages.TRIP_NOT_FOUND)
         respond(tripController.deleteTrip(getUserId(), tripId))
+    }
+}
+
+@KtorExperimentalLocationsAPI
+fun Route.inviteToTrip(tripController: TripController) {
+    post<Trip.Invite> {
+        val request = receive<TripInvitationRequest>(TripInvitationRequest.MISSING_PARAM)
+        respond(tripController.invite(getUserId(), request.getTripInvitation()))
     }
 }

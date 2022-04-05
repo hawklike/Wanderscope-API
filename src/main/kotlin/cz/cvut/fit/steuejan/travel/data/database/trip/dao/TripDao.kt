@@ -8,9 +8,10 @@ interface TripDao {
         name: String,
         ownerId: Int,
         duration: Duration,
+        canEdit: Boolean,
         description: String?,
         imageUrl: String?
-    ): TripDto
+    ): Int
 
     suspend fun findById(id: Int): TripDto?
     suspend fun deleteTrip(tripId: Int): Boolean

@@ -7,7 +7,6 @@ import kotlinx.serialization.Serializable
 data class ForgotPasswordRequest(
     val email: String
 ) : Request {
-
     companion object {
         const val MISSING_PARAM = "Required 'email': String."
     }

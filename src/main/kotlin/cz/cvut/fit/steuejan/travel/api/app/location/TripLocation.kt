@@ -6,5 +6,12 @@ import io.ktor.locations.*
 @Location(Trip.URL)
 object Trip {
 
+    @Location(Invite.URL)
+    class Invite {
+        companion object {
+            const val URL = "/invite"
+        }
+    }
+
     const val URL = "/trip"
 }

@@ -46,14 +46,14 @@ class EmailPasswordController(
         }
 
         val passwordHash = encryptor.hashPassword(login.password)
-        val user = daoFactory.userDao.addUser(
+        val userId = daoFactory.userDao.addUser(
             credentials.username,
             AccountType.EMAIL,
             login.email,
             passwordHash
         )
 
-        val tokens = jwt.createTokens(user.id)
+        val tokens = jwt.createTokens(userId)
         return AuthResponse.success(tokens.accessToken, tokens.refreshToken)
     }
 
