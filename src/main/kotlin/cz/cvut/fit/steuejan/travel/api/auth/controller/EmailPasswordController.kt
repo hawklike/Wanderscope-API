@@ -108,7 +108,7 @@ class EmailPasswordController(
         }
 
         return try {
-            val response = account.changePassword(passwordResetDto.userId, password)
+            val response = account.changePassword(passwordResetDto.userId, password, addToDb = false)
             dao.deleteForgotPassword(hashedToken)
             response
         } catch (ex: BadRequestException) {

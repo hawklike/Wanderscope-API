@@ -34,7 +34,7 @@ fun Route.accountRoutes() {
 
         post<Account.ChangePassword> {
             val request = receive<ChangePasswordRequest>(ChangePasswordRequest.MISSING_PARAM)
-            respond(userAccountController.changePassword(getUserId(), request.toChangePassword()))
+            respond(userAccountController.changePassword(getUserId(), request.toChangePassword(), addToDb = true))
         }
     }
 }

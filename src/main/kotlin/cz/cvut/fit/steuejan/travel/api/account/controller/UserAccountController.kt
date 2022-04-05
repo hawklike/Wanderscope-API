@@ -33,8 +33,11 @@ class UserAccountController(
         return LogoutResponse.success()
     }
 
-    override suspend fun changePassword(userId: Int, password: ChangePassword): Response = with(password) {
-        checkPasswordChange(password)
+    override suspend fun changePassword(userId: Int, passwordRequest: ChangePassword, addToDb: Boolean): Response {
+        val newPassword = passwordRequest.newPassword
+        val oldPassword = passwordRequest.oldPassword
+
+        checkPasswordChange(passwordRequest)
         validator.validatePassword(newPassword)
         checkOldPassword(userId, oldPassword)
 
@@ -43,17 +46,19 @@ class UserAccountController(
         }
 
         logoutAllDevices(userId)
-        val tokens = jwt.createTokens(userId, addToDatabase = false)
-        ChangePasswordResponse.success(tokens.accessToken, tokens.refreshToken)
+        val tokens = jwt.createTokens(userId, addToDb)
+        return ChangePasswordResponse.success(tokens.accessToken, tokens.refreshToken)
     }
 
-    private fun checkPasswordChange(password: ChangePassword) = with(password) {
-        if (newPassword != confirmNewPassword) {
-            throw BadRequestException(FailureMessages.PASSWORDS_DONT_MATCH)
-        }
+    private fun checkPasswordChange(passwordRequest: ChangePassword) {
+        with(passwordRequest) {
+            if (newPassword != confirmNewPassword) {
+                throw BadRequestException(FailureMessages.PASSWORDS_DONT_MATCH)
+            }
 
-        if (newPassword == oldPassword) {
-            throw BadRequestException(FailureMessages.PASSWORDS_ARE_SAME_ERROR)
+            if (newPassword == oldPassword) {
+                throw BadRequestException(FailureMessages.PASSWORDS_ARE_SAME_ERROR)
+            }
         }
     }
 
