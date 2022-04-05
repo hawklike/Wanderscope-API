@@ -12,7 +12,6 @@ import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTController
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTControllerImpl
 import cz.cvut.fit.steuejan.travel.api.auth.util.ApiEncryptor
 import cz.cvut.fit.steuejan.travel.api.auth.util.Encryptor
-import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -21,7 +20,7 @@ val authModule = module {
 
     factory { EmailSender(get()) }
 
-    single { Validator(get(qualifier = named("prototype")), get()) }
+    single { Validator(get(), get()) }
 
     single<Encryptor> { ApiEncryptor(config = get()) }
 

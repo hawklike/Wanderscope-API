@@ -2,9 +2,7 @@ package cz.cvut.fit.steuejan.travel.api.app.plugin
 
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.JWTControllerFactory
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig.Companion.JWT_AUTHENTICATION
-import cz.cvut.fit.steuejan.travel.api.auth.jwt.UsernamePrincipal
 import cz.cvut.fit.steuejan.travel.api.auth.token.AccessToken
-import cz.cvut.fit.steuejan.travel.data.model.Username
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -20,7 +18,7 @@ fun Application.configureAuthentication() {
             validate {
                 val username = it.payload.subject
                 if (username != null) {
-                    UsernamePrincipal(Username(username), JWTPrincipal(it.payload))
+                    JWTPrincipal(it.payload)
                 } else {
                     null
                 }
