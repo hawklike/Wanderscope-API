@@ -11,6 +11,7 @@ data class TransportDto(
     override val id: Int,
     override val tripId: Int,
     override val duration: Duration,
+    override val name: String,
     val from: Address,
     val to: Address,
     val type: TransportType,
@@ -21,6 +22,7 @@ data class TransportDto(
     companion object {
         fun fromDb(resultRow: ResultRow) = TransportDto(
             id = resultRow[TransportTable.id].value,
+            name = resultRow[TransportTable.name],
             tripId = resultRow[TransportTable.trip].value,
             duration = Duration(
                 startDate = resultRow[TransportTable.startDate],

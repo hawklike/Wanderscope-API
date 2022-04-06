@@ -12,7 +12,7 @@ data class PlaceDto(
     override val id: Int,
     override val tripId: Int,
     override val duration: Duration,
-    val name: String,
+    override val name: String,
     val type: PlaceType,
     val address: Address,
     val contact: Contact,

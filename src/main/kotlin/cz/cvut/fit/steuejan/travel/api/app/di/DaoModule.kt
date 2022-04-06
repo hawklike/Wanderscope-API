@@ -5,6 +5,7 @@ import cz.cvut.fit.steuejan.travel.data.database.forgotpassword.dao.ForgotPasswo
 import cz.cvut.fit.steuejan.travel.data.database.forgotpassword.dao.ForgotPasswordDaoImpl
 import cz.cvut.fit.steuejan.travel.data.database.token.dao.TokenDao
 import cz.cvut.fit.steuejan.travel.data.database.token.dao.TokenDaoImp
+import cz.cvut.fit.steuejan.travel.data.database.transport.TransportDao
 import cz.cvut.fit.steuejan.travel.data.database.trip.dao.TripDao
 import cz.cvut.fit.steuejan.travel.data.database.trip.dao.TripDaoImpl
 import cz.cvut.fit.steuejan.travel.data.database.tripuser.dao.TripUserDao
@@ -20,5 +21,7 @@ val daoModule = module {
     single<TripDao> { TripDaoImpl() }
     single<TripUserDao> { TripUserDaoImpl() }
 
-    single { DaoFactory(get(), get(), get(), get(), get()) }
+    single { TransportDao() }
+
+    single { DaoFactory(get(), get(), get(), get(), get(), get()) }
 }

@@ -12,7 +12,7 @@ data class AccomodationDto(
     override val id: Int,
     override val tripId: Int,
     override val duration: Duration,
-    val name: String,
+    override val name: String,
     val type: AccomodationType,
     val address: Address,
     val contact: Contact,

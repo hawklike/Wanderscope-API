@@ -6,4 +6,5 @@ interface PointOfInterestDto {
     val id: Int
     val tripId: Int
     val duration: Duration
+    val name: String
 }

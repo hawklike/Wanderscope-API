@@ -8,12 +8,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TripInvitationRequest(
     val username: String,
-    val tripId: Int,
     val canEdit: Boolean
 ) : Request {
-    fun getTripInvitation() = TripInvitation(Username(username), tripId, canEdit)
+    fun getTripInvitation(tripId: Int) = TripInvitation(Username(username), tripId, canEdit)
 
     companion object {
-        const val MISSING_PARAM = "Required 'username': String, 'tripId': Int, 'canEdit': Boolean."
+        const val MISSING_PARAM = "Required 'username', 'canEdit': Boolean."
     }
 }

@@ -12,6 +12,7 @@ data class ActivityDto(
     override val id: Int,
     override val tripId: Int,
     override val duration: Duration,
+    override val name: String,
     val type: ActivityType?,
     val address: Address,
     val coordinates: Coordinates,
@@ -26,6 +27,7 @@ data class ActivityDto(
                 startDate = resultRow[ActivityTable.startDate],
                 endDate = resultRow[ActivityTable.endDate],
             ),
+            name = resultRow[ActivityTable.name],
             type = resultRow[ActivityTable.type],
             address = Address(
                 googlePlaceId = resultRow[ActivityTable.googlePlaceId],

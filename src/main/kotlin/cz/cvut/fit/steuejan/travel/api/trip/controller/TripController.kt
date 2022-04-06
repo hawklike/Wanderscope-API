@@ -13,7 +13,7 @@ import cz.cvut.fit.steuejan.travel.api.trip.model.TripInvitation
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
 import cz.cvut.fit.steuejan.travel.data.database.trip.TripDto
 
-class TripController(private val daoFactory: DaoFactory) {
+class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory) {
 
     suspend fun createTrip(userId: Int, trip: TripDto): Response {
         if (trip.name.length > DatabaseConfig.NAME_LENGTH) {
@@ -29,7 +29,7 @@ class TripController(private val daoFactory: DaoFactory) {
 
     suspend fun deleteTrip(userId: Int, tripId: Int): Response {
         val trip = daoFactory.tripDao.findById(tripId)
-            ?: throw NotFoundException(FailureMessages.TRIP_NOT_FOUND)
+            ?: throw ForbiddenException(FailureMessages.USER_TRIP_NOT_FOUND)
 
         if (trip.ownerId != userId) {
             return Failure(Status.FORBIDDEN, FailureMessages.DELETE_TRIP_PROHIBITED)
@@ -52,7 +52,9 @@ class TripController(private val daoFactory: DaoFactory) {
         }
 
         with(trip) {
-            daoFactory.tripDao.editTrip(tripId, name, duration, description, imageUrl)
+            if (!daoFactory.tripDao.editTrip(tripId, name, duration, description, imageUrl)) {
+                throw NotFoundException(FailureMessages.TRIP_NOT_FOUND)
+            }
         }
 
         return Success(Status.NO_CONTENT)
@@ -70,10 +72,5 @@ class TripController(private val daoFactory: DaoFactory) {
         }
 
         return Success(Status.NO_CONTENT)
-    }
-
-    private suspend fun canUserEdit(userId: Int, tripId: Int): Boolean {
-        return daoFactory.tripUserDao.findConnection(userId, tripId)?.canEdit
-            ?: throw ForbiddenException(FailureMessages.USER_TRIP_NOT_FOUND)
     }
 }

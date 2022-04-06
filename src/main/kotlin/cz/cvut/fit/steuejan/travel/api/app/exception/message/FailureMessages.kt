@@ -14,7 +14,7 @@ object FailureMessages {
     const val USER_NOT_FOUND = "User not found."
     const val TRIP_NOT_FOUND = "Trip not found."
     const val USER_OR_TRIP_NOT_FOUND =
-        "Cannot add user to the trip. User or trip not found or user is a already a member of the trip."
+        "Cannot add user to the trip. User or trip not found or user is already a member of the trip."
     const val USER_TRIP_NOT_FOUND = "User is not a member of this trip."
 
     const val ADD_USER_FAILURE = "Cannot add this user. Check duplicates."

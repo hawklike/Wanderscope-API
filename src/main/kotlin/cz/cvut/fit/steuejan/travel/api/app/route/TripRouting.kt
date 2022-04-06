@@ -28,6 +28,7 @@ fun Routing.tripRoutes() {
     authenticate(JWT_AUTHENTICATION) {
         val tripController = controllerFactory.tripController
         val userController = controllerFactory.userController
+        val transportController = controllerFactory.transportController
 
         createTrip(tripController)
         deleteTrip(tripController)
@@ -66,8 +67,9 @@ private fun Route.editTrip(tripController: TripController) {
 @KtorExperimentalLocationsAPI
 private fun Route.inviteToTrip(tripController: TripController) {
     post<Trip.Invite> {
+        val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val request = receive<TripInvitationRequest>(TripInvitationRequest.MISSING_PARAM)
-        respond(tripController.invite(getUserId(), request.getTripInvitation()))
+        respond(tripController.invite(getUserId(), request.getTripInvitation(tripId)))
     }
 }
 
