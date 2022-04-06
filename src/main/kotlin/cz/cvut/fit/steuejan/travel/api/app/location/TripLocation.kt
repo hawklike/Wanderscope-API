@@ -15,3 +15,9 @@ object Trip {
 
     const val URL = "/trip"
 }
+
+@KtorExperimentalLocationsAPI
+@Location(Trips.URL)
+object Trips {
+    const val URL = "/trips"
+}

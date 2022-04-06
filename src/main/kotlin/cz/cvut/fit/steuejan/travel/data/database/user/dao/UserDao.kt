@@ -2,6 +2,7 @@ package cz.cvut.fit.steuejan.travel.data.database.user.dao
 
 import cz.cvut.fit.steuejan.travel.api.auth.model.AccountType
 import cz.cvut.fit.steuejan.travel.data.database.user.UserDto
+import cz.cvut.fit.steuejan.travel.data.dto.TripOverviewDto
 import cz.cvut.fit.steuejan.travel.data.model.Username
 
 interface UserDao {
@@ -10,4 +11,5 @@ interface UserDao {
     suspend fun findByEmail(email: String, accountType: AccountType): UserDto?
     suspend fun findByUsername(username: Username): UserDto?
     suspend fun changePassword(userId: Int, newPassword: String): Boolean
+    suspend fun getTrips(userId: Int): List<TripOverviewDto>
 }

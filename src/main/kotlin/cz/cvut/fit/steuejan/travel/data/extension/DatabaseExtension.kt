@@ -24,6 +24,7 @@ inline fun Table.selectFirst(query: SqlExpressionBuilder.() -> Op<Boolean>): Res
 }
 
 fun Int.isDeleted() = this > 0
+fun Int.isUpdated() = this > 0
 
 fun <T : Table> T.insertOrNull(body: T.(InsertStatement<Number>) -> Unit): InsertStatement<Number>? {
     return try {
