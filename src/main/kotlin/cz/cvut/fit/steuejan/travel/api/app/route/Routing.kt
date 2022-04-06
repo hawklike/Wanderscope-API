@@ -59,10 +59,10 @@ fun Route.exampleRoutes() {
         respond(Success())
     }
 
-    get("/trips") {
-        val username = getQuery("id")
-        respond(Success(message = getTrips(username.toInt())))
-    }
+//    get("/trips") {
+//        val username = getQuery("id")
+//        respond(Success(message = getTrips(username.toInt())))
+//    }
 
     delete("/trip") {
         val id = getQuery("id")

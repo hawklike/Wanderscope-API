@@ -16,10 +16,12 @@ import cz.cvut.fit.steuejan.travel.data.extension.isUpdated
 import cz.cvut.fit.steuejan.travel.data.extension.selectFirst
 import cz.cvut.fit.steuejan.travel.data.model.Username
 import cz.cvut.fit.steuejan.travel.data.util.transaction
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
+import org.joda.time.DateTime
 
 class UserDaoImpl : UserDao {
 
@@ -53,22 +55,49 @@ class UserDaoImpl : UserDao {
         }
     }.isUpdated()
 
-    override suspend fun getTrips(userId: Int): List<TripOverviewDto> {
-        val query = TripTable
-            .innerJoin(TripUserTable)
-            .join(UserTable, JoinType.INNER, TripUserTable.user, UserTable.id)
-            .slice(TripTable.columns + TripUserTable.columns)
-            .select { UserTable.id eq userId }
+    override suspend fun getAllTrips(userId: Int): List<TripOverviewDto> {
+        val selection = UserTable.id eq userId
+        return getTrips(selection, TripTable.startDate, SortOrder.DESC_NULLS_LAST)
+    }
+
+    override suspend fun getUpcomingTrips(userId: Int, localTime: DateTime): List<TripOverviewDto> {
+        val selection = (UserTable.id eq userId) and (
+                (TripTable.endDate.greaterEq(localTime)) or (TripTable.endDate.isNull()))
+        return getTrips(selection, TripTable.startDate, SortOrder.ASC_NULLS_LAST)
+    }
+
+    override suspend fun getPastTrips(userId: Int, localTime: DateTime): List<TripOverviewDto> {
+        val selection = (UserTable.id eq userId) and (TripTable.endDate.less(localTime))
+        return getTrips(selection, TripTable.endDate, SortOrder.DESC_NULLS_LAST)
+    }
+
+    private suspend fun getTrips(
+        selectWhere: Op<Boolean>,
+        column: Expression<*>,
+        orderBy: SortOrder
+    ): List<TripOverviewDto> {
+        val query = getTripsFieldSet()
+            .select(selectWhere)
+            .orderBy(column, orderBy)
             .withDistinct()
 
         return transaction {
-            val zip = mutableListOf<TripOverviewDto>()
-            query.forEach {
-                val trip = TripDto.fromDb(it)
-                val connection = TripUserDto.fromDb(it)
-                zip.add(TripOverviewDto(trip, connection))
-            }
-            zip
+            queryToTripsOverview(query)
         }
+    }
+
+    private fun getTripsFieldSet() = TripTable
+        .innerJoin(TripUserTable)
+        .join(UserTable, JoinType.INNER, TripUserTable.user, UserTable.id)
+        .slice(TripTable.columns + TripUserTable.columns)
+
+    private fun queryToTripsOverview(query: Query): List<TripOverviewDto> {
+        val trips = mutableListOf<TripOverviewDto>()
+        query.forEach {
+            val trip = TripDto.fromDb(it)
+            val connection = TripUserDto.fromDb(it)
+            trips.add(TripOverviewDto(trip, connection))
+        }
+        return trips
     }
 }

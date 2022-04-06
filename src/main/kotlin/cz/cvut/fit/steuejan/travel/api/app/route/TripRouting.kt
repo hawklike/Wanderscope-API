@@ -11,6 +11,7 @@ import cz.cvut.fit.steuejan.travel.api.app.location.Trip
 import cz.cvut.fit.steuejan.travel.api.app.location.Trips
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig.Companion.JWT_AUTHENTICATION
 import cz.cvut.fit.steuejan.travel.api.trip.controller.TripController
+import cz.cvut.fit.steuejan.travel.api.trip.model.GetTripsType
 import cz.cvut.fit.steuejan.travel.api.trip.request.TripInvitationRequest
 import cz.cvut.fit.steuejan.travel.api.trip.request.TripRequest
 import cz.cvut.fit.steuejan.travel.api.user.controller.UserController
@@ -65,6 +66,17 @@ fun Route.inviteToTrip(tripController: TripController) {
 @KtorExperimentalLocationsAPI
 fun Route.showUserTrips(userController: UserController) {
     get<Trips> {
-        respond(userController.showTrips(getUserId()))
+        val response = when (it.scope) {
+            GetTripsType.ALL -> userController.showAllTrips(getUserId())
+            GetTripsType.UPCOMING -> {
+                it.date ?: throw BadRequestException(FailureMessages.SHOW_TRIPS_MISSING_DATE)
+                userController.showUpcomingTrips(getUserId(), it.date)
+            }
+            GetTripsType.PAST -> {
+                it.date ?: throw BadRequestException(FailureMessages.SHOW_TRIPS_MISSING_DATE)
+                userController.showPastTrips(getUserId(), it.date)
+            }
+        }
+        respond(response)
     }
 }
