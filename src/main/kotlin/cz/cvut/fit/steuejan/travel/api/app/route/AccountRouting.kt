@@ -29,7 +29,7 @@ fun Routing.accountRoutes() {
 }
 
 @KtorExperimentalLocationsAPI
-fun Route.logout(accountController: AccountController) {
+private fun Route.logout(accountController: AccountController) {
     post<Account.Logout> {
         val request = receive<RefreshTokenRequest>(RefreshTokenRequest.MISSING_PARAM)
         respond(accountController.logout(request.refreshToken))
@@ -37,14 +37,14 @@ fun Route.logout(accountController: AccountController) {
 }
 
 @KtorExperimentalLocationsAPI
-fun Route.logoutAll(accountController: AccountController) {
-    get<Account.LogoutAll> {
+private fun Route.logoutAll(accountController: AccountController) {
+    post<Account.LogoutAll> {
         respond(accountController.logoutAllDevices(getUserId()))
     }
 }
 
 @KtorExperimentalLocationsAPI
-fun Route.changePassword(accountController: AccountController) {
+private fun Route.changePassword(accountController: AccountController) {
     post<Account.ChangePassword> {
         val request = receive<ChangePasswordRequest>(ChangePasswordRequest.MISSING_PARAM)
         respond(accountController.changePassword(getUserId(), request.toChangePassword(), addToDb = true))

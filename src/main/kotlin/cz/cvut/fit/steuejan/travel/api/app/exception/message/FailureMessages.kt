@@ -25,7 +25,5 @@ object FailureMessages {
     const val DELETE_TRIP_PROHIBITED = "User is not owner of the trip."
     const val USER_ACTION_PROHIBITED = "User's action is prohibited due to weak permissions."
 
-    const val SHOW_TRIPS_MISSING_DATE = "Query parameter 'date' is mandatory."
-
-    fun missingQueryParam(param: String) = "Missing query parameter $param."
+    fun missingQueryParam(param: String) = "Missing query parameter '$param'."
 }

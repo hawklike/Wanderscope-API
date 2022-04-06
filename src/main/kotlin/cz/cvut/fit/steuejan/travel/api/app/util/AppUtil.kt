@@ -4,6 +4,7 @@ package cz.cvut.fit.steuejan.travel.api.app.util
 
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.NotFoundException
+import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 
 
 inline fun <T> parseBody(func: () -> T, crossinline onError: () -> Nothing): T {
@@ -25,6 +26,10 @@ inline fun <T> execOrNotFound(message: String, call: () -> T?): T {
 suspend inline fun <T> delay(timeMillis: Long, doAfter: () -> T): T {
     kotlinx.coroutines.delay(timeMillis)
     return doAfter.invoke()
+}
+
+fun <T> T?.throwIfMissing(paramName: String): T {
+    return this ?: throw BadRequestException(FailureMessages.missingQueryParam(paramName))
 }
 
 /**

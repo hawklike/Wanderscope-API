@@ -6,7 +6,7 @@ import org.joda.time.DateTime
 
 @KtorExperimentalLocationsAPI
 @Location(Trip.URL)
-object Trip {
+class Trip(val id: Int? = null) {
 
     @Location(Invite.URL)
     class Invite {
@@ -15,7 +15,9 @@ object Trip {
         }
     }
 
-    const val URL = "/trip"
+    companion object {
+        const val URL = "/trip"
+    }
 }
 
 @KtorExperimentalLocationsAPI

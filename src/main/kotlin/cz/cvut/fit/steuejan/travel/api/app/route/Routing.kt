@@ -9,7 +9,10 @@ import cz.cvut.fit.steuejan.travel.api.app.request.Request
 import cz.cvut.fit.steuejan.travel.api.app.response.Response
 import cz.cvut.fit.steuejan.travel.api.app.response.Success
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig.Companion.JWT_AUTHENTICATION
-import cz.cvut.fit.steuejan.travel.data.database.*
+import cz.cvut.fit.steuejan.travel.data.database.addPlace
+import cz.cvut.fit.steuejan.travel.data.database.addUser
+import cz.cvut.fit.steuejan.travel.data.database.deletePlace
+import cz.cvut.fit.steuejan.travel.data.database.getPlaces
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -64,11 +67,11 @@ fun Route.exampleRoutes() {
 //        respond(Success(message = getTrips(username.toInt())))
 //    }
 
-    delete("/trip") {
-        val id = getQuery("id")
-        deleteTrip(id.toInt())
-        respond(Success())
-    }
+//    delete("/trip") {
+//        val id = getQuery("id")
+//        deleteTrip(id.toInt())
+//        respond(Success())
+//    }
 
     post("/place") {
         val tripId = getQuery("tripId").toInt()

@@ -42,6 +42,11 @@ class TripController(private val daoFactory: DaoFactory) {
         return Success(Status.NO_CONTENT)
     }
 
+    fun editTrip(userId: Int, tripId: Int, trip: TripDto): Response {
+
+        TODO("Not yet implemented")
+    }
+
     suspend fun invite(userId: Int, invitation: TripInvitation): Response {
         if (!canUserEdit(userId, invitation.tripId)) {
             return Failure(Status.FORBIDDEN, FailureMessages.USER_ACTION_PROHIBITED)

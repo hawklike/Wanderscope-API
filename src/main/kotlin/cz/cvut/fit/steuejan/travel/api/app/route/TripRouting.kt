@@ -1,14 +1,12 @@
 package cz.cvut.fit.steuejan.travel.api.app.route
 
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.ControllerFactory
-import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
-import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
-import cz.cvut.fit.steuejan.travel.api.app.extension.getQuery
 import cz.cvut.fit.steuejan.travel.api.app.extension.getUserId
 import cz.cvut.fit.steuejan.travel.api.app.extension.receive
 import cz.cvut.fit.steuejan.travel.api.app.extension.respond
 import cz.cvut.fit.steuejan.travel.api.app.location.Trip
 import cz.cvut.fit.steuejan.travel.api.app.location.Trips
+import cz.cvut.fit.steuejan.travel.api.app.util.throwIfMissing
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig.Companion.JWT_AUTHENTICATION
 import cz.cvut.fit.steuejan.travel.api.trip.controller.TripController
 import cz.cvut.fit.steuejan.travel.api.trip.model.GetTripsType
@@ -18,6 +16,7 @@ import cz.cvut.fit.steuejan.travel.api.user.controller.UserController
 import io.ktor.auth.*
 import io.ktor.locations.*
 import io.ktor.locations.post
+import io.ktor.locations.put
 import io.ktor.routing.*
 import org.koin.ktor.ext.inject
 
@@ -32,6 +31,7 @@ fun Routing.tripRoutes() {
 
         createTrip(tripController)
         deleteTrip(tripController)
+        editTrip(tripController)
         inviteToTrip(tripController)
 
         showUserTrips(userController)
@@ -39,7 +39,7 @@ fun Routing.tripRoutes() {
 }
 
 @KtorExperimentalLocationsAPI
-fun Route.createTrip(tripController: TripController) {
+private fun Route.createTrip(tripController: TripController) {
     post<Trip> {
         val trip = receive<TripRequest>(TripRequest.MISSING_PARAM).toDto()
         respond(tripController.createTrip(getUserId(), trip))
@@ -47,16 +47,24 @@ fun Route.createTrip(tripController: TripController) {
 }
 
 @KtorExperimentalLocationsAPI
-fun Route.deleteTrip(tripController: TripController) {
+private fun Route.deleteTrip(tripController: TripController) {
     delete<Trip> {
-        val tripId = getQuery("id").toIntOrNull()
-            ?: throw BadRequestException(FailureMessages.TRIP_NOT_FOUND)
+        val tripId = it.id.throwIfMissing(it::id.name)
         respond(tripController.deleteTrip(getUserId(), tripId))
     }
 }
 
 @KtorExperimentalLocationsAPI
-fun Route.inviteToTrip(tripController: TripController) {
+private fun Route.editTrip(tripController: TripController) {
+    put<Trip> {
+        val tripId = it.id.throwIfMissing(it::id.name)
+        val trip = receive<TripRequest>(TripRequest.MISSING_PARAM).toDto()
+        respond(tripController.editTrip(getUserId(), tripId, trip))
+    }
+}
+
+@KtorExperimentalLocationsAPI
+private fun Route.inviteToTrip(tripController: TripController) {
     post<Trip.Invite> {
         val request = receive<TripInvitationRequest>(TripInvitationRequest.MISSING_PARAM)
         respond(tripController.invite(getUserId(), request.getTripInvitation()))
@@ -64,17 +72,19 @@ fun Route.inviteToTrip(tripController: TripController) {
 }
 
 @KtorExperimentalLocationsAPI
-fun Route.showUserTrips(userController: UserController) {
+private fun Route.showUserTrips(userController: UserController) {
     get<Trips> {
         val response = when (it.scope) {
-            GetTripsType.ALL -> userController.showAllTrips(getUserId())
+            GetTripsType.ALL -> {
+                userController.showAllTrips(getUserId())
+            }
             GetTripsType.UPCOMING -> {
-                it.date ?: throw BadRequestException(FailureMessages.SHOW_TRIPS_MISSING_DATE)
-                userController.showUpcomingTrips(getUserId(), it.date)
+                val date = it.date.throwIfMissing(it::date.name)
+                userController.showUpcomingTrips(getUserId(), date)
             }
             GetTripsType.PAST -> {
-                it.date ?: throw BadRequestException(FailureMessages.SHOW_TRIPS_MISSING_DATE)
-                userController.showPastTrips(getUserId(), it.date)
+                val date = it.date.throwIfMissing(it::date.name)
+                userController.showPastTrips(getUserId(), date)
             }
         }
         respond(response)

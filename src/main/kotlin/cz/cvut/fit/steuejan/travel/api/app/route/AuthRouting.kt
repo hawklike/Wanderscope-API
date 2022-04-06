@@ -26,8 +26,8 @@ import io.ktor.routing.*
 import kotlinx.html.*
 import org.koin.ktor.ext.inject
 
-const val PASSWORD_PARAM = "password"
-const val CONFIRM_PASSWORD_PARAM = "confirmPassword"
+private const val PASSWORD_PARAM = "password"
+private const val CONFIRM_PASSWORD_PARAM = "confirmPassword"
 
 @KtorExperimentalLocationsAPI
 fun Routing.authRoutes() {
@@ -45,7 +45,7 @@ fun Routing.authRoutes() {
 }
 
 @KtorExperimentalLocationsAPI
-fun Route.register(emailController: EmailPasswordController) {
+private fun Route.register(emailController: EmailPasswordController) {
     post<Auth.Register> {
         when (it.flow) {
             AccountType.EMAIL -> {
@@ -60,7 +60,7 @@ fun Route.register(emailController: EmailPasswordController) {
 }
 
 @KtorExperimentalLocationsAPI
-fun Route.login(emailController: EmailPasswordController) {
+private fun Route.login(emailController: EmailPasswordController) {
     post<Auth.Login> {
         when (it.flow) {
             AccountType.EMAIL -> {
@@ -75,7 +75,7 @@ fun Route.login(emailController: EmailPasswordController) {
 }
 
 @KtorExperimentalLocationsAPI
-fun Route.refreshToken(refreshTokenController: RefreshTokenController) {
+private fun Route.refreshToken(refreshTokenController: RefreshTokenController) {
     post<Auth.Refresh> {
         val request = receive<RefreshTokenRequest>(RefreshTokenRequest.MISSING_PARAM)
         respond(refreshTokenController.refresh(request.refreshToken))
@@ -83,7 +83,7 @@ fun Route.refreshToken(refreshTokenController: RefreshTokenController) {
 }
 
 @KtorExperimentalLocationsAPI
-fun Route.sendForgotPasswordEmail(emailController: EmailPasswordController, emailSender: EmailSender) {
+private fun Route.sendForgotPasswordEmail(emailController: EmailPasswordController, emailSender: EmailSender) {
     post<Auth.ForgotPassword.Send> {
         val request = receive<ForgotPasswordRequest>(ForgotPasswordRequest.MISSING_PARAM)
         respond(emailController.forgotPassword(request.email, emailSender))
@@ -91,7 +91,7 @@ fun Route.sendForgotPasswordEmail(emailController: EmailPasswordController, emai
 }
 
 @KtorExperimentalLocationsAPI
-fun Route.showForgotPasswordForm() {
+private fun Route.showForgotPasswordForm() {
     get<Auth.ForgotPassword.Create> {
         call.respondHtml {
             body {
@@ -125,7 +125,7 @@ fun Route.showForgotPasswordForm() {
 }
 
 @KtorExperimentalLocationsAPI
-fun Route.resetPassword(emailController: EmailPasswordController) {
+private fun Route.resetPassword(emailController: EmailPasswordController) {
     post<Auth.ForgotPassword.Reset> {
         val formParams = call.receiveParameters()
 
