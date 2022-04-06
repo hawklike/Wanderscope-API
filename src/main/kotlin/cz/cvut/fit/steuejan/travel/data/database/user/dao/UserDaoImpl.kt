@@ -10,10 +10,7 @@ import cz.cvut.fit.steuejan.travel.data.database.tripuser.TripUserTable
 import cz.cvut.fit.steuejan.travel.data.database.user.UserDto
 import cz.cvut.fit.steuejan.travel.data.database.user.UserTable
 import cz.cvut.fit.steuejan.travel.data.dto.TripOverviewDto
-import cz.cvut.fit.steuejan.travel.data.extension.findById
-import cz.cvut.fit.steuejan.travel.data.extension.insertAndGetIdOrNull
-import cz.cvut.fit.steuejan.travel.data.extension.isUpdated
-import cz.cvut.fit.steuejan.travel.data.extension.selectFirst
+import cz.cvut.fit.steuejan.travel.data.extension.*
 import cz.cvut.fit.steuejan.travel.data.model.Username
 import cz.cvut.fit.steuejan.travel.data.util.transaction
 import org.jetbrains.exposed.sql.*
@@ -50,9 +47,7 @@ class UserDaoImpl : UserDao {
     }?.let(UserDto::fromDb)
 
     override suspend fun changePassword(userId: Int, newPassword: String) = transaction {
-        UserTable.update({ UserTable.id eq userId }) {
-            it[password] = newPassword
-        }
+        UserTable.updateById(userId) { it[password] = newPassword }
     }.isUpdated()
 
     override suspend fun getAllTrips(userId: Int): List<TripOverviewDto> {

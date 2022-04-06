@@ -42,9 +42,20 @@ class TripController(private val daoFactory: DaoFactory) {
         return Success(Status.NO_CONTENT)
     }
 
-    fun editTrip(userId: Int, tripId: Int, trip: TripDto): Response {
+    suspend fun editTrip(userId: Int, tripId: Int, trip: TripDto): Response {
+        if (trip.name.length > DatabaseConfig.NAME_LENGTH) {
+            throw BadRequestException(FailureMessages.NAME_TOO_LONG)
+        }
 
-        TODO("Not yet implemented")
+        if (!canUserEdit(userId, tripId)) {
+            return Failure(Status.FORBIDDEN, FailureMessages.USER_ACTION_PROHIBITED)
+        }
+
+        with(trip) {
+            daoFactory.tripDao.editTrip(tripId, name, duration, description, imageUrl)
+        }
+
+        return Success(Status.NO_CONTENT)
     }
 
     suspend fun invite(userId: Int, invitation: TripInvitation): Response {
@@ -62,8 +73,7 @@ class TripController(private val daoFactory: DaoFactory) {
     }
 
     private suspend fun canUserEdit(userId: Int, tripId: Int): Boolean {
-        return daoFactory.tripUserDao.findConnection(userId, tripId)?.canEdit ?: throw ForbiddenException(
-            FailureMessages.USER_TRIP_NOT_FOUND
-        )
+        return daoFactory.tripUserDao.findConnection(userId, tripId)?.canEdit
+            ?: throw ForbiddenException(FailureMessages.USER_TRIP_NOT_FOUND)
     }
 }

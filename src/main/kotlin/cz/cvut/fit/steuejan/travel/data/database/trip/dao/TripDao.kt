@@ -13,6 +13,14 @@ interface TripDao {
         imageUrl: String?
     ): Int
 
+    suspend fun editTrip(
+        tripId: Int,
+        name: String,
+        duration: Duration,
+        description: String?,
+        imageUrl: String?
+    ): Boolean
+
     suspend fun findById(id: Int): TripDto?
     suspend fun deleteTrip(tripId: Int): Boolean
     suspend fun shareTrip()

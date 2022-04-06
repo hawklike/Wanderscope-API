@@ -8,6 +8,7 @@ import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.InsertStatement
+import org.jetbrains.exposed.sql.statements.UpdateStatement
 
 suspend fun IntIdTable.findById(id: Int, coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO): ResultRow? {
     return try {
@@ -37,6 +38,18 @@ fun <T : Table> T.insertOrNull(body: T.(InsertStatement<Number>) -> Unit): Inser
 fun <Key : Comparable<Key>, T : IdTable<Key>> T.insertAndGetIdOrNull(body: T.(InsertStatement<EntityID<Key>>) -> Unit): EntityID<Key>? {
     return try {
         insertAndGetId(body)
+    } catch (ex: Exception) {
+        null
+    }
+}
+
+fun <T : IntIdTable> T.updateById(id: Int, limit: Int? = null, body: T.(UpdateStatement) -> Unit): Int {
+    return this.update({ this@updateById.id eq id }, limit, body)
+}
+
+fun <T : IntIdTable> T.updateByIdOrNull(id: Int, limit: Int? = null, body: T.(UpdateStatement) -> Unit): Int? {
+    return try {
+        updateById(id, limit, body)
     } catch (ex: Exception) {
         null
     }

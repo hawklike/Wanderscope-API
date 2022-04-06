@@ -21,7 +21,7 @@ class TokenDaoImp : TokenDao {
 
     override suspend fun findToken(refreshToken: String) = transaction {
         TokenTable.selectFirst { TokenTable.refreshToken eq refreshToken }
-    }?.let { TokenDto.fromDb(it) }
+    }?.let(TokenDto::fromDb)
 
     override suspend fun deleteToken(refreshToken: String) = transaction {
         TokenTable.deleteWhere { TokenTable.refreshToken eq refreshToken }
