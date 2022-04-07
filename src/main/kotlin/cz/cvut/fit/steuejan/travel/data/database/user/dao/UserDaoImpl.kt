@@ -36,7 +36,9 @@ class UserDaoImpl : UserDao {
         }?.value ?: throw BadRequestException(FailureMessages.ADD_USER_FAILURE)
     }
 
-    override suspend fun findById(id: Int) = UserTable.findById(id)?.let(UserDto::fromDb)
+    override suspend fun findById(id: Int) = transaction {
+        UserTable.findById(id)
+    }?.let(UserDto::fromDb)
 
     override suspend fun findByEmail(email: String, accountType: AccountType) = transaction {
         UserTable.selectFirst { (UserTable.email eq email) and (UserTable.accountType eq accountType) }

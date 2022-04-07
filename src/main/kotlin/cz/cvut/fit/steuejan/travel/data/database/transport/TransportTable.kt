@@ -22,8 +22,8 @@ object TransportTable : IntIdTable("transports") {
     val cars = text("cars").nullable()
     val seats = text("seats").nullable()
 
-    fun parseList(list: List<String>): String {
-        return list.joinToString(ARRAY_SEPARATOR)
+    fun parseList(list: List<String>?): String? {
+        return list?.joinToString(ARRAY_SEPARATOR)
     }
 
     const val ARRAY_SEPARATOR = "$"

@@ -10,4 +10,11 @@ abstract class AbstractTripController(protected val daoFactory: DaoFactory) {
         return daoFactory.tripUserDao.findConnection(userId, tripId)?.canEdit
             ?: throw ForbiddenException(FailureMessages.USER_TRIP_NOT_FOUND)
     }
+
+    protected suspend fun editOrThrow(userId: Int, tripId: Int, edit: (suspend () -> Unit)? = null) {
+        if (!canUserEdit(userId, tripId)) {
+            throw ForbiddenException(FailureMessages.EDIT_TRIP_PROHIBITED)
+        }
+        edit?.invoke()
+    }
 }

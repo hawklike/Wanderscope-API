@@ -7,27 +7,18 @@ import cz.cvut.fit.steuejan.travel.data.database.trip.TripDto
 import cz.cvut.fit.steuejan.travel.data.database.trip.TripTable
 import cz.cvut.fit.steuejan.travel.data.database.tripuser.TripUserTable
 import cz.cvut.fit.steuejan.travel.data.extension.*
-import cz.cvut.fit.steuejan.travel.data.model.Duration
 import cz.cvut.fit.steuejan.travel.data.util.transaction
-import org.jetbrains.exposed.sql.deleteWhere
 
 class TripDaoImpl : TripDao {
 
-    override suspend fun createTrip(
-        name: String,
-        ownerId: Int,
-        duration: Duration,
-        canEdit: Boolean,
-        description: String?,
-        imageUrl: String?
-    ) = transaction {
+    override suspend fun createTrip(ownerId: Int, canEdit: Boolean, trip: TripDto) = transaction {
         val tripId = TripTable.insertAndGetIdOrNull {
-            it[this.name] = name
-            it[this.owner] = ownerId
-            it[this.startDate] = duration.startDate
-            it[this.endDate] = duration.endDate
-            it[this.description] = description
-            it[this.imageUrl] = imageUrl
+            it[name] = trip.name
+            it[owner] = ownerId
+            it[startDate] = trip.duration.startDate
+            it[endDate] = trip.duration.endDate
+            it[description] = trip.description
+            it[imageUrl] = trip.imageUrl
         } ?: throw BadRequestException(FailureMessages.ADD_TRIP_FAILURE)
 
         TripUserTable.insertOrNull {
@@ -39,26 +30,22 @@ class TripDaoImpl : TripDao {
         return@transaction tripId.value
     }
 
-    override suspend fun editTrip(
-        tripId: Int,
-        name: String,
-        duration: Duration,
-        description: String?,
-        imageUrl: String?
-    ) = transaction {
+    override suspend fun editTrip(tripId: Int, trip: TripDto) = transaction {
         TripTable.updateByIdOrNull(tripId) {
-            it[this.name] = name
-            it[this.startDate] = duration.startDate
-            it[this.endDate] = duration.endDate
-            it[this.description] = description
-            it[this.imageUrl] = imageUrl
+            it[name] = trip.name
+            it[startDate] = trip.duration.startDate
+            it[endDate] = trip.duration.endDate
+            it[description] = trip.description
+            it[imageUrl] = trip.imageUrl
         } ?: throw BadRequestException(FailureMessages.ADD_TRIP_FAILURE)
     }.isUpdated()
 
-    override suspend fun findById(id: Int) = TripTable.findById(id)?.let(TripDto::fromDb)
+    override suspend fun findById(id: Int) = transaction {
+        TripTable.findById(id)
+    }?.let(TripDto::fromDb)
 
     override suspend fun deleteTrip(tripId: Int) = transaction {
-        TripTable.deleteWhere { TripTable.id eq tripId }
+        TripTable.deleteById(tripId)
     }.isDeleted()
 
     override suspend fun shareTrip() {

@@ -20,10 +20,7 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
             throw BadRequestException(FailureMessages.NAME_TOO_LONG)
         }
 
-        with(trip) {
-            daoFactory.tripDao.createTrip(name, userId, duration, true, description, imageUrl)
-        }
-
+        daoFactory.tripDao.createTrip(userId, true, trip)
         return Success(Status.CREATED)
     }
 
@@ -47,23 +44,16 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
             throw BadRequestException(FailureMessages.NAME_TOO_LONG)
         }
 
-        if (!canUserEdit(userId, tripId)) {
-            return Failure(Status.FORBIDDEN, FailureMessages.USER_ACTION_PROHIBITED)
-        }
-
-        with(trip) {
-            if (!daoFactory.tripDao.editTrip(tripId, name, duration, description, imageUrl)) {
+        editOrThrow(userId, tripId) {
+            if (!daoFactory.tripDao.editTrip(tripId, trip)) {
                 throw NotFoundException(FailureMessages.TRIP_NOT_FOUND)
             }
         }
-
         return Success(Status.NO_CONTENT)
     }
 
     suspend fun invite(userId: Int, invitation: TripInvitation): Response {
-        if (!canUserEdit(userId, invitation.tripId)) {
-            return Failure(Status.FORBIDDEN, FailureMessages.USER_ACTION_PROHIBITED)
-        }
+        editOrThrow(userId, invitation.tripId)
 
         with(invitation) {
             val user = daoFactory.userDao.findByUsername(username)

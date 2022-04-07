@@ -13,17 +13,19 @@ object FailureMessages {
 
     const val USER_NOT_FOUND = "User not found."
     const val TRIP_NOT_FOUND = "Trip not found."
+    const val TRANSPORT_NOT_FOUND = "Transport not found."
     const val USER_OR_TRIP_NOT_FOUND =
         "Cannot add user to the trip. User or trip not found or user is already a member of the trip."
     const val USER_TRIP_NOT_FOUND = "User is not a member of this trip."
 
     const val ADD_USER_FAILURE = "Cannot add this user. Check duplicates."
-    const val ADD_TRIP_FAILURE = "Cannot add this trip. Check name length."
+    const val ADD_TRIP_FAILURE = "Cannot add this trip. Check name length and if owner exists."
+    const val ADD_TRANSPORT_FAILURE = "Cannot add this transport point. Check name length and if trip exists."
 
     const val NAME_TOO_LONG = "Name is too long. Max length allowed is ${DatabaseConfig.NAME_LENGTH}"
 
     const val DELETE_TRIP_PROHIBITED = "User is not owner of the trip."
-    const val USER_ACTION_PROHIBITED = "User's action is prohibited due to weak permissions."
+    const val EDIT_TRIP_PROHIBITED = "User cannot edit this trip."
 
     fun missingQueryParam(param: String) = "Missing query parameter '$param'."
 }

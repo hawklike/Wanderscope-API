@@ -1,8 +1,5 @@
 package cz.cvut.fit.steuejan.travel.data.extension
 
-import cz.cvut.fit.steuejan.travel.data.util.transaction
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.dao.id.IntIdTable
@@ -10,14 +7,8 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.statements.UpdateStatement
 
-suspend fun IntIdTable.findById(id: Int, coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO): ResultRow? {
-    return try {
-        transaction(coroutineDispatcher) {
-            select { this@findById.id eq id }.first()
-        }
-    } catch (ex: Exception) {
-        null
-    }
+fun IntIdTable.findById(id: Int): ResultRow? {
+    return select { this@findById.id eq id }.firstOrNull()
 }
 
 inline fun Table.selectFirst(query: SqlExpressionBuilder.() -> Op<Boolean>): ResultRow? {
@@ -53,4 +44,8 @@ fun <T : IntIdTable> T.updateByIdOrNull(id: Int, limit: Int? = null, body: T.(Up
     } catch (ex: Exception) {
         null
     }
+}
+
+fun IntIdTable.deleteById(id: Int, limit: Int? = null, offset: Long? = null): Int {
+    return deleteWhere(limit, offset) { this@deleteById.id eq id }
 }
