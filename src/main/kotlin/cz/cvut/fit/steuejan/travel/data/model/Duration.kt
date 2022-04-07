@@ -7,7 +7,7 @@ import org.joda.time.DateTime
 @Serializable
 data class Duration(
     @Serializable(with = DateTimeSerializer::class)
-    val startDate: DateTime?,
+    val startDate: DateTime? = null,
     @Serializable(with = DateTimeSerializer::class)
-    val endDate: DateTime?
+    val endDate: DateTime? = null
 )

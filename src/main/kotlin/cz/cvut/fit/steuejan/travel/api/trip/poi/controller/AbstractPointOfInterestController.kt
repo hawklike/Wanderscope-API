@@ -1,4 +1,4 @@
-package cz.cvut.fit.steuejan.travel.api.trip.points.controller
+package cz.cvut.fit.steuejan.travel.api.trip.poi.controller
 
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException

@@ -1,10 +1,10 @@
-package cz.cvut.fit.steuejan.travel.api.trip.points.transport.controller
+package cz.cvut.fit.steuejan.travel.api.trip.poi.transport.controller
 
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.api.app.response.Response
-import cz.cvut.fit.steuejan.travel.api.trip.points.controller.AbstractPointOfInterestController
-import cz.cvut.fit.steuejan.travel.api.trip.points.transport.response.TransportResponse
+import cz.cvut.fit.steuejan.travel.api.trip.poi.controller.AbstractPointOfInterestController
+import cz.cvut.fit.steuejan.travel.api.trip.poi.transport.response.TransportResponse
 import cz.cvut.fit.steuejan.travel.data.database.transport.TransportDto
 
 class TransportController(

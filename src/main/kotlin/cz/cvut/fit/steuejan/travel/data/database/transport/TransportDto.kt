@@ -1,7 +1,7 @@
 package cz.cvut.fit.steuejan.travel.data.database.transport
 
-import cz.cvut.fit.steuejan.travel.api.trip.points.response.AbstractPointOfInterestResponse
-import cz.cvut.fit.steuejan.travel.api.trip.points.transport.response.TransportResponse
+import cz.cvut.fit.steuejan.travel.api.trip.poi.response.AbstractPointOfInterestResponse
+import cz.cvut.fit.steuejan.travel.api.trip.poi.transport.response.TransportResponse
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
 import cz.cvut.fit.steuejan.travel.data.model.Address
@@ -46,6 +46,15 @@ data class TransportDto(
     }
 
     override fun toResponse(): AbstractPointOfInterestResponse = TransportResponse(
-        id, tripId, name, type, from, to, description, duration, cars, seats
+        id = id,
+        tripId = tripId,
+        name = name,
+        duration = duration,
+        type = type,
+        from = from,
+        to = to,
+        description = description,
+        cars = cars,
+        seats = seats
     )
 }

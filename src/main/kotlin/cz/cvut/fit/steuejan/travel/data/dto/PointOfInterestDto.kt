@@ -1,6 +1,6 @@
 package cz.cvut.fit.steuejan.travel.data.dto
 
-import cz.cvut.fit.steuejan.travel.api.trip.points.response.AbstractPointOfInterestResponse
+import cz.cvut.fit.steuejan.travel.api.trip.poi.response.AbstractPointOfInterestResponse
 import cz.cvut.fit.steuejan.travel.data.model.Duration
 
 interface PointOfInterestDto {

@@ -1,6 +1,6 @@
 package cz.cvut.fit.steuejan.travel.data.database.activity
 
-import cz.cvut.fit.steuejan.travel.api.trip.points.response.AbstractPointOfInterestResponse
+import cz.cvut.fit.steuejan.travel.api.trip.poi.response.AbstractPointOfInterestResponse
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
 import cz.cvut.fit.steuejan.travel.data.model.ActivityType

@@ -1,6 +1,7 @@
 package cz.cvut.fit.steuejan.travel.data.database.accomodation
 
-import cz.cvut.fit.steuejan.travel.api.trip.points.response.AbstractPointOfInterestResponse
+import cz.cvut.fit.steuejan.travel.api.trip.poi.accomodation.response.AccomodationResponse
+import cz.cvut.fit.steuejan.travel.api.trip.poi.response.AbstractPointOfInterestResponse
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
 import cz.cvut.fit.steuejan.travel.data.model.AccomodationType
@@ -42,5 +43,14 @@ data class AccomodationDto(
         )
     }
 
-    override fun toResponse(): AbstractPointOfInterestResponse = TODO()
+    override fun toResponse(): AbstractPointOfInterestResponse = AccomodationResponse(
+        id = id,
+        tripId = tripId,
+        duration = duration,
+        name = name,
+        address = address,
+        contact = contact,
+        type = type,
+        description = description
+    )
 }

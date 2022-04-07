@@ -12,6 +12,7 @@ fun Application.configureRouting() {
         accountRoutes()
         tripRoutes()
         transportRoutes()
+        accomodationRoutes()
         exampleRoutes()
     }
 }

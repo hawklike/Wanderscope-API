@@ -10,8 +10,8 @@ import cz.cvut.fit.steuejan.travel.api.app.extension.respond
 import cz.cvut.fit.steuejan.travel.api.app.location.Trip
 import cz.cvut.fit.steuejan.travel.api.app.util.throwIfMissing
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig
-import cz.cvut.fit.steuejan.travel.api.trip.points.transport.controller.TransportController
-import cz.cvut.fit.steuejan.travel.api.trip.points.transport.request.TransportRequest
+import cz.cvut.fit.steuejan.travel.api.trip.poi.transport.controller.TransportController
+import cz.cvut.fit.steuejan.travel.api.trip.poi.transport.request.TransportRequest
 import io.ktor.auth.*
 import io.ktor.locations.*
 import io.ktor.locations.post

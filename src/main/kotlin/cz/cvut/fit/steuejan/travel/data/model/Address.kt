@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Address(
-    val googlePlaceId: String?,
-    val address: String?
+    val googlePlaceId: String? = null,
+    val address: String? = null
 )

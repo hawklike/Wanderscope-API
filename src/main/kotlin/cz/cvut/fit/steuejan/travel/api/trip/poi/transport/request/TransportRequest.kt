@@ -1,4 +1,4 @@
-package cz.cvut.fit.steuejan.travel.api.trip.points.transport.request
+package cz.cvut.fit.steuejan.travel.api.trip.poi.transport.request
 
 import cz.cvut.fit.steuejan.travel.api.app.request.Request
 import cz.cvut.fit.steuejan.travel.data.database.transport.TransportDto
@@ -22,10 +22,10 @@ data class TransportRequest(
     fun toDto() = TransportDto(
         id = Dto.UNKNOWN_ID,
         tripId = Dto.UNKNOWN_ID,
-        duration = duration ?: Duration(null, null),
+        duration = duration ?: Duration(),
         name = name,
-        from = from ?: Address(null, null),
-        to = to ?: Address(null, null),
+        from = from ?: Address(),
+        to = to ?: Address(),
         type = type,
         description = description,
         cars = cars,
@@ -34,6 +34,6 @@ data class TransportRequest(
 
     companion object {
         const val MISSING_PARAM =
-            "Required 'name': String, type: TransportType aka [WALK, BIKE, CAR, BUS, TRAIN, FERRY, PUBLIC, PLANE]."
+            "Required 'name': String, 'type': TransportType aka [WALK, BIKE, CAR, BUS, TRAIN, FERRY, PUBLIC, PLANE]."
     }
 }
