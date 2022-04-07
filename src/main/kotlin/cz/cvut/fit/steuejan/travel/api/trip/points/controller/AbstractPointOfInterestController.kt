@@ -34,7 +34,7 @@ abstract class AbstractPointOfInterestController<T : PointOfInterestDto>(
 
     suspend fun delete(userId: Int, tripId: Int, poiId: Int): Response {
         editOrThrow(userId, tripId) {
-            if (!dao.delete(poiId)) {
+            if (!dao.delete(tripId, poiId)) {
                 throw NotFoundException(notFound)
             }
         }
@@ -43,7 +43,7 @@ abstract class AbstractPointOfInterestController<T : PointOfInterestDto>(
 
     suspend fun edit(userId: Int, tripId: Int, poiId: Int, dto: T): Response {
         upsert(userId, tripId, dto) {
-            if (!dao.edit(poiId, dto)) {
+            if (!dao.edit(tripId, poiId, dto)) {
                 throw NotFoundException(notFound)
             }
         }

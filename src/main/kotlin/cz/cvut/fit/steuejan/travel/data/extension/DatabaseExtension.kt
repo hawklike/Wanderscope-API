@@ -46,6 +46,18 @@ fun <T : IntIdTable> T.updateByIdOrNull(id: Int, limit: Int? = null, body: T.(Up
     }
 }
 
+fun <T : Table> T.updateOrNull(
+    where: (SqlExpressionBuilder.() -> Op<Boolean>)? = null,
+    limit: Int? = null,
+    body: T.(UpdateStatement) -> Unit
+): Int? {
+    return try {
+        update(where, limit, body)
+    } catch (ex: Exception) {
+        null
+    }
+}
+
 fun IntIdTable.deleteById(id: Int, limit: Int? = null, offset: Long? = null): Int {
     return deleteWhere(limit, offset) { this@deleteById.id eq id }
 }

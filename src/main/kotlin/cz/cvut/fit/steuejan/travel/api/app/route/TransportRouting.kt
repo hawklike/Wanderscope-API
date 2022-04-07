@@ -15,6 +15,7 @@ import cz.cvut.fit.steuejan.travel.api.trip.points.transport.request.TransportRe
 import io.ktor.auth.*
 import io.ktor.locations.*
 import io.ktor.locations.post
+import io.ktor.locations.put
 import io.ktor.routing.*
 import org.koin.ktor.ext.inject
 
@@ -26,6 +27,8 @@ fun Routing.transportRoutes() {
 
         addTransport(transportController)
         showTransport(transportController)
+        editTransport(transportController)
+        deleteTransport(transportController)
     }
 }
 
@@ -42,6 +45,23 @@ fun Route.showTransport(transportController: TransportController) {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val transportId = it.transportId.throwIfMissing(it::transportId.name)
         respond(transportController.getTransport(getUserId(), tripId, transportId))
+    }
+}
+
+fun Route.editTransport(transportController: TransportController) {
+    put<Trip.Transport> {
+        val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
+        val transportId = it.transportId.throwIfMissing(it::transportId.name)
+        val transport = receive<TransportRequest>(TransportRequest.MISSING_PARAM).toDto()
+        respond(transportController.edit(getUserId(), tripId, transportId, transport))
+    }
+}
+
+fun Route.deleteTransport(transportController: TransportController) {
+    delete<Trip.Transport> {
+        val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
+        val transportId = it.transportId.throwIfMissing(it::transportId.name)
+        respond(transportController.delete(getUserId(), tripId, transportId))
     }
 }
 
