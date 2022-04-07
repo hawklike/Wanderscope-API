@@ -24,7 +24,7 @@ class TransportDao : PointOfInterestDao<TransportDto> {
             it[endDate] = dto.duration.endDate
             it[cars] = parseList(dto.cars)
             it[seats] = parseList(dto.seats)
-        }?.value ?: throw BadRequestException(FailureMessages.poiDbInsertionFailure("transport"))
+        }?.value ?: throw BadRequestException(FailureMessages.poiDbInsertionFailure(RESOURCE_NAME))
     }
 
     override suspend fun find(tripId: Int, id: Int) = transaction {
@@ -48,7 +48,7 @@ class TransportDao : PointOfInterestDao<TransportDto> {
             it[endDate] = dto.duration.endDate
             it[cars] = parseList(dto.cars)
             it[seats] = parseList(dto.seats)
-        } ?: throw BadRequestException(FailureMessages.poiDbInsertionFailure("transport"))
+        } ?: throw BadRequestException(FailureMessages.poiDbInsertionFailure(RESOURCE_NAME))
     }.isUpdated()
 
     override suspend fun delete(tripId: Int, poiId: Int) = transaction {
@@ -57,4 +57,7 @@ class TransportDao : PointOfInterestDao<TransportDto> {
         }
     }.isDeleted()
 
+    companion object {
+        const val RESOURCE_NAME = "transport"
+    }
 }

@@ -13,6 +13,7 @@ fun Application.configureRouting() {
         tripRoutes()
         transportRoutes()
         accomodationRoutes()
+        activityRoutes()
         exampleRoutes()
     }
 }

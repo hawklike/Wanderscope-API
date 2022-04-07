@@ -1,5 +1,6 @@
 package cz.cvut.fit.steuejan.travel.data.database.activity
 
+import cz.cvut.fit.steuejan.travel.api.trip.poi.activity.response.ActivityResponse
 import cz.cvut.fit.steuejan.travel.api.trip.poi.response.AbstractPointOfInterestResponse
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
@@ -20,6 +21,7 @@ data class ActivityDto(
     val mapLink: String?,
     val description: String?
 ) : PointOfInterestDto, Dto() {
+
     companion object {
         fun fromDb(resultRow: ResultRow) = ActivityDto(
             id = resultRow[ActivityTable.id].value,
@@ -43,5 +45,15 @@ data class ActivityDto(
         )
     }
 
-    override fun toResponse(): AbstractPointOfInterestResponse = TODO()
+    override fun toResponse(): AbstractPointOfInterestResponse = ActivityResponse(
+        id = id,
+        tripId = tripId,
+        duration = duration,
+        name = name,
+        type = type,
+        address = address,
+        coordinates = coordinates,
+        mapLink = mapLink,
+        description = description
+    )
 }

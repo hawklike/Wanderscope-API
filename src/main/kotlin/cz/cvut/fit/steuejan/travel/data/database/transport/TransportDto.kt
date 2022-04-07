@@ -21,6 +21,7 @@ data class TransportDto(
     val cars: List<String>?,
     val seats: List<String>?
 ) : PointOfInterestDto, Dto() {
+
     companion object {
         fun fromDb(resultRow: ResultRow) = TransportDto(
             id = resultRow[TransportTable.id].value,

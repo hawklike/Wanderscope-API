@@ -20,6 +20,7 @@ data class AccomodationDto(
     val contact: Contact,
     val description: String?
 ) : PointOfInterestDto, Dto() {
+
     companion object {
         fun fromDb(resultRow: ResultRow) = AccomodationDto(
             id = resultRow[AccomodationTable.id].value,

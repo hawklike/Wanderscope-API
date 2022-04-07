@@ -31,6 +31,13 @@ class Trip(val id: Int? = null) {
         }
     }
 
+    @Location("${Activity.URL}/{activityId?}")
+    class Activity(val trip: Trip, val activityId: Int? = null) {
+        companion object {
+            const val URL = "/activity"
+        }
+    }
+
     companion object {
         const val URL = "/trip"
     }
