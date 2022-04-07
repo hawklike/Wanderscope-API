@@ -20,6 +20,7 @@ object FailureMessages {
     const val TRANSPORT_NOT_FOUND = "Transport not found."
     const val ACCOMODATION_NOT_FOUND = "Accomodation not found."
     const val ACTIVITY_NOT_FOUND = "Activity not found."
+    const val PLACE_NOT_FOUND = "Place not found."
 
     const val ADD_USER_FAILURE = "Cannot add this user. Check duplicates."
     const val ADD_TRIP_FAILURE = "Cannot add this trip. Check name length and if owner exists."

@@ -3,6 +3,7 @@ package cz.cvut.fit.steuejan.travel.api.app.di.factory
 import cz.cvut.fit.steuejan.travel.data.database.accomodation.AccomodationDao
 import cz.cvut.fit.steuejan.travel.data.database.activity.ActivityDao
 import cz.cvut.fit.steuejan.travel.data.database.forgotpassword.dao.ForgotPasswordDao
+import cz.cvut.fit.steuejan.travel.data.database.place.PlaceDao
 import cz.cvut.fit.steuejan.travel.data.database.token.dao.TokenDao
 import cz.cvut.fit.steuejan.travel.data.database.transport.TransportDao
 import cz.cvut.fit.steuejan.travel.data.database.trip.dao.TripDao
@@ -17,5 +18,6 @@ class DaoFactory(
     val tripUserDao: TripUserDao,
     val transportDao: TransportDao,
     val accomodationDao: AccomodationDao,
-    val activityDao: ActivityDao
+    val activityDao: ActivityDao,
+    val placeDao: PlaceDao
 )

@@ -1,5 +1,6 @@
 package cz.cvut.fit.steuejan.travel.data.database.place
 
+import cz.cvut.fit.steuejan.travel.api.trip.poi.place.response.PlaceResponse
 import cz.cvut.fit.steuejan.travel.api.trip.poi.response.AbstractPointOfInterestResponse
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
@@ -21,6 +22,7 @@ data class PlaceDto(
     val imageUrl: String?,
     val description: String?
 ) : PointOfInterestDto, Dto() {
+
     companion object {
         fun fromDb(resultRow: ResultRow) = PlaceDto(
             id = resultRow[PlaceTable.id].value,
@@ -46,5 +48,16 @@ data class PlaceDto(
         )
     }
 
-    override fun toResponse(): AbstractPointOfInterestResponse = TODO()
+    override fun toResponse(): AbstractPointOfInterestResponse = PlaceResponse(
+        id = id,
+        tripId = tripId,
+        duration = duration,
+        name = name,
+        type = type,
+        address = address,
+        contact = contact,
+        wikiBrief = wikiBrief,
+        imageUrl = imageUrl,
+        description = description
+    )
 }

@@ -14,6 +14,7 @@ fun Application.configureRouting() {
         transportRoutes()
         accomodationRoutes()
         activityRoutes()
+        placeRoutes()
         exampleRoutes()
     }
 }
