@@ -1,3 +1,6 @@
+@file:OptIn(KtorExperimentalLocationsAPI::class)
+@file:Suppress("OPT_IN_IS_NOT_ENABLED")
+
 package cz.cvut.fit.steuejan.travel.api.app.route
 
 import cz.cvut.fit.steuejan.travel.api.account.model.ChangePassword
@@ -29,7 +32,6 @@ import org.koin.ktor.ext.inject
 private const val PASSWORD_PARAM = "password"
 private const val CONFIRM_PASSWORD_PARAM = "confirmPassword"
 
-@KtorExperimentalLocationsAPI
 fun Routing.authRoutes() {
     val authFactory: AuthControllerFactory by inject()
     val emailSender: EmailSender by inject()
@@ -44,7 +46,6 @@ fun Routing.authRoutes() {
     resetPassword(authFactory.emailPasswordController)
 }
 
-@KtorExperimentalLocationsAPI
 private fun Route.register(emailController: EmailPasswordController) {
     post<Auth.Register> {
         when (it.flow) {
@@ -59,7 +60,6 @@ private fun Route.register(emailController: EmailPasswordController) {
     }
 }
 
-@KtorExperimentalLocationsAPI
 private fun Route.login(emailController: EmailPasswordController) {
     post<Auth.Login> {
         when (it.flow) {
@@ -74,7 +74,6 @@ private fun Route.login(emailController: EmailPasswordController) {
     }
 }
 
-@KtorExperimentalLocationsAPI
 private fun Route.refreshToken(refreshTokenController: RefreshTokenController) {
     post<Auth.Refresh> {
         val request = receive<RefreshTokenRequest>(RefreshTokenRequest.MISSING_PARAM)
@@ -82,7 +81,6 @@ private fun Route.refreshToken(refreshTokenController: RefreshTokenController) {
     }
 }
 
-@KtorExperimentalLocationsAPI
 private fun Route.sendForgotPasswordEmail(emailController: EmailPasswordController, emailSender: EmailSender) {
     post<Auth.ForgotPassword.Send> {
         val request = receive<ForgotPasswordRequest>(ForgotPasswordRequest.MISSING_PARAM)
@@ -90,7 +88,6 @@ private fun Route.sendForgotPasswordEmail(emailController: EmailPasswordControll
     }
 }
 
-@KtorExperimentalLocationsAPI
 private fun Route.showForgotPasswordForm() {
     get<Auth.ForgotPassword.Create> {
         call.respondHtml {
@@ -124,7 +121,6 @@ private fun Route.showForgotPasswordForm() {
     }
 }
 
-@KtorExperimentalLocationsAPI
 private fun Route.resetPassword(emailController: EmailPasswordController) {
     post<Auth.ForgotPassword.Reset> {
         val formParams = call.receiveParameters()

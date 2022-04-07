@@ -7,7 +7,7 @@ import cz.cvut.fit.steuejan.travel.api.trip.model.GetTripsType
 import io.ktor.locations.*
 import org.joda.time.DateTime
 
-@Location("${Trip.URL}/{id}")
+@Location("${Trip.URL}/{id?}")
 class Trip(val id: Int? = null) {
 
     @Location(Invite.URL)
@@ -17,8 +17,8 @@ class Trip(val id: Int? = null) {
         }
     }
 
-    @Location(Transport.URL)
-    class Transport(val trip: Trip) {
+    @Location("${Transport.URL}/{transportId?}")
+    class Transport(val trip: Trip, val transportId: Int? = null) {
         companion object {
             const val URL = "/transport"
         }

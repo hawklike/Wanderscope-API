@@ -1,5 +1,6 @@
 package cz.cvut.fit.steuejan.travel.data.database.accomodation
 
+import cz.cvut.fit.steuejan.travel.api.trip.points.response.AbstractPointOfInterestResponse
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
 import cz.cvut.fit.steuejan.travel.data.model.AccomodationType
@@ -40,4 +41,6 @@ data class AccomodationDto(
             description = resultRow[AccomodationTable.description]
         )
     }
+
+    override fun toResponse(): AbstractPointOfInterestResponse = TODO()
 }

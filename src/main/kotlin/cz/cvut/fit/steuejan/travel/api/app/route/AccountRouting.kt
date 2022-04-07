@@ -1,3 +1,6 @@
+@file:OptIn(KtorExperimentalLocationsAPI::class)
+@file:Suppress("OPT_IN_IS_NOT_ENABLED")
+
 package cz.cvut.fit.steuejan.travel.api.app.route
 
 import cz.cvut.fit.steuejan.travel.api.account.controller.AccountController
@@ -15,8 +18,6 @@ import io.ktor.locations.post
 import io.ktor.routing.*
 import org.koin.ktor.ext.inject
 
-
-@KtorExperimentalLocationsAPI
 fun Routing.accountRoutes() {
     val controllerFactory: ControllerFactory by inject()
 
@@ -28,7 +29,6 @@ fun Routing.accountRoutes() {
     }
 }
 
-@KtorExperimentalLocationsAPI
 private fun Route.logout(accountController: AccountController) {
     post<Account.Logout> {
         val request = receive<RefreshTokenRequest>(RefreshTokenRequest.MISSING_PARAM)
@@ -36,14 +36,12 @@ private fun Route.logout(accountController: AccountController) {
     }
 }
 
-@KtorExperimentalLocationsAPI
 private fun Route.logoutAll(accountController: AccountController) {
     post<Account.LogoutAll> {
         respond(accountController.logoutAllDevices(getUserId()))
     }
 }
 
-@KtorExperimentalLocationsAPI
 private fun Route.changePassword(accountController: AccountController) {
     post<Account.ChangePassword> {
         val request = receive<ChangePasswordRequest>(ChangePasswordRequest.MISSING_PARAM)

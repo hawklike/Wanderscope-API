@@ -1,9 +1,6 @@
 package cz.cvut.fit.steuejan.travel.api.app.plugin
 
-import cz.cvut.fit.steuejan.travel.api.app.route.accountRoutes
-import cz.cvut.fit.steuejan.travel.api.app.route.authRoutes
-import cz.cvut.fit.steuejan.travel.api.app.route.exampleRoutes
-import cz.cvut.fit.steuejan.travel.api.app.route.tripRoutes
+import cz.cvut.fit.steuejan.travel.api.app.route.*
 import io.ktor.application.*
 import io.ktor.locations.*
 import io.ktor.routing.*
@@ -14,6 +11,7 @@ fun Application.configureRouting() {
         authRoutes()
         accountRoutes()
         tripRoutes()
+        transportRoutes()
         exampleRoutes()
     }
 }

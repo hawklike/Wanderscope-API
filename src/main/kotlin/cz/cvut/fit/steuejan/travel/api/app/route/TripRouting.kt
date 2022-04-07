@@ -1,3 +1,6 @@
+@file:OptIn(KtorExperimentalLocationsAPI::class)
+@file:Suppress("OPT_IN_IS_NOT_ENABLED")
+
 package cz.cvut.fit.steuejan.travel.api.app.route
 
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.ControllerFactory
@@ -20,15 +23,12 @@ import io.ktor.locations.put
 import io.ktor.routing.*
 import org.koin.ktor.ext.inject
 
-
-@KtorExperimentalLocationsAPI
 fun Routing.tripRoutes() {
     val controllerFactory: ControllerFactory by inject()
 
     authenticate(JWT_AUTHENTICATION) {
         val tripController = controllerFactory.tripController
         val userController = controllerFactory.userController
-        val transportController = controllerFactory.transportController
 
         createTrip(tripController)
         deleteTrip(tripController)
@@ -39,7 +39,6 @@ fun Routing.tripRoutes() {
     }
 }
 
-@KtorExperimentalLocationsAPI
 private fun Route.createTrip(tripController: TripController) {
     post<Trip> {
         val trip = receive<TripRequest>(TripRequest.MISSING_PARAM).toDto()
@@ -47,7 +46,6 @@ private fun Route.createTrip(tripController: TripController) {
     }
 }
 
-@KtorExperimentalLocationsAPI
 private fun Route.deleteTrip(tripController: TripController) {
     delete<Trip> {
         val tripId = it.id.throwIfMissing(it::id.name)
@@ -55,7 +53,6 @@ private fun Route.deleteTrip(tripController: TripController) {
     }
 }
 
-@KtorExperimentalLocationsAPI
 private fun Route.editTrip(tripController: TripController) {
     put<Trip> {
         val tripId = it.id.throwIfMissing(it::id.name)
@@ -64,7 +61,6 @@ private fun Route.editTrip(tripController: TripController) {
     }
 }
 
-@KtorExperimentalLocationsAPI
 private fun Route.inviteToTrip(tripController: TripController) {
     post<Trip.Invite> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
@@ -73,7 +69,6 @@ private fun Route.inviteToTrip(tripController: TripController) {
     }
 }
 
-@KtorExperimentalLocationsAPI
 private fun Route.showUserTrips(userController: UserController) {
     get<Trips> {
         val response = when (it.scope) {

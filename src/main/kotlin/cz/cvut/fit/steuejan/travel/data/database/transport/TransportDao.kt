@@ -5,6 +5,7 @@ import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.data.database.dao.PointOfInterestDao
 import cz.cvut.fit.steuejan.travel.data.extension.*
 import cz.cvut.fit.steuejan.travel.data.util.transaction
+import org.jetbrains.exposed.sql.and
 
 @Suppress("DuplicatedCode")
 class TransportDao : PointOfInterestDao<TransportDto> {
@@ -24,6 +25,12 @@ class TransportDao : PointOfInterestDao<TransportDto> {
             it[seats] = parseList(dto.seats)
         }?.value ?: throw BadRequestException(FailureMessages.ADD_TRANSPORT_FAILURE)
     }
+
+    override suspend fun find(tripId: Int, id: Int) = transaction {
+        TransportTable.selectFirst {
+            (TransportTable.trip eq tripId) and (TransportTable.id eq id)
+        }
+    }?.let(TransportDto::fromDb)
 
     override suspend fun edit(poiId: Int, dto: TransportDto) = transaction {
         TransportTable.updateByIdOrNull(poiId) {

@@ -12,7 +12,7 @@ import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
 import cz.cvut.fit.steuejan.travel.data.database.dao.PointOfInterestDao
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
 
-abstract class AbstractPointOfInterestController<in T : PointOfInterestDto>(
+abstract class AbstractPointOfInterestController<T : PointOfInterestDto>(
     daoFactory: DaoFactory,
     protected val dao: PointOfInterestDao<T>
 ) : AbstractTripController(daoFactory) {
@@ -24,6 +24,12 @@ abstract class AbstractPointOfInterestController<in T : PointOfInterestDto>(
             dao.add(tripId, dto)
         }
         return Success(Status.CREATED)
+    }
+
+    suspend fun get(userId: Int, tripId: Int, poiId: Int): Response {
+        return viewOrThrow(userId, tripId) {
+            dao.find(tripId, poiId)?.toResponse() ?: throw NotFoundException(notFound)
+        }!!
     }
 
     suspend fun delete(userId: Int, tripId: Int, poiId: Int): Response {
