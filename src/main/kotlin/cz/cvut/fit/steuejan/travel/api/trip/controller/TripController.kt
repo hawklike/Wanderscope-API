@@ -53,7 +53,7 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
     }
 
     suspend fun invite(userId: Int, invitation: TripInvitation): Response {
-        editOrThrow<Unit>(userId, invitation.tripId)
+        editOrThrow(userId, invitation.tripId)
 
         with(invitation) {
             val user = daoFactory.userDao.findByUsername(username)
