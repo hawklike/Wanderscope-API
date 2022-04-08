@@ -32,7 +32,7 @@ fun Routing.accomodationRoutes() {
     }
 }
 
-fun Route.addAccomodation(accomodationController: AccomodationController) {
+private fun Route.addAccomodation(accomodationController: AccomodationController) {
     post<Trip.Accomodation> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val accomodation = receive<AccomodationRequest>(AccomodationRequest.MISSING_PARAM).toDto()
@@ -40,7 +40,7 @@ fun Route.addAccomodation(accomodationController: AccomodationController) {
     }
 }
 
-fun Route.showAccomodation(accomodationController: AccomodationController) {
+private fun Route.showAccomodation(accomodationController: AccomodationController) {
     get<Trip.Accomodation> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val accomodationId = it.accomodationId.throwIfMissing(it::accomodationId.name)
@@ -48,7 +48,7 @@ fun Route.showAccomodation(accomodationController: AccomodationController) {
     }
 }
 
-fun Route.editAccomodation(accomodationController: AccomodationController) {
+private fun Route.editAccomodation(accomodationController: AccomodationController) {
     put<Trip.Accomodation> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val accomodationId = it.accomodationId.throwIfMissing(it::accomodationId.name)
@@ -57,7 +57,7 @@ fun Route.editAccomodation(accomodationController: AccomodationController) {
     }
 }
 
-fun Route.deleteAccomodation(accomodationController: AccomodationController) {
+private fun Route.deleteAccomodation(accomodationController: AccomodationController) {
     delete<Trip.Accomodation> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val accomodationId = it.accomodationId.throwIfMissing(it::accomodationId.name)

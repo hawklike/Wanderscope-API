@@ -32,7 +32,7 @@ fun Routing.placeRoutes() {
     }
 }
 
-fun Route.addPlace(placeController: PlaceController) {
+private fun Route.addPlace(placeController: PlaceController) {
     post<Trip.Place> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val place = receive<PlaceRequest>(PlaceRequest.MISSING_PARAM).toDto()
@@ -40,7 +40,7 @@ fun Route.addPlace(placeController: PlaceController) {
     }
 }
 
-fun Route.showPlace(placeController: PlaceController) {
+private fun Route.showPlace(placeController: PlaceController) {
     get<Trip.Place> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val placeId = it.placeId.throwIfMissing(it::placeId.name)
@@ -48,7 +48,7 @@ fun Route.showPlace(placeController: PlaceController) {
     }
 }
 
-fun Route.editPlace(placeController: PlaceController) {
+private fun Route.editPlace(placeController: PlaceController) {
     put<Trip.Place> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val placeId = it.placeId.throwIfMissing(it::placeId.name)
@@ -57,7 +57,7 @@ fun Route.editPlace(placeController: PlaceController) {
     }
 }
 
-fun Route.deletePlace(placeController: PlaceController) {
+private fun Route.deletePlace(placeController: PlaceController) {
     delete<Trip.Place> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val placeId = it.placeId.throwIfMissing(it::placeId.name)

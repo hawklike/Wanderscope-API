@@ -32,7 +32,7 @@ fun Routing.transportRoutes() {
     }
 }
 
-fun Route.addTransport(transportController: TransportController) {
+private fun Route.addTransport(transportController: TransportController) {
     post<Trip.Transport> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val transport = receive<TransportRequest>(TransportRequest.MISSING_PARAM).toDto()
@@ -40,7 +40,7 @@ fun Route.addTransport(transportController: TransportController) {
     }
 }
 
-fun Route.showTransport(transportController: TransportController) {
+private fun Route.showTransport(transportController: TransportController) {
     get<Trip.Transport> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val transportId = it.transportId.throwIfMissing(it::transportId.name)
@@ -48,7 +48,7 @@ fun Route.showTransport(transportController: TransportController) {
     }
 }
 
-fun Route.editTransport(transportController: TransportController) {
+private fun Route.editTransport(transportController: TransportController) {
     put<Trip.Transport> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val transportId = it.transportId.throwIfMissing(it::transportId.name)
@@ -57,7 +57,7 @@ fun Route.editTransport(transportController: TransportController) {
     }
 }
 
-fun Route.deleteTransport(transportController: TransportController) {
+private fun Route.deleteTransport(transportController: TransportController) {
     delete<Trip.Transport> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val transportId = it.transportId.throwIfMissing(it::transportId.name)

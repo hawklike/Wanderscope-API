@@ -32,7 +32,7 @@ fun Routing.activityRoutes() {
     }
 }
 
-fun Route.addActivity(activityController: ActivityController) {
+private fun Route.addActivity(activityController: ActivityController) {
     post<Trip.Activity> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val activity = receive<ActivityRequest>(ActivityRequest.MISSING_PARAM).toDto()
@@ -40,7 +40,7 @@ fun Route.addActivity(activityController: ActivityController) {
     }
 }
 
-fun Route.showActivity(activityController: ActivityController) {
+private fun Route.showActivity(activityController: ActivityController) {
     get<Trip.Activity> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val activityId = it.activityId.throwIfMissing(it::activityId.name)
@@ -48,7 +48,7 @@ fun Route.showActivity(activityController: ActivityController) {
     }
 }
 
-fun Route.editActivity(activityController: ActivityController) {
+private fun Route.editActivity(activityController: ActivityController) {
     put<Trip.Activity> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val activityId = it.activityId.throwIfMissing(it::activityId.name)
@@ -57,7 +57,7 @@ fun Route.editActivity(activityController: ActivityController) {
     }
 }
 
-fun Route.deleteActivity(activityController: ActivityController) {
+private fun Route.deleteActivity(activityController: ActivityController) {
     delete<Trip.Activity> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val activityId = it.activityId.throwIfMissing(it::activityId.name)

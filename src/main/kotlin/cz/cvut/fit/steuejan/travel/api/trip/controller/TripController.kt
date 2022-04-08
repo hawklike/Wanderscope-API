@@ -12,6 +12,7 @@ import cz.cvut.fit.steuejan.travel.api.app.response.Success
 import cz.cvut.fit.steuejan.travel.api.trip.model.TripInvitation
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
 import cz.cvut.fit.steuejan.travel.data.database.trip.TripDto
+import cz.cvut.fit.steuejan.travel.data.model.Duration
 
 class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory) {
 
@@ -61,6 +62,15 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
             daoFactory.tripUserDao.addConnection(user.id, tripId, canEdit)
         }
 
+        return Success(Status.NO_CONTENT)
+    }
+
+    suspend fun changeDate(userId: Int, tripId: Int, duration: Duration): Response {
+        editOrThrow(userId, tripId) {
+            if (!daoFactory.tripDao.editDate(tripId, duration)) {
+                throw NotFoundException(FailureMessages.TRIP_NOT_FOUND)
+            }
+        }
         return Success(Status.NO_CONTENT)
     }
 }

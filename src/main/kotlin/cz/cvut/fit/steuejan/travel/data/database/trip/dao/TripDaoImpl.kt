@@ -7,6 +7,7 @@ import cz.cvut.fit.steuejan.travel.data.database.trip.TripDto
 import cz.cvut.fit.steuejan.travel.data.database.trip.TripTable
 import cz.cvut.fit.steuejan.travel.data.database.tripuser.TripUserTable
 import cz.cvut.fit.steuejan.travel.data.extension.*
+import cz.cvut.fit.steuejan.travel.data.model.Duration
 import cz.cvut.fit.steuejan.travel.data.util.transaction
 
 class TripDaoImpl : TripDao {
@@ -47,6 +48,13 @@ class TripDaoImpl : TripDao {
     override suspend fun deleteTrip(tripId: Int) = transaction {
         TripTable.deleteById(tripId)
     }.isDeleted()
+
+    override suspend fun editDate(tripId: Int, duration: Duration) = transaction {
+        TripTable.updateById(tripId) {
+            it[startDate] = duration.startDate
+            it[endDate] = duration.endDate
+        }
+    }.isUpdated()
 
     override suspend fun shareTrip() {
         TODO("Not yet implemented")

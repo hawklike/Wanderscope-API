@@ -13,6 +13,7 @@ import cz.cvut.fit.steuejan.travel.api.app.util.throwIfMissing
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig.Companion.JWT_AUTHENTICATION
 import cz.cvut.fit.steuejan.travel.api.trip.controller.TripController
 import cz.cvut.fit.steuejan.travel.api.trip.model.GetTripsType
+import cz.cvut.fit.steuejan.travel.api.trip.request.TripDateRequest
 import cz.cvut.fit.steuejan.travel.api.trip.request.TripInvitationRequest
 import cz.cvut.fit.steuejan.travel.api.trip.request.TripRequest
 import cz.cvut.fit.steuejan.travel.api.user.controller.UserController
@@ -34,6 +35,7 @@ fun Routing.tripRoutes() {
         deleteTrip(tripController)
         editTrip(tripController)
         inviteToTrip(tripController)
+        changeDate(tripController)
 
         showUserTrips(userController)
     }
@@ -66,6 +68,14 @@ private fun Route.inviteToTrip(tripController: TripController) {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val request = receive<TripInvitationRequest>(TripInvitationRequest.MISSING_PARAM)
         respond(tripController.invite(getUserId(), request.getTripInvitation(tripId)))
+    }
+}
+
+private fun Route.changeDate(tripController: TripController) {
+    put<Trip.Date> {
+        val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
+        val duration = receive<TripDateRequest>(TripDateRequest.MISSING_PARAM).duration
+        respond(tripController.changeDate(getUserId(), tripId, duration))
     }
 }
 
