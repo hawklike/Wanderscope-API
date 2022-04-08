@@ -5,13 +5,13 @@ import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
 import cz.cvut.fit.steuejan.travel.api.app.exception.ForbiddenException
 import cz.cvut.fit.steuejan.travel.api.app.exception.NotFoundException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import cz.cvut.fit.steuejan.travel.api.app.response.CreatedResponse
 import cz.cvut.fit.steuejan.travel.api.app.response.Response
 import cz.cvut.fit.steuejan.travel.api.app.response.Status
 import cz.cvut.fit.steuejan.travel.api.app.response.Success
 import cz.cvut.fit.steuejan.travel.api.auth.util.Encryptor
 import cz.cvut.fit.steuejan.travel.api.trip.controller.AbstractTripController
 import cz.cvut.fit.steuejan.travel.api.trip.document.model.DocumentMetadata
-import cz.cvut.fit.steuejan.travel.api.trip.document.response.DocumentMetadataResponse
 import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
 
 class DocumentController(
@@ -23,13 +23,18 @@ class DocumentController(
     suspend fun saveMetadata(
         userId: Int,
         tripId: Int,
-        poiId: Int,
         metadata: DocumentMetadata,
-        poiType: PointOfInterestType
+        poiId: Int? = null,
+        poiType: PointOfInterestType? = null
     ): Response {
         return editOrThrow(userId, tripId) {
-            val id = daoFactory.documentDao.saveMetadata(userId, tripId, poiId, metadata, poiType)
-            DocumentMetadataResponse.success(tripId, id)
+            val hashedKey = metadata.key?.let {
+                validator.validateDocumentKey(it)
+                encryptor.hash(it)
+            }
+            val metadataHashedKey = metadata.copy(key = hashedKey)
+            val id = daoFactory.documentDao.saveMetadata(userId, tripId, poiId, metadataHashedKey, poiType)
+            CreatedResponse.success(id)
         }
     }
 
@@ -87,8 +92,8 @@ class DocumentController(
                 throw ForbiddenException(FailureMessages.DOCUMENT_SET_KEY_PROHIBITED)
             }
 
-            validator.validatePassword(key, "key")
-            val hashedKey = encryptor.hashPassword(key)
+            validator.validateDocumentKey(key)
+            val hashedKey = encryptor.hash(key)
 
             if (!dbCall.invoke(hashedKey)) {
                 throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)

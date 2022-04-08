@@ -22,6 +22,16 @@ class Validator(private val userDao: UserDao, private val config: LimitsConfig) 
         }
     }
 
+    fun validateDocumentKey(key: String, what: String = "key") = with(config) {
+        if (key.isBlank()) {
+            throw BadRequestException(FailureMessages.isBlank(what))
+        }
+
+        if (key.length !in (documentKeyMin..documentKeyMax)) {
+            throw BadRequestException(FailureMessages.lengthIsBad(what, documentKeyMin, documentKeyMax))
+        }
+    }
+
     suspend fun validateEmail(email: String, register: Boolean) {
         if (!EmailValidator.getInstance().isValid(email)) {
             throw BadRequestException(FailureMessages.EMAIL_ADDRESS_BAD_FORMAT)

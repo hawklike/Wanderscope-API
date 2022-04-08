@@ -8,7 +8,7 @@ interface DocumentDao {
     suspend fun saveMetadata(
         userId: Int,
         tripId: Int,
-        poiId: Int,
+        poiId: Int?,
         metadata: DocumentMetadata,
         poiType: PointOfInterestType? = null
     ): Int

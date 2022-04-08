@@ -15,6 +15,8 @@ fun Application.configureRouting() {
         accomodationRoutes()
         activityRoutes()
         placeRoutes()
+        documentRoutes()
+
         exampleRoutes()
     }
 }

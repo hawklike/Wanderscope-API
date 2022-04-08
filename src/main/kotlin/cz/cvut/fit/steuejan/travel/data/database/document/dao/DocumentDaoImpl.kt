@@ -25,14 +25,16 @@ class DocumentDaoImpl : DocumentDao {
     override suspend fun saveMetadata(
         userId: Int,
         tripId: Int,
-        poiId: Int,
+        poiId: Int?,
         metadata: DocumentMetadata,
         poiType: PointOfInterestType?
     ): Int = transaction {
         DocumentTable.insertAndGetIdOrNull {
             it[owner] = userId
             it[trip] = tripId
-            selectColumn(poiType)?.let { col -> it[col] = poiId }
+            selectColumn(poiType)?.let { col ->
+                it[col] = poiId ?: throw BadRequestException(FailureMessages.ADD_DOCUMENT_METADATA_POI_NULL)
+            }
             it[name] = metadata.name
             it[extension] = metadata.extension
             it[key] = metadata.key

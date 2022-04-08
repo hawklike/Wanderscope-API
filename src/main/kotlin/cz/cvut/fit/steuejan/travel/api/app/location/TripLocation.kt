@@ -9,6 +9,9 @@ import org.joda.time.DateTime
 
 @Location("${Trip.URL}/{id?}")
 class Trip(val id: Int? = null) {
+    companion object {
+        const val URL = "/trip"
+    }
 
     @Location(Invite.URL)
     class Invite(val trip: Trip) {
@@ -24,10 +27,24 @@ class Trip(val id: Int? = null) {
         }
     }
 
-    @Location(Document.URL)
-    class Document(val trip: Trip) {
+    @Location("${Document.URL}/{documentId?}")
+    class Document(val trip: Trip, val documentId: Int? = null) {
         companion object {
             const val URL = "/document"
+        }
+
+        @Location(Key.URL)
+        class Key(val document: Document) {
+            companion object {
+                const val URL = "/key"
+            }
+        }
+
+        @Location(Data.URL)
+        class Data(val document: Document) {
+            companion object {
+                const val URL = "/data"
+            }
         }
     }
 
@@ -57,10 +74,6 @@ class Trip(val id: Int? = null) {
         companion object {
             const val URL = "/place"
         }
-    }
-
-    companion object {
-        const val URL = "/trip"
     }
 }
 

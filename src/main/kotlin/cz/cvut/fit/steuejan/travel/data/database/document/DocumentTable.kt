@@ -24,6 +24,6 @@ object DocumentTable : IntIdTable("documents") {
     val name = varchar("name", DatabaseConfig.NAME_LENGTH)
     val created = datetime("created")
     val extension = varchar("extension", DatabaseConfig.FILE_EXTENSION_LENGTH)
-    val key = text("key").nullable()
+    val key = text("key").nullable() //hashed with HmacSHA256
     val data = blob("data").nullable()
 }
