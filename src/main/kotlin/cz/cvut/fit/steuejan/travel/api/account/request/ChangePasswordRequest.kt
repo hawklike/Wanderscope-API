@@ -2,8 +2,9 @@ package cz.cvut.fit.steuejan.travel.api.account.request
 
 import cz.cvut.fit.steuejan.travel.api.account.model.ChangePassword
 import cz.cvut.fit.steuejan.travel.api.app.request.Request
+import kotlinx.serialization.Serializable
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class ChangePasswordRequest(
     val oldPassword: String,
     val newPassword: String,

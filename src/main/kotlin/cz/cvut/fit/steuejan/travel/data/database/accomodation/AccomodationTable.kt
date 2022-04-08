@@ -11,12 +11,12 @@ object AccomodationTable : IntIdTable("accomodation") {
     val trip = reference("trip", TripTable, onDelete = CASCADE, onUpdate = CASCADE)
 
     val name = varchar("name", DatabaseConfig.NAME_LENGTH)
+    val type = enumerationByName("type", 10, AccomodationType::class)
     val googlePlaceId = text("google_place_id").nullable()
     val address = text("address").nullable()
     val phone = varchar("phone", DatabaseConfig.PHONE_LENGTH).nullable()
     val email = varchar("email", DatabaseConfig.EMAIL_LENGTH).nullable()
     val website = text("website").nullable()
-    val type = enumerationByName("type", 10, AccomodationType::class)
     val description = text("description").nullable()
     val startDate = datetime("start_date").nullable()
     val endDate = datetime("end_date").nullable()

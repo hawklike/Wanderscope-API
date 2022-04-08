@@ -2,8 +2,9 @@ package cz.cvut.fit.steuejan.travel.api.auth.request
 
 import cz.cvut.fit.steuejan.travel.api.app.request.Request
 import cz.cvut.fit.steuejan.travel.data.model.EmailLogin
+import kotlinx.serialization.Serializable
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class EmailLoginRequest(val email: String, val password: String) : Request {
     fun getLogin() = EmailLogin(email, password)
 

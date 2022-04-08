@@ -1,5 +1,6 @@
 package cz.cvut.fit.steuejan.travel.data.database.document
 
+import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import org.jetbrains.exposed.sql.ResultRow
 import org.joda.time.DateTime
 
@@ -16,7 +17,7 @@ data class DocumentDto(
     val extension: String,
     val key: String?,
     val data: ByteArray?
-) {
+) : Dto() {
     companion object {
         fun fromDb(resultRow: ResultRow) = DocumentDto(
             id = resultRow[DocumentTable.id].value,

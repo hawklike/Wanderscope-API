@@ -2,7 +2,7 @@ package cz.cvut.fit.steuejan.travel.api.auth.controller
 
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.exceptions.TokenExpiredException
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Response
+import cz.cvut.fit.steuejan.travel.api.app.response.Response
 import cz.cvut.fit.steuejan.travel.api.auth.exception.InvalidRefreshTokenException
 import cz.cvut.fit.steuejan.travel.api.auth.exception.RefreshTokenExpiredException
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTController

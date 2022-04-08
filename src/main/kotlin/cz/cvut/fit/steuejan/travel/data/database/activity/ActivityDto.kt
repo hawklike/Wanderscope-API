@@ -1,5 +1,8 @@
 package cz.cvut.fit.steuejan.travel.data.database.activity
 
+import cz.cvut.fit.steuejan.travel.api.trip.poi.activity.response.ActivityResponse
+import cz.cvut.fit.steuejan.travel.api.trip.poi.response.AbstractPointOfInterestResponse
+import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
 import cz.cvut.fit.steuejan.travel.data.model.ActivityType
 import cz.cvut.fit.steuejan.travel.data.model.Address
@@ -11,12 +14,14 @@ data class ActivityDto(
     override val id: Int,
     override val tripId: Int,
     override val duration: Duration,
+    override val name: String,
     val type: ActivityType?,
     val address: Address,
     val coordinates: Coordinates,
     val mapLink: String?,
     val description: String?
-) : PointOfInterestDto {
+) : PointOfInterestDto, Dto() {
+
     companion object {
         fun fromDb(resultRow: ResultRow) = ActivityDto(
             id = resultRow[ActivityTable.id].value,
@@ -25,6 +30,7 @@ data class ActivityDto(
                 startDate = resultRow[ActivityTable.startDate],
                 endDate = resultRow[ActivityTable.endDate],
             ),
+            name = resultRow[ActivityTable.name],
             type = resultRow[ActivityTable.type],
             address = Address(
                 googlePlaceId = resultRow[ActivityTable.googlePlaceId],
@@ -38,4 +44,16 @@ data class ActivityDto(
             description = resultRow[ActivityTable.description]
         )
     }
+
+    override fun toResponse(): AbstractPointOfInterestResponse = ActivityResponse(
+        id = id,
+        tripId = tripId,
+        duration = duration,
+        name = name,
+        type = type,
+        address = address,
+        coordinates = coordinates,
+        mapLink = mapLink,
+        description = description
+    )
 }

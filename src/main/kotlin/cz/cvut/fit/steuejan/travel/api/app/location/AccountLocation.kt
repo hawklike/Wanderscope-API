@@ -1,8 +1,10 @@
+@file:OptIn(KtorExperimentalLocationsAPI::class)
+@file:Suppress("OPT_IN_IS_NOT_ENABLED")
+
 package cz.cvut.fit.steuejan.travel.api.app.location
 
 import io.ktor.locations.*
 
-@KtorExperimentalLocationsAPI
 @Location(Account.URL)
 object Account {
     @Location(ChangePassword.URL)

@@ -1,5 +1,6 @@
 package cz.cvut.fit.steuejan.travel.api.auth.controller
 
+import cz.cvut.fit.steuejan.travel.api.account.controller.AccountController
 import cz.cvut.fit.steuejan.travel.api.account.model.ChangePassword
 import cz.cvut.fit.steuejan.travel.api.app.baseUrl
 import cz.cvut.fit.steuejan.travel.api.app.bussines.EmailSender
@@ -8,10 +9,10 @@ import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.api.app.location.Auth
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Failure
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Response
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Status
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Success
+import cz.cvut.fit.steuejan.travel.api.app.response.Failure
+import cz.cvut.fit.steuejan.travel.api.app.response.Response
+import cz.cvut.fit.steuejan.travel.api.app.response.Status
+import cz.cvut.fit.steuejan.travel.api.app.response.Success
 import cz.cvut.fit.steuejan.travel.api.app.util.getRandomString
 import cz.cvut.fit.steuejan.travel.api.app.util.isExpired
 import cz.cvut.fit.steuejan.travel.api.app.util.retryOnError
@@ -32,7 +33,7 @@ class EmailPasswordController(
     private val jwt: JWTController,
     private val encryptor: Encryptor,
     private val validator: Validator,
-    private val account: AuthAccount
+    private val account: AccountController
 ) : AuthController<EmailLogin> {
 
     override suspend fun register(credentials: Credentials<EmailLogin>): AuthResponse {
@@ -45,14 +46,14 @@ class EmailPasswordController(
         }
 
         val passwordHash = encryptor.hashPassword(login.password)
-        val user = daoFactory.userDao.addUser(
+        val userId = daoFactory.userDao.addUser(
             credentials.username,
             AccountType.EMAIL,
             login.email,
             passwordHash
         )
 
-        val tokens = jwt.createTokens(user.id)
+        val tokens = jwt.createTokens(userId)
         return AuthResponse.success(tokens.accessToken, tokens.refreshToken)
     }
 

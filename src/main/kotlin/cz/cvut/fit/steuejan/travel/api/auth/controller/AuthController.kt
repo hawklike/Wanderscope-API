@@ -1,6 +1,6 @@
 package cz.cvut.fit.steuejan.travel.api.auth.controller
 
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Response
+import cz.cvut.fit.steuejan.travel.api.app.response.Response
 import cz.cvut.fit.steuejan.travel.data.model.Credentials
 import cz.cvut.fit.steuejan.travel.data.model.Login
 

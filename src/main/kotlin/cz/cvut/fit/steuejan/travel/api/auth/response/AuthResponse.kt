@@ -1,9 +1,9 @@
 package cz.cvut.fit.steuejan.travel.api.auth.response
 
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Failure
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Response
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Status
-import cz.cvut.fit.steuejan.travel.api.app.response.general.Success
+import cz.cvut.fit.steuejan.travel.api.app.response.Failure
+import cz.cvut.fit.steuejan.travel.api.app.response.Response
+import cz.cvut.fit.steuejan.travel.api.app.response.Status
+import cz.cvut.fit.steuejan.travel.api.app.response.Success
 import kotlinx.serialization.Serializable
 
 @Serializable
