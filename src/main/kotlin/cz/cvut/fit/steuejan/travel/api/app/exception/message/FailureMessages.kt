@@ -24,6 +24,9 @@ object FailureMessages {
 
     const val ADD_USER_FAILURE = "Cannot add this user. Check duplicates."
     const val ADD_TRIP_FAILURE = "Cannot add this trip. Check name length and if owner exists."
+    const val ADD_DOCUMENT_METADATA_FAILURE =
+        "Cannot add this document. Check name length and if both owner and trip exist."
+    const val ADD_DOCUMENT_DATA_FAILURE = "Saving document to database failed: "
 
     const val NAME_TOO_LONG = "Name is too long. Max length allowed is ${DatabaseConfig.NAME_LENGTH}"
 

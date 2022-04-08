@@ -5,7 +5,6 @@ import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.ForbiddenException
 import cz.cvut.fit.steuejan.travel.api.app.exception.NotFoundException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
-import cz.cvut.fit.steuejan.travel.api.app.response.Failure
 import cz.cvut.fit.steuejan.travel.api.app.response.Response
 import cz.cvut.fit.steuejan.travel.api.app.response.Status
 import cz.cvut.fit.steuejan.travel.api.app.response.Success
@@ -30,7 +29,7 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
             ?: throw ForbiddenException(FailureMessages.USER_TRIP_NOT_FOUND)
 
         if (trip.ownerId != userId) {
-            return Failure(Status.FORBIDDEN, FailureMessages.DELETE_TRIP_PROHIBITED)
+            throw ForbiddenException(FailureMessages.DELETE_TRIP_PROHIBITED)
         }
 
         if (!daoFactory.tripDao.deleteTrip(tripId)) {

@@ -11,7 +11,6 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption.CASCADE
 import org.jetbrains.exposed.sql.ReferenceOption.SET_NULL
 import org.jetbrains.exposed.sql.jodatime.datetime
-import org.joda.time.DateTime
 
 object DocumentTable : IntIdTable("documents") {
     val owner = reference("owner", UserTable, onDelete = SET_NULL, onUpdate = CASCADE)
@@ -23,7 +22,7 @@ object DocumentTable : IntIdTable("documents") {
     val activity = reference("activity", ActivityTable, onDelete = CASCADE, onUpdate = CASCADE).nullable()
 
     val name = varchar("name", DatabaseConfig.NAME_LENGTH)
-    val created = datetime("created").default(DateTime.now())
+    val created = datetime("created")
     val extension = varchar("extension", DatabaseConfig.FILE_EXTENSION_LENGTH)
     val key = char("key", DatabaseConfig.DOCUMENT_KEY_LENTGH).nullable()
     val data = blob("data").nullable()
