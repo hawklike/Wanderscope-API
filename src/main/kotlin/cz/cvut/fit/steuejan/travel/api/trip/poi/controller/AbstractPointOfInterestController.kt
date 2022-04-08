@@ -28,8 +28,9 @@ abstract class AbstractPointOfInterestController<T : PointOfInterestDto>(
 
     suspend fun get(userId: Int, tripId: Int, poiId: Int): Response {
         return viewOrThrow(userId, tripId) {
-            dao.find(tripId, poiId)?.toResponse() ?: throw NotFoundException(notFound)
-        }!!
+            dao.find(tripId, poiId)?.toResponse()
+                ?: throw NotFoundException(notFound)
+        }
     }
 
     suspend fun delete(userId: Int, tripId: Int, poiId: Int): Response {
