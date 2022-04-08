@@ -4,6 +4,7 @@ import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.NotFoundException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import cz.cvut.fit.steuejan.travel.api.app.response.CreatedResponse
 import cz.cvut.fit.steuejan.travel.api.app.response.Response
 import cz.cvut.fit.steuejan.travel.api.app.response.Status
 import cz.cvut.fit.steuejan.travel.api.app.response.Success
@@ -20,10 +21,10 @@ abstract class AbstractPointOfInterestController<T : PointOfInterestDto>(
     abstract val notFound: String
 
     suspend fun add(userId: Int, tripId: Int, dto: T): Response {
-        upsert(userId, tripId, dto) {
+        val poiId = upsert(userId, tripId, dto) {
             dao.add(tripId, dto)
         }
-        return Success(Status.CREATED)
+        return CreatedResponse.success(poiId)
     }
 
     suspend fun get(userId: Int, tripId: Int, poiId: Int): Response {
@@ -51,11 +52,11 @@ abstract class AbstractPointOfInterestController<T : PointOfInterestDto>(
         return Success(Status.NO_CONTENT)
     }
 
-    private suspend fun upsert(userId: Int, tripId: Int, dto: T, call: suspend () -> Unit) {
+    private suspend fun <R> upsert(userId: Int, tripId: Int, dto: T, call: suspend () -> R): R {
         if (dto.name.length > DatabaseConfig.NAME_LENGTH) {
             throw BadRequestException(FailureMessages.NAME_TOO_LONG)
         }
-        editOrThrow(userId, tripId) {
+        return editOrThrow(userId, tripId) {
             call.invoke()
         }
     }

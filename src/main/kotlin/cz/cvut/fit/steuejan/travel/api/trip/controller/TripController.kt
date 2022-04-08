@@ -5,6 +5,7 @@ import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.ForbiddenException
 import cz.cvut.fit.steuejan.travel.api.app.exception.NotFoundException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import cz.cvut.fit.steuejan.travel.api.app.response.CreatedResponse
 import cz.cvut.fit.steuejan.travel.api.app.response.Response
 import cz.cvut.fit.steuejan.travel.api.app.response.Status
 import cz.cvut.fit.steuejan.travel.api.app.response.Success
@@ -20,8 +21,8 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
             throw BadRequestException(FailureMessages.NAME_TOO_LONG)
         }
 
-        daoFactory.tripDao.createTrip(userId, true, trip)
-        return Success(Status.CREATED)
+        val tripId = daoFactory.tripDao.createTrip(userId, true, trip)
+        return CreatedResponse.success(tripId)
     }
 
     suspend fun deleteTrip(userId: Int, tripId: Int): Response {

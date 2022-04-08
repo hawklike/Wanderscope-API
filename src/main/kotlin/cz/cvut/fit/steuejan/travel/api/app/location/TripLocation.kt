@@ -24,6 +24,13 @@ class Trip(val id: Int? = null) {
         }
     }
 
+    @Location(Document.URL)
+    class Document(val trip: Trip) {
+        companion object {
+            const val URL = "/document"
+        }
+    }
+
     @Location("${Transport.URL}/{transportId?}")
     class Transport(val trip: Trip, val transportId: Int? = null) {
         companion object {
