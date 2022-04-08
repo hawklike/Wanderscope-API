@@ -17,14 +17,20 @@ import io.ktor.routing.*
 import kotlinx.serialization.Serializable
 import org.joda.time.DateTime
 
-//@Serializable
-//data class User(val username: String, val email: String) : Request
-//
-//@Serializable
-//data class Username(val username: String) : Request
-//
-//@Serializable
-//data class Place(val placeId: String, val name: String) : Request
+@Serializable
+sealed class Common
+
+@Serializable
+data class User(val username: String, val email: String) : Common()
+
+@Serializable
+data class Username(val username: String) : Common()
+
+@Serializable
+data class Place(val placeId: String, val name: String) : Common()
+
+@Serializable
+data class AllResponse(val payload: List<Common>) : Response by Success()
 
 @Serializable
 data class Time(val YYYY: Int, val MM: Int, val dd: Int, val hh: Int, val mm: Int) : Request
@@ -48,6 +54,11 @@ fun Route.exampleRoutes() {
         with(receive<Time>("")) {
             respond(TimeResponse(DateTime(YYYY, MM, dd, hh, mm)))
         }
+    }
+
+    get("/common") {
+        val all = listOf(Username("honza"), User("jan", "jan@seznam.cz"), Place("id", "horni dolni"))
+        respond(AllResponse(all))
     }
 //
 //    post("/user") {
