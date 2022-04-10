@@ -15,6 +15,7 @@ import cz.cvut.fit.steuejan.travel.api.trip.document.controller.DocumentControll
 import cz.cvut.fit.steuejan.travel.api.trip.document.request.DocumentKeyRequest
 import cz.cvut.fit.steuejan.travel.api.trip.document.request.DocumentMetadataRequest
 import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
+import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.locations.*
@@ -40,6 +41,11 @@ fun Routing.documentRoutes() {
 
         saveDataInTrip(documentController)
 
+        saveDataInTransport(documentController)
+        saveDataInAccommodation(documentController)
+        saveDataInActivity(documentController)
+        saveDataInPlace(documentController)
+
         setDocumentKeyInTransport(documentController)
         setDocumentKeyInAccommodation(documentController)
         setDocumentKeyInActivity(documentController)
@@ -64,11 +70,57 @@ private fun Route.saveDataInTrip(documentController: DocumentController) {
     }
 }
 
+@Suppress("DuplicatedCode") //IDE misinterpreted duplication
+private fun Route.saveDataInTransport(documentController: DocumentController) {
+    post<Trip.Transport.Document.Data> {
+        val tripId = it.document.transport.trip.id.throwIfMissing(it.document.transport.trip::id.name)
+        val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
+        val transportId = it.document.transport.transportId.throwIfMissing(it.document.transport::transportId.name)
+        val response = documentController.saveData(getUserId(), tripId, transportId, documentId, getFile(), TRANSPORT)
+        respond(response)
+    }
+}
+
+@Suppress("DuplicatedCode")
+private fun Route.saveDataInAccommodation(documentController: DocumentController) {
+    post<Trip.Accomodation.Document.Data> {
+        val tripId = it.document.accommodation.trip.id.throwIfMissing(it.document.accommodation.trip::id.name)
+        val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
+        val accommodationId =
+            it.document.accommodation.accomodationId.throwIfMissing(it.document.accommodation::accomodationId.name)
+        val response =
+            documentController.saveData(getUserId(), tripId, accommodationId, documentId, getFile(), ACCOMMODATION)
+        respond(response)
+    }
+}
+
+@Suppress("DuplicatedCode")
+private fun Route.saveDataInActivity(documentController: DocumentController) {
+    post<Trip.Activity.Document.Data> {
+        val tripId = it.document.activity.trip.id.throwIfMissing(it.document.activity.trip::id.name)
+        val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
+        val activityId = it.document.activity.activityId.throwIfMissing(it.document.activity::activityId.name)
+        val response = documentController.saveData(getUserId(), tripId, activityId, documentId, getFile(), ACTIVITY)
+        respond(response)
+    }
+}
+
+@Suppress("DuplicatedCode")
+private fun Route.saveDataInPlace(documentController: DocumentController) {
+    post<Trip.Place.Document.Data> {
+        val tripId = it.document.place.trip.id.throwIfMissing(it.document.place.trip::id.name)
+        val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
+        val placeId = it.document.place.placeId.throwIfMissing(it.document.place::placeId.name)
+        val response = documentController.saveData(getUserId(), tripId, placeId, documentId, getFile(), PLACE)
+        respond(response)
+    }
+}
+
 private fun Route.saveDocumentMetadataInTransport(documentController: DocumentController) {
     post<Trip.Transport.Document> {
         val tripId = it.transport.trip.id.throwIfMissing(it.transport.trip::id.name)
         val poiId = it.transport.transportId.throwIfMissing(it.transport::transportId.name)
-        saveDocumentMetadataInPoi(this, documentController, tripId, poiId, PointOfInterestType.TRANSPORT)
+        saveDocumentMetadataInPoi(this, documentController, tripId, poiId, TRANSPORT)
     }
 }
 
@@ -76,7 +128,7 @@ private fun Route.saveDocumentMetadataInAccommodation(documentController: Docume
     post<Trip.Accomodation.Document> {
         val tripId = it.accommodation.trip.id.throwIfMissing(it.accommodation.trip::id.name)
         val poiId = it.accommodation.accomodationId.throwIfMissing(it.accommodation::accomodationId.name)
-        saveDocumentMetadataInPoi(this, documentController, tripId, poiId, PointOfInterestType.ACCOMMODATION)
+        saveDocumentMetadataInPoi(this, documentController, tripId, poiId, ACCOMMODATION)
     }
 }
 
@@ -84,7 +136,7 @@ private fun Route.saveDocumentMetadataInActivity(documentController: DocumentCon
     post<Trip.Activity.Document> {
         val tripId = it.activity.trip.id.throwIfMissing(it.activity.trip::id.name)
         val poiId = it.activity.activityId.throwIfMissing(it.activity::activityId.name)
-        saveDocumentMetadataInPoi(this, documentController, tripId, poiId, PointOfInterestType.ACTIVITY)
+        saveDocumentMetadataInPoi(this, documentController, tripId, poiId, ACTIVITY)
     }
 }
 
@@ -92,7 +144,7 @@ private fun Route.saveDocumentMetadataInPlace(documentController: DocumentContro
     post<Trip.Place.Document> {
         val tripId = it.place.trip.id.throwIfMissing(it.place.trip::id.name)
         val poiId = it.place.placeId.throwIfMissing(it.place::placeId.name)
-        saveDocumentMetadataInPoi(this, documentController, tripId, poiId, PointOfInterestType.PLACE)
+        saveDocumentMetadataInPoi(this, documentController, tripId, poiId, PLACE)
     }
 }
 
@@ -123,7 +175,7 @@ private fun Route.setDocumentKeyInTransport(documentController: DocumentControll
         val tripId = it.document.transport.trip.id.throwIfMissing(it.document.transport.trip::id.name)
         val poiId = it.document.transport.transportId.throwIfMissing(it.document.transport::transportId.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
-        setDocumentKeyInPoi(this, documentController, tripId, poiId, documentId, PointOfInterestType.TRANSPORT)
+        setDocumentKeyInPoi(this, documentController, tripId, poiId, documentId, TRANSPORT)
     }
 }
 
@@ -134,7 +186,7 @@ private fun Route.setDocumentKeyInAccommodation(documentController: DocumentCont
         val poiId =
             it.document.accommodation.accomodationId.throwIfMissing(it.document.accommodation::accomodationId.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
-        setDocumentKeyInPoi(this, documentController, tripId, poiId, documentId, PointOfInterestType.ACCOMMODATION)
+        setDocumentKeyInPoi(this, documentController, tripId, poiId, documentId, ACCOMMODATION)
     }
 }
 
@@ -144,7 +196,7 @@ private fun Route.setDocumentKeyInActivity(documentController: DocumentControlle
         val tripId = it.document.activity.trip.id.throwIfMissing(it.document.activity.trip::id.name)
         val poiId = it.document.activity.activityId.throwIfMissing(it.document.activity::activityId.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
-        setDocumentKeyInPoi(this, documentController, tripId, poiId, documentId, PointOfInterestType.ACTIVITY)
+        setDocumentKeyInPoi(this, documentController, tripId, poiId, documentId, ACTIVITY)
     }
 }
 
@@ -154,7 +206,7 @@ private fun Route.setDocumentKeyInPlace(documentController: DocumentController) 
         val tripId = it.document.place.trip.id.throwIfMissing(it.document.place.trip::id.name)
         val poiId = it.document.place.placeId.throwIfMissing(it.document.place::placeId.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
-        setDocumentKeyInPoi(this, documentController, tripId, poiId, documentId, PointOfInterestType.ACTIVITY)
+        setDocumentKeyInPoi(this, documentController, tripId, poiId, documentId, PLACE)
     }
 }
 
