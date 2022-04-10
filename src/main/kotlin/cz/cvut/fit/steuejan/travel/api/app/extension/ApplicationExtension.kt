@@ -12,9 +12,12 @@ import cz.cvut.fit.steuejan.travel.api.app.util.parseBodyOrBadRequest
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
+import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.util.pipeline.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 suspend inline fun <reified T : Request> PipelineContext<*, ApplicationCall>.receive(message: String): T {
     return parseBodyOrBadRequest(message) {
@@ -39,4 +42,16 @@ fun PipelineContext<*, ApplicationCall>.getUserId(): Int {
 fun PipelineContext<*, ApplicationCall>.getQuery(queryParam: String): String {
     return call.request.queryParameters[queryParam]
         ?: throw BadRequestException(FailureMessages.missingQueryParam(queryParam))
+}
+
+suspend fun PipelineContext<*, ApplicationCall>.getFile(): ByteArray {
+    var bytes: ByteArray? = null
+    call.receiveMultipart().forEachPart { part ->
+        if (part is PartData.FileItem) {
+            withContext(Dispatchers.IO) {
+                bytes = part.streamProvider().readBytes()
+            }
+        }
+    }
+    return bytes ?: throw BadRequestException(FailureMessages.MULTIPART_FORM_MISSING_FILE)
 }

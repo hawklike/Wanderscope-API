@@ -39,6 +39,8 @@ object FailureMessages {
     const val EDIT_TRIP_PROHIBITED = "User cannot edit this trip."
     const val DOCUMENT_SET_KEY_PROHIBITED = "Only owner of the document may set a key."
 
+    const val MULTIPART_FORM_MISSING_FILE = "Missing file part in the multipart form data."
+
     fun missingQueryParam(param: String): String {
         return "Missing query parameter '$param'."
     }
@@ -55,5 +57,9 @@ object FailureMessages {
     @Suppress("DEPRECATION")
     fun isBlank(what: String): String {
         return "${what.capitalize()} cannot be blank."
+    }
+
+    fun documentMaxSize(maxSizeInMb: Int): String {
+        return "Document is too big. Max size of a document is ${maxSizeInMb / 1_000_000} MB."
     }
 }

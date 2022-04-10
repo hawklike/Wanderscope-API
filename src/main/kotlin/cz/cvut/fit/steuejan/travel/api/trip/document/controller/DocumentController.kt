@@ -1,7 +1,9 @@
 package cz.cvut.fit.steuejan.travel.api.trip.document.controller
 
 import cz.cvut.fit.steuejan.travel.api.app.bussines.Validator
+import cz.cvut.fit.steuejan.travel.api.app.config.LimitsConfig
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
+import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.ForbiddenException
 import cz.cvut.fit.steuejan.travel.api.app.exception.NotFoundException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
@@ -17,7 +19,8 @@ import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
 class DocumentController(
     daoFactory: DaoFactory,
     private val validator: Validator,
-    private val encryptor: Encryptor
+    private val encryptor: Encryptor,
+    private val limitsConfig: LimitsConfig
 ) : AbstractTripController(daoFactory) {
 
     suspend fun saveMetadata(
@@ -45,7 +48,7 @@ class DocumentController(
     }
 
     suspend fun saveData(userId: Int, tripId: Int, documentId: Int, data: ByteArray): Response {
-        return saveData(userId, tripId) {
+        return saveData(userId, tripId, data) {
             daoFactory.documentDao.saveData(tripId, documentId, data)
         }
     }
@@ -58,7 +61,7 @@ class DocumentController(
         data: ByteArray,
         poiType: PointOfInterestType
     ): Response {
-        return saveData(userId, tripId) {
+        return saveData(userId, tripId, data) {
             daoFactory.documentDao.saveData(poiId, documentId, data, poiType)
         }
     }
@@ -108,11 +111,16 @@ class DocumentController(
         }
     }
 
-    private suspend fun saveData(userId: Int, tripId: Int, dbCall: suspend () -> Boolean): Response {
+    private suspend fun saveData(userId: Int, tripId: Int, data: ByteArray, dbCall: suspend () -> Boolean): Response {
         return editOrThrow(userId, tripId) {
+            if (data.size > limitsConfig.documentMaxSize) {
+                throw BadRequestException(FailureMessages.documentMaxSize(limitsConfig.documentMaxSize))
+            }
+
             if (!dbCall.invoke()) {
                 throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
             }
+
             Success(Status.NO_CONTENT)
         }
     }
