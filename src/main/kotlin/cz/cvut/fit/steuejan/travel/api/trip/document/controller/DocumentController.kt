@@ -28,11 +28,17 @@ class DocumentController(
         poiType: PointOfInterestType? = null
     ): Response {
         return editOrThrow(userId, tripId) {
+            poiType?.let {
+                requireNotNull(poiId)
+                getDao(it).find(tripId, poiId) ?: throw NotFoundException(it.notFound())
+            }
+
             val hashedKey = metadata.key?.let {
                 validator.validateDocumentKey(it)
                 encryptor.hash(it)
             }
             val metadataHashedKey = metadata.copy(key = hashedKey)
+
             val id = daoFactory.documentDao.saveMetadata(userId, tripId, poiId, metadataHashedKey, poiType)
             CreatedResponse.success(id)
         }

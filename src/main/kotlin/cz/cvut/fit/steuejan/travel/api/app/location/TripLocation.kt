@@ -53,12 +53,54 @@ class Trip(val id: Int? = null) {
         companion object {
             const val URL = "/transport"
         }
+
+        @Location("${Document.URL}/{documentId?}")
+        class Document(val transport: Transport, val documentId: Int? = null) {
+            companion object {
+                const val URL = "/document"
+            }
+
+            @Location(Key.URL)
+            class Key(val document: Document) {
+                companion object {
+                    const val URL = "/key"
+                }
+            }
+
+            @Location(Data.URL)
+            class Data(val document: Document) {
+                companion object {
+                    const val URL = "/data"
+                }
+            }
+        }
     }
 
     @Location("${Accomodation.URL}/{accomodationId?}")
     class Accomodation(val trip: Trip, val accomodationId: Int? = null) {
         companion object {
-            const val URL = "/accomodation"
+            const val URL = "/accommodation"
+        }
+
+        @Location("${Document.URL}/{documentId?}")
+        class Document(val accommodation: Accomodation, val documentId: Int? = null) {
+            companion object {
+                const val URL = "/document"
+            }
+
+            @Location(Key.URL)
+            class Key(val document: Document) {
+                companion object {
+                    const val URL = "/key"
+                }
+            }
+
+            @Location(Data.URL)
+            class Data(val document: Document) {
+                companion object {
+                    const val URL = "/data"
+                }
+            }
         }
     }
 
@@ -67,12 +109,54 @@ class Trip(val id: Int? = null) {
         companion object {
             const val URL = "/activity"
         }
+
+        @Location("${Document.URL}/{documentId?}")
+        class Document(val activity: Activity, val documentId: Int? = null) {
+            companion object {
+                const val URL = "/document"
+            }
+
+            @Location(Key.URL)
+            class Key(val document: Document) {
+                companion object {
+                    const val URL = "/key"
+                }
+            }
+
+            @Location(Data.URL)
+            class Data(val document: Document) {
+                companion object {
+                    const val URL = "/data"
+                }
+            }
+        }
     }
 
     @Location("${Place.URL}/{placeId?}")
     class Place(val trip: Trip, val placeId: Int? = null) {
         companion object {
             const val URL = "/place"
+        }
+
+        @Location("${Document.URL}/{documentId?}")
+        class Document(val place: Place, val documentId: Int? = null) {
+            companion object {
+                const val URL = "/document"
+            }
+
+            @Location(Key.URL)
+            class Key(val document: Document) {
+                companion object {
+                    const val URL = "/key"
+                }
+            }
+
+            @Location(Data.URL)
+            class Data(val document: Document) {
+                companion object {
+                    const val URL = "/data"
+                }
+            }
         }
     }
 }

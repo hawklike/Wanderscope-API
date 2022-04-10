@@ -3,6 +3,8 @@ package cz.cvut.fit.steuejan.travel.api.trip.controller
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
 import cz.cvut.fit.steuejan.travel.api.app.exception.ForbiddenException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import cz.cvut.fit.steuejan.travel.data.database.dao.PointOfInterestDao
+import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
 
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class AbstractTripController(protected val daoFactory: DaoFactory) {
@@ -36,5 +38,14 @@ abstract class AbstractTripController(protected val daoFactory: DaoFactory) {
 
     protected suspend fun viewOrThrow(userId: Int, tripId: Int) {
         viewOrThrow(userId, tripId) {}
+    }
+
+    protected fun getDao(poiType: PointOfInterestType): PointOfInterestDao<*> {
+        return when (poiType) {
+            PointOfInterestType.TRANSPORT -> daoFactory.transportDao
+            PointOfInterestType.ACCOMMODATION -> daoFactory.accomodationDao
+            PointOfInterestType.ACTIVITY -> daoFactory.activityDao
+            PointOfInterestType.PLACE -> daoFactory.placeDao
+        }
     }
 }
