@@ -18,12 +18,18 @@ import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
 import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType.*
 import io.ktor.application.*
 import io.ktor.auth.*
+import io.ktor.http.*
+import io.ktor.http.ContentDisposition.Parameters.FileName
 import io.ktor.locations.*
 import io.ktor.locations.post
 import io.ktor.locations.put
+import io.ktor.request.*
+import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.util.pipeline.*
 import org.koin.ktor.ext.inject
+
+const val DOCUMENT_KEY_HEADER = "Wanderscope-Document-Key"
 
 fun Routing.documentRoutes() {
     val controllerFactory: ControllerFactory by inject()
@@ -32,14 +38,14 @@ fun Routing.documentRoutes() {
         val documentController = controllerFactory.documentController
 
         saveDocumentMetadataInTrip(documentController)
+        saveDataInTrip(documentController)
         setDocumentKeyInTrip(documentController)
+        getDataInTrip(documentController)
 
         saveDocumentMetadataInTransport(documentController)
         saveDocumentMetadataInAccommodation(documentController)
         saveDocumentMetadataInActivity(documentController)
         saveDocumentMetadataInPlace(documentController)
-
-        saveDataInTrip(documentController)
 
         saveDataInTransport(documentController)
         saveDataInAccommodation(documentController)
@@ -67,6 +73,21 @@ private fun Route.saveDataInTrip(documentController: DocumentController) {
         val tripId = it.document.trip.id.throwIfMissing(it.document.trip::id.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
         respond(documentController.saveData(getUserId(), tripId, documentId, getFile()))
+    }
+}
+
+private fun Route.getDataInTrip(documentController: DocumentController) {
+    get<Trip.Document.Data> {
+        val tripId = it.document.trip.id.throwIfMissing(it.document.trip::id.name)
+        val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
+        val key = call.request.header(DOCUMENT_KEY_HEADER)
+        val file = documentController.getData(getUserId(), tripId, documentId, key)
+        //downloadable from browser and overrides the filename with the original
+        call.response.header(
+            HttpHeaders.ContentDisposition,
+            ContentDisposition.Attachment.withParameter(FileName, file.originalName).toString()
+        )
+        call.respondBytes(file.file)
     }
 }
 

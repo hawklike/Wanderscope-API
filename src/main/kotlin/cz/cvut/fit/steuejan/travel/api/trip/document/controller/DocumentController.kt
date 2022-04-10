@@ -14,6 +14,8 @@ import cz.cvut.fit.steuejan.travel.api.app.response.Success
 import cz.cvut.fit.steuejan.travel.api.auth.util.Encryptor
 import cz.cvut.fit.steuejan.travel.api.trip.controller.AbstractTripController
 import cz.cvut.fit.steuejan.travel.api.trip.document.model.DocumentMetadata
+import cz.cvut.fit.steuejan.travel.api.trip.document.model.FileWrapper
+import cz.cvut.fit.steuejan.travel.data.database.document.DocumentDto
 import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
 
 class DocumentController(
@@ -63,6 +65,33 @@ class DocumentController(
     ): Response {
         return saveData(userId, tripId, data) {
             daoFactory.documentDao.saveData(poiId, documentId, data, poiType)
+        }
+    }
+
+    suspend fun getData(userId: Int, tripId: Int, documentId: Int, key: String?): FileWrapper {
+        return getData(userId, tripId, key) {
+            daoFactory.documentDao.getDocument(tripId, documentId)
+        }
+    }
+
+    private suspend fun getData(
+        userId: Int,
+        tripId: Int,
+        key: String?,
+        dbCall: suspend () -> DocumentDto?
+    ): FileWrapper {
+        return viewOrThrow(userId, tripId) {
+            val document = dbCall.invoke() ?: throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
+            document.data ?: throw NotFoundException(FailureMessages.DOCUMENT_DATA_NULL)
+
+            //document is secret
+            document.key?.let { hashedKey ->
+                if (key == null || hashedKey != encryptor.hash(key)) {
+                    throw ForbiddenException(FailureMessages.DOCUMENT_DATA_PROHIBITED)
+                }
+            }
+
+            FileWrapper(document.name, document.data)
         }
     }
 

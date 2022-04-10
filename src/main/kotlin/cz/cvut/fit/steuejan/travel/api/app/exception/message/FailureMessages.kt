@@ -1,5 +1,6 @@
 package cz.cvut.fit.steuejan.travel.api.app.exception.message
 
+import cz.cvut.fit.steuejan.travel.api.app.route.DOCUMENT_KEY_HEADER
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig.Companion.NAME_LENGTH
 
 object FailureMessages {
@@ -38,6 +39,9 @@ object FailureMessages {
     const val DELETE_TRIP_PROHIBITED = "User is not owner of the trip."
     const val EDIT_TRIP_PROHIBITED = "User cannot edit this trip."
     const val DOCUMENT_SET_KEY_PROHIBITED = "Only owner of the document may set a key."
+    const val DOCUMENT_DATA_PROHIBITED =
+        "Document is secured with a key. Provide correct key using custom header $DOCUMENT_KEY_HEADER"
+    const val DOCUMENT_DATA_NULL = "Document content not provided, nothing to see."
 
     const val MULTIPART_FORM_MISSING_FILE = "Missing file part in the multipart form data."
 
