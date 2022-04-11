@@ -11,7 +11,7 @@ object TransportTable : IntIdTable("transports") {
     val trip = reference("trip", TripTable, onDelete = CASCADE, onUpdate = CASCADE)
 
     val name = varchar("name", DatabaseConfig.NAME_LENGTH)
-    val type = enumerationByName("type", 10, TransportType::class)
+    val type = enumerationByName("type", TransportType.MAX_LENGTH, TransportType::class)
     val fromGooglePlaceId = text("from_google_place_id").nullable()
     val fromAddress = text("from_address").nullable()
     val toGooglePlaceId = text("to_google_place_id").nullable()

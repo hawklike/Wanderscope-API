@@ -11,10 +11,13 @@ fun Application.configureRouting() {
         authRoutes()
         accountRoutes()
         tripRoutes()
+        userRoutes()
         transportRoutes()
         accomodationRoutes()
         activityRoutes()
         placeRoutes()
+        documentRoutes()
+
         exampleRoutes()
     }
 }

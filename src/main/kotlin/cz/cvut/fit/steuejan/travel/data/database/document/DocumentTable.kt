@@ -7,11 +7,11 @@ import cz.cvut.fit.steuejan.travel.data.database.place.PlaceTable
 import cz.cvut.fit.steuejan.travel.data.database.transport.TransportTable
 import cz.cvut.fit.steuejan.travel.data.database.trip.TripTable
 import cz.cvut.fit.steuejan.travel.data.database.user.UserTable
+import cz.cvut.fit.steuejan.travel.data.model.DocumentType
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption.CASCADE
 import org.jetbrains.exposed.sql.ReferenceOption.SET_NULL
 import org.jetbrains.exposed.sql.jodatime.datetime
-import org.joda.time.DateTime
 
 object DocumentTable : IntIdTable("documents") {
     val owner = reference("owner", UserTable, onDelete = SET_NULL, onUpdate = CASCADE)
@@ -23,8 +23,9 @@ object DocumentTable : IntIdTable("documents") {
     val activity = reference("activity", ActivityTable, onDelete = CASCADE, onUpdate = CASCADE).nullable()
 
     val name = varchar("name", DatabaseConfig.NAME_LENGTH)
-    val created = datetime("created").default(DateTime.now())
-    val extension = varchar("extension", DatabaseConfig.FILE_EXTENSION_LENGTH)
-    val key = char("key", DatabaseConfig.DOCUMENT_KEY_LENTGH).nullable()
+    val updated = datetime("updated")
+    val extension = varchar("extension", DatabaseConfig.FILE_EXTENSION_LENGTH).nullable()
+    val type = enumerationByName("type", DocumentType.MAX_LENGTH, DocumentType::class)
+    val key = text("key").nullable() //hashed with HmacSHA256
     val data = blob("data").nullable()
 }

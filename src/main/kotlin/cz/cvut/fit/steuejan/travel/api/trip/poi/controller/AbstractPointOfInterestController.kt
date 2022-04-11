@@ -4,13 +4,17 @@ import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.NotFoundException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import cz.cvut.fit.steuejan.travel.api.app.response.CreatedResponse
 import cz.cvut.fit.steuejan.travel.api.app.response.Response
 import cz.cvut.fit.steuejan.travel.api.app.response.Status
 import cz.cvut.fit.steuejan.travel.api.app.response.Success
 import cz.cvut.fit.steuejan.travel.api.trip.controller.AbstractTripController
+import cz.cvut.fit.steuejan.travel.api.trip.document.model.DocumentOverview
+import cz.cvut.fit.steuejan.travel.api.trip.document.response.DocumentOverviewListResponse
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
 import cz.cvut.fit.steuejan.travel.data.database.dao.PointOfInterestDao
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
+import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
 
 abstract class AbstractPointOfInterestController<T : PointOfInterestDto>(
     daoFactory: DaoFactory,
@@ -18,18 +22,20 @@ abstract class AbstractPointOfInterestController<T : PointOfInterestDto>(
 ) : AbstractTripController(daoFactory) {
 
     abstract val notFound: String
+    abstract val type: PointOfInterestType
 
     suspend fun add(userId: Int, tripId: Int, dto: T): Response {
-        upsert(userId, tripId, dto) {
+        val poiId = upsert(userId, tripId, dto) {
             dao.add(tripId, dto)
         }
-        return Success(Status.CREATED)
+        return CreatedResponse.success(poiId)
     }
 
     suspend fun get(userId: Int, tripId: Int, poiId: Int): Response {
         return viewOrThrow(userId, tripId) {
-            dao.find(tripId, poiId)?.toResponse() ?: throw NotFoundException(notFound)
-        }!!
+            dao.find(tripId, poiId)?.toResponse()
+                ?: throw NotFoundException(notFound)
+        }
     }
 
     suspend fun delete(userId: Int, tripId: Int, poiId: Int): Response {
@@ -50,11 +56,17 @@ abstract class AbstractPointOfInterestController<T : PointOfInterestDto>(
         return Success(Status.NO_CONTENT)
     }
 
-    private suspend fun upsert(userId: Int, tripId: Int, dto: T, call: suspend () -> Unit) {
+    suspend fun showDocuments(userId: Int, tripId: Int, poiId: Int): Response {
+        viewOrThrow(userId, tripId)
+        val documents = daoFactory.documentDao.getDocuments(tripId, poiId, this.type)
+        return DocumentOverviewListResponse.success(documents.map(DocumentOverview::fromDto))
+    }
+
+    private suspend fun <R> upsert(userId: Int, tripId: Int, dto: T, call: suspend () -> R): R {
         if (dto.name.length > DatabaseConfig.NAME_LENGTH) {
             throw BadRequestException(FailureMessages.NAME_TOO_LONG)
         }
-        editOrThrow(userId, tripId) {
+        return editOrThrow(userId, tripId) {
             call.invoke()
         }
     }

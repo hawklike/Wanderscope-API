@@ -29,6 +29,7 @@ fun Routing.accomodationRoutes() {
         showAccomodation(accomodationController)
         editAccomodation(accomodationController)
         deleteAccomodation(accomodationController)
+        showDocuments(accomodationController)
     }
 }
 
@@ -62,6 +63,14 @@ private fun Route.deleteAccomodation(accomodationController: AccomodationControl
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val accomodationId = it.accomodationId.throwIfMissing(it::accomodationId.name)
         respond(accomodationController.delete(getUserId(), tripId, accomodationId))
+    }
+}
+
+private fun Route.showDocuments(accomodationController: AccomodationController) {
+    get<Trip.Accomodation.Documents> {
+        val tripId = it.accommodation.trip.id.throwIfMissing(it.accommodation.trip::id.name)
+        val accomodationId = it.accommodation.accomodationId.throwIfMissing(it.accommodation::accomodationId.name)
+        respond(accomodationController.showDocuments(getUserId(), tripId, accomodationId))
     }
 }
 

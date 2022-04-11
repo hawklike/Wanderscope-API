@@ -9,6 +9,9 @@ import org.joda.time.DateTime
 
 @Location("${Trip.URL}/{id?}")
 class Trip(val id: Int? = null) {
+    companion object {
+        const val URL = "/trip"
+    }
 
     @Location(Invite.URL)
     class Invite(val trip: Trip) {
@@ -24,17 +27,101 @@ class Trip(val id: Int? = null) {
         }
     }
 
+    @Location(Documents.URL)
+    class Documents(val trip: Trip) {
+        companion object {
+            const val URL = "/documents"
+        }
+    }
+
+    @Location("${Document.URL}/{documentId?}")
+    class Document(val trip: Trip, val documentId: Int? = null) {
+        companion object {
+            const val URL = "/document"
+        }
+
+        @Location(Key.URL)
+        class Key(val document: Document) {
+            companion object {
+                const val URL = "/key"
+            }
+        }
+
+        @Location(Data.URL)
+        class Data(val document: Document) {
+            companion object {
+                const val URL = "/data"
+            }
+        }
+    }
+
     @Location("${Transport.URL}/{transportId?}")
     class Transport(val trip: Trip, val transportId: Int? = null) {
         companion object {
             const val URL = "/transport"
+        }
+
+        @Location("${Document.URL}/{documentId?}")
+        class Document(val transport: Transport, val documentId: Int? = null) {
+            companion object {
+                const val URL = "/document"
+            }
+
+            @Location(Key.URL)
+            class Key(val document: Document) {
+                companion object {
+                    const val URL = "/key"
+                }
+            }
+
+            @Location(Data.URL)
+            class Data(val document: Document) {
+                companion object {
+                    const val URL = "/data"
+                }
+            }
+        }
+
+        @Location(Documents.URL)
+        class Documents(val transport: Transport) {
+            companion object {
+                const val URL = "/documents"
+            }
         }
     }
 
     @Location("${Accomodation.URL}/{accomodationId?}")
     class Accomodation(val trip: Trip, val accomodationId: Int? = null) {
         companion object {
-            const val URL = "/accomodation"
+            const val URL = "/accommodation"
+        }
+
+        @Location("${Document.URL}/{documentId?}")
+        class Document(val accommodation: Accomodation, val documentId: Int? = null) {
+            companion object {
+                const val URL = "/document"
+            }
+
+            @Location(Key.URL)
+            class Key(val document: Document) {
+                companion object {
+                    const val URL = "/key"
+                }
+            }
+
+            @Location(Data.URL)
+            class Data(val document: Document) {
+                companion object {
+                    const val URL = "/data"
+                }
+            }
+        }
+
+        @Location(Documents.URL)
+        class Documents(val accommodation: Accomodation) {
+            companion object {
+                const val URL = "/documents"
+            }
         }
     }
 
@@ -43,6 +130,34 @@ class Trip(val id: Int? = null) {
         companion object {
             const val URL = "/activity"
         }
+
+        @Location("${Document.URL}/{documentId?}")
+        class Document(val activity: Activity, val documentId: Int? = null) {
+            companion object {
+                const val URL = "/document"
+            }
+
+            @Location(Key.URL)
+            class Key(val document: Document) {
+                companion object {
+                    const val URL = "/key"
+                }
+            }
+
+            @Location(Data.URL)
+            class Data(val document: Document) {
+                companion object {
+                    const val URL = "/data"
+                }
+            }
+        }
+
+        @Location(Documents.URL)
+        class Documents(val activity: Activity) {
+            companion object {
+                const val URL = "/documents"
+            }
+        }
     }
 
     @Location("${Place.URL}/{placeId?}")
@@ -50,10 +165,34 @@ class Trip(val id: Int? = null) {
         companion object {
             const val URL = "/place"
         }
-    }
 
-    companion object {
-        const val URL = "/trip"
+        @Location("${Document.URL}/{documentId?}")
+        class Document(val place: Place, val documentId: Int? = null) {
+            companion object {
+                const val URL = "/document"
+            }
+
+            @Location(Key.URL)
+            class Key(val document: Document) {
+                companion object {
+                    const val URL = "/key"
+                }
+            }
+
+            @Location(Data.URL)
+            class Data(val document: Document) {
+                companion object {
+                    const val URL = "/data"
+                }
+            }
+        }
+
+        @Location(Documents.URL)
+        class Documents(val place: Place) {
+            companion object {
+                const val URL = "/documents"
+            }
+        }
     }
 }
 

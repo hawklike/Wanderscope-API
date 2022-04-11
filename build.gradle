@@ -5,7 +5,7 @@ plugins {
 }
 
 group "cz.cvut.fit.steuejan"
-version "0.0.8"
+version "0.1.0"
 mainClassName = "io.ktor.server.netty.EngineMain"
 
 repositories {
@@ -40,6 +40,9 @@ dependencies {
 
     //apache commons email
     implementation "org.apache.commons:commons-email:$apache_commons_email_version"
+
+    //apache commons io
+    implementation "commons-io:commons-io:$apache_commons_io_version"
 
     //exposed orm
     implementation "org.jetbrains.exposed:exposed-core:$exposed_version"

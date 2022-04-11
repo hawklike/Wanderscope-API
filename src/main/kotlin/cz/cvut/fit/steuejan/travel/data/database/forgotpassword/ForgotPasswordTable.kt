@@ -8,6 +8,6 @@ import org.jetbrains.exposed.sql.jodatime.datetime
 object ForgotPasswordTable : IntIdTable("forgot_passwords") {
     val user = reference("user", UserTable, onDelete = CASCADE, onUpdate = CASCADE)
 
-    val token = text("token").uniqueIndex()
+    val token = text("token").uniqueIndex() //hashed with HmacSHA256
     val expiresAt = datetime("expires_at")
 }

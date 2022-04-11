@@ -5,10 +5,12 @@ import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.ForbiddenException
 import cz.cvut.fit.steuejan.travel.api.app.exception.NotFoundException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
-import cz.cvut.fit.steuejan.travel.api.app.response.Failure
+import cz.cvut.fit.steuejan.travel.api.app.response.CreatedResponse
 import cz.cvut.fit.steuejan.travel.api.app.response.Response
 import cz.cvut.fit.steuejan.travel.api.app.response.Status
 import cz.cvut.fit.steuejan.travel.api.app.response.Success
+import cz.cvut.fit.steuejan.travel.api.trip.document.model.DocumentOverview
+import cz.cvut.fit.steuejan.travel.api.trip.document.response.DocumentOverviewListResponse
 import cz.cvut.fit.steuejan.travel.api.trip.model.TripInvitation
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
 import cz.cvut.fit.steuejan.travel.data.database.trip.TripDto
@@ -21,8 +23,8 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
             throw BadRequestException(FailureMessages.NAME_TOO_LONG)
         }
 
-        daoFactory.tripDao.createTrip(userId, true, trip)
-        return Success(Status.CREATED)
+        val tripId = daoFactory.tripDao.createTrip(userId, true, trip)
+        return CreatedResponse.success(tripId)
     }
 
     suspend fun deleteTrip(userId: Int, tripId: Int): Response {
@@ -30,7 +32,7 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
             ?: throw ForbiddenException(FailureMessages.USER_TRIP_NOT_FOUND)
 
         if (trip.ownerId != userId) {
-            return Failure(Status.FORBIDDEN, FailureMessages.DELETE_TRIP_PROHIBITED)
+            throw ForbiddenException(FailureMessages.DELETE_TRIP_PROHIBITED)
         }
 
         if (!daoFactory.tripDao.deleteTrip(tripId)) {
@@ -54,7 +56,7 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
     }
 
     suspend fun invite(userId: Int, invitation: TripInvitation): Response {
-        editOrThrow<Unit>(userId, invitation.tripId)
+        editOrThrow(userId, invitation.tripId)
 
         with(invitation) {
             val user = daoFactory.userDao.findByUsername(username)
@@ -63,6 +65,12 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
         }
 
         return Success(Status.NO_CONTENT)
+    }
+
+    suspend fun showDocuments(userId: Int, tripId: Int): Response {
+        viewOrThrow(userId, tripId)
+        val documents = daoFactory.documentDao.getDocuments(tripId)
+        return DocumentOverviewListResponse.success(documents.map(DocumentOverview::fromDto))
     }
 
     suspend fun changeDate(userId: Int, tripId: Int, duration: Duration): Response {

@@ -5,6 +5,8 @@ import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.data.database.dao.PointOfInterestDao
 import cz.cvut.fit.steuejan.travel.data.extension.*
 import cz.cvut.fit.steuejan.travel.data.util.transaction
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 
@@ -29,15 +31,11 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
     }
 
     override suspend fun find(tripId: Int, id: Int) = transaction {
-        PlaceTable.selectFirst {
-            (PlaceTable.trip eq tripId) and (PlaceTable.id eq id)
-        }
+        PlaceTable.selectFirst { findById(tripId, id) }
     }?.let(PlaceDto::fromDb)
 
     override suspend fun edit(tripId: Int, poiId: Int, dto: PlaceDto) = transaction {
-        PlaceTable.updateOrNull({
-            (PlaceTable.id eq poiId) and (PlaceTable.trip eq tripId)
-        }) {
+        PlaceTable.updateOrNull({ findById(tripId, poiId) }) {
             it[name] = dto.name
             it[type] = dto.type
             it[googlePlaceId] = dto.address.googlePlaceId
@@ -54,12 +52,14 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
     }.isUpdated()
 
     override suspend fun delete(tripId: Int, poiId: Int) = transaction {
-        PlaceTable.deleteWhere {
-            (PlaceTable.id eq poiId) and (PlaceTable.trip eq tripId)
-        }
+        PlaceTable.deleteWhere { findById(tripId, poiId) }
     }.isDeleted()
 
     companion object {
         const val RESOURCE_NAME = "place"
+
+        private fun findById(tripId: Int, placeId: Int): Op<Boolean> {
+            return ((PlaceTable.id eq placeId) and (PlaceTable.trip eq tripId))
+        }
     }
 }
