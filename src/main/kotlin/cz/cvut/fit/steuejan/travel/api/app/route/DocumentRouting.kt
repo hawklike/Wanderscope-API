@@ -4,6 +4,7 @@
 package cz.cvut.fit.steuejan.travel.api.app.route
 
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.ControllerFactory
+import cz.cvut.fit.steuejan.travel.api.app.exception.UnauthorizedException
 import cz.cvut.fit.steuejan.travel.api.app.extension.getFile
 import cz.cvut.fit.steuejan.travel.api.app.extension.getUserId
 import cz.cvut.fit.steuejan.travel.api.app.extension.receive
@@ -76,10 +77,13 @@ private fun Route.saveDocumentMetadataInTrip(documentController: DocumentControl
 
 private fun Route.saveDataInTrip(documentController: DocumentController) {
     post<Trip.Document.Data> {
-        val tripId = it.document.trip.id.throwIfMissing(it.document.trip::id.name)
-        val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
-        val file = getFile()
-        respond(documentController.saveData(getUserId(), tripId, documentId, file))
+        try {
+            val tripId = it.document.trip.id.throwIfMissing(it.document.trip::id.name)
+            val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
+            respond(documentController.saveData(getUserId(), tripId, documentId, getFile()))
+        } catch (ex: Exception) {
+            throw UnauthorizedException("fakt")
+        }
     }
 }
 
