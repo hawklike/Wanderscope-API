@@ -81,6 +81,7 @@ private fun Route.saveDocumentMetadataInTrip(documentController: DocumentControl
 
 private fun Route.saveDataInTrip(documentController: DocumentController) {
     put<Trip.Document.Data> {
+        val hack = call.request.receiveChannel()
         val tripId = it.document.trip.id.throwIfMissing(it.document.trip::id.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
         respond(documentController.saveData(getUserId(), tripId, documentId, getFile()))
