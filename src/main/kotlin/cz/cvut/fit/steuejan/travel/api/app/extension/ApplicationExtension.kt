@@ -47,7 +47,14 @@ fun PipelineContext<*, ApplicationCall>.getQuery(queryParam: String): String {
 
 suspend fun PipelineContext<*, ApplicationCall>.getFile(): FileWrapper {
     var file: FileWrapper? = null
-    call.receiveMultipart().forEachPart { part ->
+
+    val multipartData = try {
+        call.receiveMultipart()
+    } catch (ex: Exception) {
+        throw BadRequestException("${ex.message}.")
+    }
+
+    multipartData.forEachPart { part ->
         if (part is PartData.FileItem) {
             withContext(Dispatchers.IO) {
                 val bytes = part.streamProvider().readBytes()
