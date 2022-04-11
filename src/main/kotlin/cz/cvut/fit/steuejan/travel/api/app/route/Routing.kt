@@ -57,7 +57,7 @@ fun Route.exampleRoutes() {
     }
 
     get("/version") {
-        call.respondText("0.0.3")
+        call.respondText("0.0.5")
     }
 
     get("/common") {
