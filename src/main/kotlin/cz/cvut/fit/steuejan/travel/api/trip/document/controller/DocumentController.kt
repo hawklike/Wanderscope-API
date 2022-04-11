@@ -74,6 +74,19 @@ class DocumentController(
         }
     }
 
+    suspend fun getData(
+        userId: Int,
+        tripId: Int,
+        poiId: Int,
+        documentId: Int,
+        key: String?,
+        poiType: PointOfInterestType
+    ): FileWrapper {
+        return getData(userId, tripId, key) {
+            daoFactory.documentDao.getDocument(poiId, documentId, poiType)
+        }
+    }
+
     private suspend fun getData(
         userId: Int,
         tripId: Int,

@@ -12,6 +12,7 @@ import cz.cvut.fit.steuejan.travel.api.app.location.Trip
 import cz.cvut.fit.steuejan.travel.api.app.util.throwIfMissing
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig
 import cz.cvut.fit.steuejan.travel.api.trip.document.controller.DocumentController
+import cz.cvut.fit.steuejan.travel.api.trip.document.model.FileWrapper
 import cz.cvut.fit.steuejan.travel.api.trip.document.request.DocumentKeyRequest
 import cz.cvut.fit.steuejan.travel.api.trip.document.request.DocumentMetadataRequest
 import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
@@ -52,6 +53,11 @@ fun Routing.documentRoutes() {
         saveDataInActivity(documentController)
         saveDataInPlace(documentController)
 
+        getDataInTransport(documentController)
+        getDataInAccommodation(documentController)
+        getDataInActivity(documentController)
+        getDataInPlace(documentController)
+
         setDocumentKeyInTransport(documentController)
         setDocumentKeyInAccommodation(documentController)
         setDocumentKeyInActivity(documentController)
@@ -82,12 +88,74 @@ private fun Route.getDataInTrip(documentController: DocumentController) {
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
         val key = call.request.header(DOCUMENT_KEY_HEADER)
         val file = documentController.getData(getUserId(), tripId, documentId, key)
-        //downloadable from browser and overrides the filename with the original
+        getData(this, file)
+    }
+}
+
+private suspend fun getData(context: PipelineContext<Unit, ApplicationCall>, file: FileWrapper) {
+    with(context) {
+        //downloadable from browser and overrides the filename with the original name
         call.response.header(
             HttpHeaders.ContentDisposition,
             ContentDisposition.Attachment.withParameter(FileName, file.originalName).toString()
         )
-        call.respondBytes(file.file)
+        call.respondBytes(file.rawData)
+    }
+}
+
+@Suppress("DuplicatedCode") //IDE misinterpreted duplication
+private fun Route.getDataInTransport(documentController: DocumentController) {
+    get<Trip.Transport.Document.Data> {
+        val tripId = it.document.transport.trip.id.throwIfMissing(it.document.transport.trip::id.name)
+        val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
+        val transportId = it.document.transport.transportId.throwIfMissing(it.document.transport::transportId.name)
+        getDataInPoi(this, documentController, tripId, transportId, documentId, TRANSPORT)
+    }
+}
+
+@Suppress("DuplicatedCode") //IDE misinterpreted duplication
+private fun Route.getDataInAccommodation(documentController: DocumentController) {
+    get<Trip.Accomodation.Document.Data> {
+        val tripId = it.document.accommodation.trip.id.throwIfMissing(it.document.accommodation.trip::id.name)
+        val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
+        val transportId =
+            it.document.accommodation.accomodationId.throwIfMissing(it.document.accommodation::accomodationId.name)
+        getDataInPoi(this, documentController, tripId, transportId, documentId, ACCOMMODATION)
+    }
+}
+
+@Suppress("DuplicatedCode") //IDE misinterpreted duplication
+private fun Route.getDataInActivity(documentController: DocumentController) {
+    get<Trip.Activity.Document.Data> {
+        val tripId = it.document.activity.trip.id.throwIfMissing(it.document.activity.trip::id.name)
+        val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
+        val activityId = it.document.activity.activityId.throwIfMissing(it.document.activity::activityId.name)
+        getDataInPoi(this, documentController, tripId, activityId, documentId, ACTIVITY)
+    }
+}
+
+@Suppress("DuplicatedCode") //IDE misinterpreted duplication
+private fun Route.getDataInPlace(documentController: DocumentController) {
+    get<Trip.Place.Document.Data> {
+        val tripId = it.document.place.trip.id.throwIfMissing(it.document.place.trip::id.name)
+        val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
+        val placeId = it.document.place.placeId.throwIfMissing(it.document.place::placeId.name)
+        getDataInPoi(this, documentController, tripId, placeId, documentId, PLACE)
+    }
+}
+
+private suspend fun getDataInPoi(
+    context: PipelineContext<Unit, ApplicationCall>,
+    documentController: DocumentController,
+    tripId: Int,
+    poiId: Int,
+    documentId: Int,
+    poiType: PointOfInterestType
+) {
+    with(context) {
+        val key = call.request.header(DOCUMENT_KEY_HEADER)
+        val file = documentController.getData(getUserId(), tripId, poiId, documentId, key, poiType)
+        getData(this, file)
     }
 }
 
@@ -102,7 +170,7 @@ private fun Route.saveDataInTransport(documentController: DocumentController) {
     }
 }
 
-@Suppress("DuplicatedCode")
+@Suppress("DuplicatedCode") //IDE misinterpreted duplication
 private fun Route.saveDataInAccommodation(documentController: DocumentController) {
     post<Trip.Accomodation.Document.Data> {
         val tripId = it.document.accommodation.trip.id.throwIfMissing(it.document.accommodation.trip::id.name)
@@ -115,7 +183,7 @@ private fun Route.saveDataInAccommodation(documentController: DocumentController
     }
 }
 
-@Suppress("DuplicatedCode")
+@Suppress("DuplicatedCode") //IDE misinterpreted duplication
 private fun Route.saveDataInActivity(documentController: DocumentController) {
     post<Trip.Activity.Document.Data> {
         val tripId = it.document.activity.trip.id.throwIfMissing(it.document.activity.trip::id.name)
@@ -126,7 +194,7 @@ private fun Route.saveDataInActivity(documentController: DocumentController) {
     }
 }
 
-@Suppress("DuplicatedCode")
+@Suppress("DuplicatedCode") //IDE misinterpreted duplication
 private fun Route.saveDataInPlace(documentController: DocumentController) {
     post<Trip.Place.Document.Data> {
         val tripId = it.document.place.trip.id.throwIfMissing(it.document.place.trip::id.name)
@@ -190,7 +258,7 @@ private fun Route.setDocumentKeyInTrip(documentController: DocumentController) {
     }
 }
 
-@Suppress("DuplicatedCode")
+@Suppress("DuplicatedCode") //IDE misinterpreted duplication
 private fun Route.setDocumentKeyInTransport(documentController: DocumentController) {
     put<Trip.Transport.Document.Key> {
         val tripId = it.document.transport.trip.id.throwIfMissing(it.document.transport.trip::id.name)
@@ -200,7 +268,7 @@ private fun Route.setDocumentKeyInTransport(documentController: DocumentControll
     }
 }
 
-@Suppress("DuplicatedCode")
+@Suppress("DuplicatedCode") //IDE misinterpreted duplication
 private fun Route.setDocumentKeyInAccommodation(documentController: DocumentController) {
     put<Trip.Accomodation.Document.Key> {
         val tripId = it.document.accommodation.trip.id.throwIfMissing(it.document.accommodation.trip::id.name)
@@ -211,7 +279,7 @@ private fun Route.setDocumentKeyInAccommodation(documentController: DocumentCont
     }
 }
 
-@Suppress("DuplicatedCode")
+@Suppress("DuplicatedCode") //IDE misinterpreted duplication
 private fun Route.setDocumentKeyInActivity(documentController: DocumentController) {
     put<Trip.Activity.Document.Key> {
         val tripId = it.document.activity.trip.id.throwIfMissing(it.document.activity.trip::id.name)
@@ -221,7 +289,7 @@ private fun Route.setDocumentKeyInActivity(documentController: DocumentControlle
     }
 }
 
-@Suppress("DuplicatedCode")
+@Suppress("DuplicatedCode") //IDE misinterpreted duplication
 private fun Route.setDocumentKeyInPlace(documentController: DocumentController) {
     put<Trip.Place.Document.Key> {
         val tripId = it.document.place.trip.id.throwIfMissing(it.document.place.trip::id.name)
@@ -242,6 +310,3 @@ private suspend fun setDocumentKeyInPoi(
     val key = context.receive<DocumentKeyRequest>(DocumentKeyRequest.MISSING_PARAM).key
     context.respond(documentController.setKey(context.getUserId(), tripId, poiId, documentId, key, poiType))
 }
-
-
-

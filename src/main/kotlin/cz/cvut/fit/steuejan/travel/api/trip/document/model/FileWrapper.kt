@@ -2,7 +2,7 @@ package cz.cvut.fit.steuejan.travel.api.trip.document.model
 
 data class FileWrapper(
     val originalName: String,
-    val file: ByteArray
+    val rawData: ByteArray
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -11,14 +11,14 @@ data class FileWrapper(
         other as FileWrapper
 
         if (originalName != other.originalName) return false
-        if (!file.contentEquals(other.file)) return false
+        if (!rawData.contentEquals(other.rawData)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = originalName.hashCode()
-        result = 31 * result + file.contentHashCode()
+        result = 31 * result + rawData.contentHashCode()
         return result
     }
 }
