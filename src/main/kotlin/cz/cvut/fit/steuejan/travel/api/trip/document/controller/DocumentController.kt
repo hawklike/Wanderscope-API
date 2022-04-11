@@ -64,7 +64,7 @@ class DocumentController(
         poiType: PointOfInterestType
     ): Response {
         return saveData(userId, tripId, file) { fileWithExtension ->
-            daoFactory.documentDao.saveData(poiId, documentId, fileWithExtension, poiType)
+            daoFactory.documentDao.saveData(tripId, poiId, documentId, fileWithExtension, poiType)
         }
     }
 
@@ -83,7 +83,7 @@ class DocumentController(
         poiType: PointOfInterestType
     ): FileWrapper {
         return getData(userId, tripId, key) {
-            daoFactory.documentDao.getDocument(poiId, documentId, poiType)
+            daoFactory.documentDao.getDocument(tripId, poiId, documentId, poiType)
         }
     }
 
@@ -123,7 +123,7 @@ class DocumentController(
         poiType: PointOfInterestType
     ): Response {
         return setKey(userId, tripId, documentId, key) { hashedKey ->
-            daoFactory.documentDao.setKey(poiId, documentId, hashedKey, poiType)
+            daoFactory.documentDao.setKey(tripId, poiId, documentId, hashedKey, poiType)
         }
     }
 

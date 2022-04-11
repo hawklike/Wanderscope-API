@@ -15,9 +15,17 @@ interface DocumentDao {
     ): Int
 
     suspend fun getDocument(tripId: Int, documentId: Int): DocumentDto?
-    suspend fun getDocument(poiId: Int, documentId: Int, poiType: PointOfInterestType): DocumentDto?
+    suspend fun getDocument(tripId: Int, poiId: Int, documentId: Int, poiType: PointOfInterestType): DocumentDto?
+
     suspend fun saveData(tripId: Int, documentId: Int, data: FileWrapper): Boolean
-    suspend fun saveData(poiId: Int, documentId: Int, data: FileWrapper, poiType: PointOfInterestType): Boolean
+    suspend fun saveData(
+        tripId: Int,
+        poiId: Int,
+        documentId: Int,
+        data: FileWrapper,
+        poiType: PointOfInterestType
+    ): Boolean
+
     suspend fun setKey(tripId: Int, documentId: Int, key: String): Boolean
-    suspend fun setKey(poiId: Int, documentId: Int, key: String, poiType: PointOfInterestType): Boolean
+    suspend fun setKey(tripId: Int, poiId: Int, documentId: Int, key: String, poiType: PointOfInterestType): Boolean
 }
