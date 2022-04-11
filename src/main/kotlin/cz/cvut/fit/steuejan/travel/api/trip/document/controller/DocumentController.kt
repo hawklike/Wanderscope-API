@@ -32,21 +32,21 @@ class DocumentController(
         poiId: Int? = null,
         poiType: PointOfInterestType? = null
     ): Response {
-        return editOrThrow(userId, tripId) {
-            poiType?.let {
-                requireNotNull(poiId)
-                getDao(it).find(tripId, poiId) ?: throw NotFoundException(it.notFound())
-            }
+        editOrThrow(userId, tripId)
 
-            val hashedKey = metadata.key?.let {
-                validator.validateDocumentKey(it)
-                encryptor.hash(it)
-            }
-            val metadataHashedKey = metadata.copy(key = hashedKey)
-
-            val id = daoFactory.documentDao.saveMetadata(userId, tripId, poiId, metadataHashedKey, poiType)
-            CreatedResponse.success(id)
+        poiType?.let {
+            requireNotNull(poiId)
+            getDao(it).find(tripId, poiId) ?: throw NotFoundException(it.notFound())
         }
+
+        val hashedKey = metadata.key?.let {
+            validator.validateDocumentKey(it)
+            encryptor.hash(it)
+        }
+        val metadataHashedKey = metadata.copy(key = hashedKey)
+
+        val id = daoFactory.documentDao.saveMetadata(userId, tripId, poiId, metadataHashedKey, poiType)
+        return CreatedResponse.success(id)
     }
 
     suspend fun saveData(userId: Int, tripId: Int, documentId: Int, file: FileWrapper): Response {
@@ -93,19 +93,19 @@ class DocumentController(
         key: String?,
         dbCall: suspend () -> DocumentDto?
     ): FileWrapper {
-        return viewOrThrow(userId, tripId) {
-            val document = dbCall.invoke() ?: throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
-            document.data ?: throw NotFoundException(FailureMessages.DOCUMENT_DATA_NULL)
+        viewOrThrow(userId, tripId)
 
-            //document is secret
-            document.key?.let { hashedKey ->
-                if (key == null || hashedKey != encryptor.hash(key)) {
-                    throw ForbiddenException(FailureMessages.DOCUMENT_DATA_PROHIBITED)
-                }
+        val document = dbCall.invoke() ?: throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
+        document.data ?: throw NotFoundException(FailureMessages.DOCUMENT_DATA_NULL)
+
+        //document is secret
+        document.key?.let { hashedKey ->
+            if (key == null || hashedKey != encryptor.hash(key)) {
+                throw ForbiddenException(FailureMessages.DOCUMENT_DATA_PROHIBITED)
             }
-
-            FileWrapper(document.name, document.data)
         }
+
+        return FileWrapper(document.name, document.data)
     }
 
     suspend fun setKey(userId: Int, tripId: Int, documentId: Int, key: String): Response {
@@ -134,23 +134,23 @@ class DocumentController(
         key: String,
         dbCall: suspend (hashedKey: String) -> Boolean
     ): Response {
-        return editOrThrow(userId, tripId) {
-            val document = daoFactory.documentDao.getDocument(tripId, documentId)
-                ?: throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
+        editOrThrow(userId, tripId)
 
-            //key may set only owner
-            if (document.userId != userId) {
-                throw ForbiddenException(FailureMessages.DOCUMENT_SET_KEY_PROHIBITED)
-            }
+        val document = daoFactory.documentDao.getDocument(tripId, documentId)
+            ?: throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
 
-            validator.validateDocumentKey(key)
-            val hashedKey = encryptor.hash(key)
-
-            if (!dbCall.invoke(hashedKey)) {
-                throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
-            }
-            Success(Status.NO_CONTENT)
+        //key may set only owner
+        if (document.userId != userId) {
+            throw ForbiddenException(FailureMessages.DOCUMENT_SET_KEY_PROHIBITED)
         }
+
+        validator.validateDocumentKey(key)
+        val hashedKey = encryptor.hash(key)
+
+        if (!dbCall.invoke(hashedKey)) {
+            throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
+        }
+        return Success(Status.NO_CONTENT)
     }
 
     private suspend fun saveData(
@@ -159,18 +159,18 @@ class DocumentController(
         file: FileWrapper,
         dbCall: suspend (file: FileWrapper) -> Boolean
     ): Response {
-        return editOrThrow(userId, tripId) {
-            if (file.rawData.size > limitsConfig.documentMaxSize) {
-                throw BadRequestException(FailureMessages.documentMaxSize(limitsConfig.documentMaxSize))
-            }
+        editOrThrow(userId, tripId)
 
-            val extension = validator.validateExtension(file.originalName)
-
-            if (!dbCall.invoke(file.copy(extension = extension))) {
-                throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
-            }
-
-            Success(Status.NO_CONTENT)
+        if (file.rawData.size > limitsConfig.documentMaxSize) {
+            throw BadRequestException(FailureMessages.documentMaxSize(limitsConfig.documentMaxSize))
         }
+
+        val extension = validator.validateExtension(file.originalName)
+
+        if (!dbCall.invoke(file.copy(extension = extension))) {
+            throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
+        }
+
+        return Success(Status.NO_CONTENT)
     }
 }

@@ -27,6 +27,13 @@ class Trip(val id: Int? = null) {
         }
     }
 
+    @Location(Documents.URL)
+    class Documents(val trip: Trip) {
+        companion object {
+            const val URL = "/documents"
+        }
+    }
+
     @Location("${Document.URL}/{documentId?}")
     class Document(val trip: Trip, val documentId: Int? = null) {
         companion object {
@@ -74,6 +81,13 @@ class Trip(val id: Int? = null) {
                 }
             }
         }
+
+        @Location(Documents.URL)
+        class Documents(val transport: Transport) {
+            companion object {
+                const val URL = "/documents"
+            }
+        }
     }
 
     @Location("${Accomodation.URL}/{accomodationId?}")
@@ -100,6 +114,13 @@ class Trip(val id: Int? = null) {
                 companion object {
                     const val URL = "/data"
                 }
+            }
+        }
+
+        @Location(Documents.URL)
+        class Documents(val accommodation: Accomodation) {
+            companion object {
+                const val URL = "/documents"
             }
         }
     }
@@ -130,6 +151,13 @@ class Trip(val id: Int? = null) {
                 }
             }
         }
+
+        @Location(Documents.URL)
+        class Documents(val activity: Activity) {
+            companion object {
+                const val URL = "/documents"
+            }
+        }
     }
 
     @Location("${Place.URL}/{placeId?}")
@@ -156,6 +184,13 @@ class Trip(val id: Int? = null) {
                 companion object {
                     const val URL = "/data"
                 }
+            }
+        }
+
+        @Location(Documents.URL)
+        class Documents(val place: Place) {
+            companion object {
+                const val URL = "/documents"
             }
         }
     }

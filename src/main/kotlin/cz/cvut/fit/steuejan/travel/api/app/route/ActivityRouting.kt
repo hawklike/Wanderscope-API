@@ -29,6 +29,7 @@ fun Routing.activityRoutes() {
         showActivity(activityController)
         editActivity(activityController)
         deleteActivity(activityController)
+        showDocuments(activityController)
     }
 }
 
@@ -62,6 +63,14 @@ private fun Route.deleteActivity(activityController: ActivityController) {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val activityId = it.activityId.throwIfMissing(it::activityId.name)
         respond(activityController.delete(getUserId(), tripId, activityId))
+    }
+}
+
+private fun Route.showDocuments(activityController: ActivityController) {
+    get<Trip.Activity.Documents> {
+        val tripId = it.activity.trip.id.throwIfMissing(it.activity.trip::id.name)
+        val activityId = it.activity.activityId.throwIfMissing(it.activity::activityId.name)
+        respond(activityController.showDocuments(getUserId(), tripId, activityId))
     }
 }
 

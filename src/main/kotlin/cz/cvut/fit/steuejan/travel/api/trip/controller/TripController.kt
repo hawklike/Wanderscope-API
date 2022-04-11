@@ -9,6 +9,8 @@ import cz.cvut.fit.steuejan.travel.api.app.response.CreatedResponse
 import cz.cvut.fit.steuejan.travel.api.app.response.Response
 import cz.cvut.fit.steuejan.travel.api.app.response.Status
 import cz.cvut.fit.steuejan.travel.api.app.response.Success
+import cz.cvut.fit.steuejan.travel.api.trip.document.model.DocumentOverview
+import cz.cvut.fit.steuejan.travel.api.trip.document.response.DocumentOverviewListResponse
 import cz.cvut.fit.steuejan.travel.api.trip.model.TripInvitation
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
 import cz.cvut.fit.steuejan.travel.data.database.trip.TripDto
@@ -63,6 +65,12 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
         }
 
         return Success(Status.NO_CONTENT)
+    }
+
+    suspend fun showDocuments(userId: Int, tripId: Int): Response {
+        viewOrThrow(userId, tripId)
+        val documents = daoFactory.documentDao.getDocuments(tripId)
+        return DocumentOverviewListResponse.success(documents.map(DocumentOverview::fromDto))
     }
 
     suspend fun changeDate(userId: Int, tripId: Int, duration: Duration): Response {

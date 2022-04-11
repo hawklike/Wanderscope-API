@@ -29,6 +29,7 @@ fun Routing.placeRoutes() {
         showPlace(placeController)
         editPlace(placeController)
         deletePlace(placeController)
+        showDocuments(placeController)
     }
 }
 
@@ -62,6 +63,14 @@ private fun Route.deletePlace(placeController: PlaceController) {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val placeId = it.placeId.throwIfMissing(it::placeId.name)
         respond(placeController.delete(getUserId(), tripId, placeId))
+    }
+}
+
+private fun Route.showDocuments(placeController: PlaceController) {
+    get<Trip.Place.Documents> {
+        val tripId = it.place.trip.id.throwIfMissing(it.place.trip::id.name)
+        val placeId = it.place.placeId.throwIfMissing(it.place::placeId.name)
+        respond(placeController.showDocuments(getUserId(), tripId, placeId))
     }
 }
 

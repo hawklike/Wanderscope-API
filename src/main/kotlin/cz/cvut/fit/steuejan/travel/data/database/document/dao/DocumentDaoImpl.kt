@@ -49,11 +49,15 @@ class DocumentDaoImpl : DocumentDao {
             DocumentTable.selectFirst { findByIdInPoi(tripId, poiId, documentId, selectColumn(poiType)!!) }
         }?.let(DocumentDto::fromDb)
 
-    suspend fun getDocuments(tripId: Int) = transaction {
+    override suspend fun getDocuments(tripId: Int) = transaction {
         DocumentTable.select { DocumentTable.trip eq tripId }.map(DocumentDto::fromDb)
     }
 
-//    suspend fun getDocuments(tripId: Int, poiId: Int, poiT)
+    override suspend fun getDocuments(tripId: Int, poiId: Int, poiType: PointOfInterestType) = transaction {
+        DocumentTable.select {
+            (DocumentTable.trip eq tripId) and (selectColumn(poiType)!! eq poiId)
+        }.map(DocumentDto::fromDb)
+    }
 
     override suspend fun saveData(tripId: Int, documentId: Int, data: FileWrapper): Boolean {
         return saveData(findByIdInTrip(tripId, documentId), data)
