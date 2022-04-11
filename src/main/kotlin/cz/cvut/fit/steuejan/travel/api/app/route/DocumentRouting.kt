@@ -40,7 +40,11 @@ fun Routing.documentRoutes() {
         val documentController = controllerFactory.documentController
 
         saveDocumentMetadataInTrip(documentController)
-        saveDataInTrip(documentController)
+        try {
+            saveDataInTrip(documentController)
+        } catch (ex: Exception) {
+            throw UnauthorizedException("fakt")
+        }
         setDocumentKeyInTrip(documentController)
         getDataInTrip(documentController)
 
@@ -77,13 +81,9 @@ private fun Route.saveDocumentMetadataInTrip(documentController: DocumentControl
 
 private fun Route.saveDataInTrip(documentController: DocumentController) {
     post<Trip.Document.Data> {
-        try {
-            val tripId = it.document.trip.id.throwIfMissing(it.document.trip::id.name)
-            val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
-            respond(documentController.saveData(getUserId(), tripId, documentId, getFile()))
-        } catch (ex: Exception) {
-            throw UnauthorizedException("fakt")
-        }
+        val tripId = it.document.trip.id.throwIfMissing(it.document.trip::id.name)
+        val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
+        respond(documentController.saveData(getUserId(), tripId, documentId, getFile()))
     }
 }
 
