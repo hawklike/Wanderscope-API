@@ -24,7 +24,7 @@ val authModule = module {
     single<Encryptor> { ApiEncryptor(config = get()) }
 
     single { AccountController(get(), get(), get(), get()) }
-    single { EmailPasswordController(get(), get(), get(), get(), get()) }
+    single { EmailPasswordController(get(), get(), get(), get(), get(), get()) }
     single { RefreshTokenController(get(), get()) }
 
     single { JWTControllerFactory(get()) }

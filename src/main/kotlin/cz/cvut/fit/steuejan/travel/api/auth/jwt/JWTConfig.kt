@@ -1,8 +1,9 @@
 package cz.cvut.fit.steuejan.travel.api.auth.jwt
 
+import cz.cvut.fit.steuejan.travel.api.app.config.AppConfig
 import io.ktor.config.*
 
-class JWTConfig(config: ApplicationConfig) {
+class JWTConfig(override val config: ApplicationConfig) : AppConfig {
     val accessSecretKey = config.property(ACCESS_SECRET_KEY).getString()
     val refreshSecretKey = config.property(REFRESH_SECRET_KEY).getString()
     val audience = config.property(AUDIENCE).getString()

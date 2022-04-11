@@ -1,6 +1,7 @@
 package cz.cvut.fit.steuejan.travel.api.app.di
 
 import cz.cvut.fit.steuejan.travel.api.app.config.AppConfig
+import cz.cvut.fit.steuejan.travel.api.app.config.DeploymentConfig
 import cz.cvut.fit.steuejan.travel.api.app.config.EmailConfig
 import cz.cvut.fit.steuejan.travel.api.app.config.LimitsConfig
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig
@@ -19,10 +20,11 @@ val Application.configModule: Module
 
         single { provideApplicationConfig() }
 
-        single { JWTConfig(get()) }
-        single { DatabaseConfig(get()) }
+        single { JWTConfig(get()) } bind AppConfig::class
+        single { DatabaseConfig(get()) } bind AppConfig::class
         single { LimitsConfig(get()) } bind AppConfig::class
         single { EmailConfig(get()) } bind AppConfig::class
+        single { DeploymentConfig(get()) } bind AppConfig::class
 
         single<Hikari> { PostgresHikari(get()) }
     }

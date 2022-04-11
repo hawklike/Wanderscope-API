@@ -2,9 +2,9 @@ package cz.cvut.fit.steuejan.travel.api.auth.controller
 
 import cz.cvut.fit.steuejan.travel.api.account.controller.AccountController
 import cz.cvut.fit.steuejan.travel.api.account.model.ChangePassword
-import cz.cvut.fit.steuejan.travel.api.app.baseUrl
 import cz.cvut.fit.steuejan.travel.api.app.bussines.EmailSender
 import cz.cvut.fit.steuejan.travel.api.app.bussines.Validator
+import cz.cvut.fit.steuejan.travel.api.app.config.DeploymentConfig
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.ForbiddenException
@@ -34,7 +34,8 @@ class EmailPasswordController(
     private val jwt: JWTController,
     private val encryptor: Encryptor,
     private val validator: Validator,
-    private val account: AccountController
+    private val account: AccountController,
+    private val deploymentConfig: DeploymentConfig
 ) : AuthController<EmailLogin> {
 
     override suspend fun register(credentials: Credentials<EmailLogin>): AuthResponse {
@@ -120,6 +121,7 @@ class EmailPasswordController(
 
     @KtorExperimentalLocationsAPI
     private fun getEmailMessage(username: Username, token: String): String {
+        val baseUrl = deploymentConfig.baseUrl
         return """
                 Hi ${username.it},
                 
