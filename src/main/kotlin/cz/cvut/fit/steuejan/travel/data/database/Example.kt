@@ -1,48 +1,80 @@
 package cz.cvut.fit.steuejan.travel.data.database
 
-import kotlinx.coroutines.Dispatchers
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import cz.cvut.fit.steuejan.travel.api.auth.model.AccountType
+import cz.cvut.fit.steuejan.travel.data.database.place.PlaceTable
+import cz.cvut.fit.steuejan.travel.data.database.trip.TripTable
+import cz.cvut.fit.steuejan.travel.data.database.tripuser.TripUserTable
+import cz.cvut.fit.steuejan.travel.data.database.user.UserTable
+import cz.cvut.fit.steuejan.travel.data.util.transaction
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.insertAndGetId
+import org.jetbrains.exposed.sql.select
 
-object Users : IntIdTable() {
-    val name = varchar("name", 50).index()
-    val city = reference("city", Cities)
-    val age = integer("age")
-}
-
-object Cities : IntIdTable() {
-    val name = varchar("name", 50)
-}
-
-class User(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<User>(Users)
-
-    var name by Users.name
-    var city by City referencedOn Users.city
-    var age by Users.age
-}
-
-class City(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<City>(Cities)
-
-    var name by Cities.name
-    val users by User referrersOn Users.city
-}
-
-suspend fun addCity(name: String) {
-    newSuspendedTransaction(Dispatchers.IO) {
-        City.new {
-            this.name = name
+suspend fun addUser(username: String, email: String) {
+    transaction {
+        UserTable.insert {
+            it[this.username] = username
+            it[this.accountType] = AccountType.EMAIL
+            it[this.email] = email
         }
     }
 }
 
-suspend fun getCities(): String {
-    return newSuspendedTransaction(Dispatchers.IO) {
-        City.all().joinToString { it.name }
+suspend fun getTrips(id: Int): String {
+    val query = TripTable
+        .innerJoin(TripUserTable)
+        .innerJoin(UserTable)
+        .slice(TripTable.columns)
+        .select { UserTable.id eq id }
+        .withDistinct()
+
+
+    return transaction {
+        query.joinToString { it[TripTable.name] }
+    }
+}
+
+suspend fun createTrip(name: String, userId: Int) {
+    transaction {
+        val tripId = TripTable.insertAndGetId {
+            it[this.name] = name
+        }
+
+        TripUserTable.insert {
+            it[this.user] = userId
+            it[this.trip] = tripId
+        }
+    }
+}
+
+suspend fun deleteTrip(tripId: Int) {
+    transaction {
+        TripTable.deleteWhere { TripTable.id eq tripId }
+    }
+}
+
+suspend fun addPlace(tripId: Int, placeId: String, name: String) {
+    transaction {
+        PlaceTable.insert {
+            it[this.name] = name
+            it[this.googlePlaceId] = placeId
+            it[this.trip] = tripId
+        }
+    }
+}
+
+suspend fun getPlaces(tripId: Int): String {
+    val query = PlaceTable.select { PlaceTable.trip eq tripId }
+
+    return transaction {
+        query.joinToString { it[PlaceTable.googlePlaceId] ?: "" }
+    }
+}
+
+suspend fun deletePlace(id: Int) {
+    transaction {
+        PlaceTable.deleteWhere { PlaceTable.id eq id }
     }
 }
 

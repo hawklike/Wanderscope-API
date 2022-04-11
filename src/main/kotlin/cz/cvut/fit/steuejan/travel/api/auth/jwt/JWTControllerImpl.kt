@@ -7,8 +7,7 @@ import cz.cvut.fit.steuejan.travel.api.auth.token.AccessToken
 import cz.cvut.fit.steuejan.travel.api.auth.token.RefreshToken
 import cz.cvut.fit.steuejan.travel.api.auth.token.TokenHolder
 import cz.cvut.fit.steuejan.travel.api.auth.token.TokenType
-import cz.cvut.fit.steuejan.travel.data.dao.token.TokenDao
-import cz.cvut.fit.steuejan.travel.data.model.Username
+import cz.cvut.fit.steuejan.travel.data.database.token.dao.TokenDao
 import java.util.*
 
 class JWTControllerImpl(
@@ -32,10 +31,14 @@ class JWTControllerImpl(
             .sign(getAlgorithm(tokenType))
     }
 
-    override fun createTokens(username: Username): TokenHolder {
-        val accessToken = create(username.it, tokenType = AccessToken())
-        val refreshToken = create(username.it, tokenType = RefreshToken())
-        tokenDao.addRefreshToken(refreshToken, username)
+    override suspend fun createTokens(userId: Int, addToDatabase: Boolean): TokenHolder {
+        val accessToken = create(userId.toString(), tokenType = AccessToken())
+        val refreshToken = create(userId.toString(), tokenType = RefreshToken())
+
+        if (addToDatabase) {
+            tokenDao.addRefreshToken(userId, refreshToken)
+        }
+
         return TokenHolder(accessToken, refreshToken)
     }
 

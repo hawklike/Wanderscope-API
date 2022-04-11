@@ -44,8 +44,8 @@ class ApiEncryptor(secret: String) : Encryptor {
     }
 
     companion object {
-        const val TOKEN_ALGORITHM = "HmacSHA256"
-        const val BCRYPT_SALT_ROUNDS = 12
-        const val MAX_PASSWORD_LENGTH = 50
+        private const val TOKEN_ALGORITHM = "HmacSHA256"
+        private const val BCRYPT_SALT_ROUNDS = 12
+        private const val MAX_PASSWORD_LENGTH = 50
     }
 }
