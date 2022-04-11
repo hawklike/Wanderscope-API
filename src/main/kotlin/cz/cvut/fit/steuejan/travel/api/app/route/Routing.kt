@@ -56,6 +56,10 @@ fun Route.exampleRoutes() {
         }
     }
 
+    get("/version") {
+        call.respondText("0.0.1")
+    }
+
     get("/common") {
         val all = listOf(Username("honza"), User("jan", "jan@seznam.cz"), Place("id", "horni dolni"))
         respond(AllResponse(all))
