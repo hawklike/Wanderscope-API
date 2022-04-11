@@ -29,7 +29,6 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.util.pipeline.*
-import kotlinx.coroutines.delay
 import org.koin.ktor.ext.inject
 
 const val DOCUMENT_KEY_HEADER = "Wanderscope-Document-Key"
@@ -81,12 +80,10 @@ private fun Route.saveDocumentMetadataInTrip(documentController: DocumentControl
 }
 
 private fun Route.saveDataInTrip(documentController: DocumentController) {
-    post<Trip.Document.Data> {
-        val file = getFile()
-        delay(3000)
+    put<Trip.Document.Data> {
         val tripId = it.document.trip.id.throwIfMissing(it.document.trip::id.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
-        respond(documentController.saveData(getUserId(), tripId, documentId, file))
+        respond(documentController.saveData(getUserId(), tripId, documentId, getFile()))
     }
 }
 
