@@ -23,7 +23,7 @@ object DocumentTable : IntIdTable("documents") {
     val activity = reference("activity", ActivityTable, onDelete = CASCADE, onUpdate = CASCADE).nullable()
 
     val name = varchar("name", DatabaseConfig.NAME_LENGTH)
-    val created = datetime("created")
+    val updated = datetime("updated")
     val extension = varchar("extension", DatabaseConfig.FILE_EXTENSION_LENGTH).nullable()
     val type = enumerationByName("type", DocumentType.MAX_LENGTH, DocumentType::class)
     val key = text("key").nullable() //hashed with HmacSHA256

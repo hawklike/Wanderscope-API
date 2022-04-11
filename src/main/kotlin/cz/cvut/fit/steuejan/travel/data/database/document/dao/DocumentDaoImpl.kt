@@ -36,7 +36,7 @@ class DocumentDaoImpl : DocumentDao {
             it[name] = metadata.name
             it[type] = metadata.type
             it[key] = metadata.key
-            it[created] = DateTime.now(DateTimeZone.UTC)
+            it[updated] = DateTime.now(DateTimeZone.UTC)
         }?.value ?: throw BadRequestException(FailureMessages.ADD_DOCUMENT_METADATA_FAILURE)
     }
 
@@ -97,6 +97,7 @@ class DocumentDaoImpl : DocumentDao {
         try {
             DocumentTable.update({ updateWhere }) {
                 it[extension] = file.extension
+                it[updated] = DateTime.now(DateTimeZone.UTC)
                 it[data] = ExposedBlob(file.rawData)
             }
         } catch (ex: Exception) {

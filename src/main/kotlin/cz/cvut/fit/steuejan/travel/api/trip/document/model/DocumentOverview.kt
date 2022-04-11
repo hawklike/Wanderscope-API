@@ -19,7 +19,7 @@ data class DocumentOverview(
     val name: String,
     val type: DocumentType,
     @Serializable(with = DateTimeSerializer::class)
-    val created: DateTime,
+    val updated: DateTime,
     val extension: String?
 ) {
     companion object {
@@ -34,7 +34,7 @@ data class DocumentOverview(
                 ownerId = userId,
                 name = name,
                 type = type,
-                created = created,
+                updated = updated,
                 extension = extension
             )
         }
