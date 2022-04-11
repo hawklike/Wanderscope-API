@@ -47,14 +47,22 @@ fun PipelineContext<*, ApplicationCall>.getQuery(queryParam: String): String {
 
 suspend fun PipelineContext<*, ApplicationCall>.getFile(): FileWrapper {
     var file: FileWrapper? = null
-    call.receiveMultipart().forEachPart { part ->
+
+    val multipartData = try {
+        call.receiveMultipart()
+    } catch (ex: Exception) {
+        throw BadRequestException("${ex.message}.")
+    }
+
+    multipartData.forEachPart { part ->
         if (part is PartData.FileItem) {
             withContext(Dispatchers.IO) {
-                val bytes = part.streamProvider().readBytes()
+                val bytes = part.streamProvider().use { it.readBytes() }
                 val name = part.originalFileName
                     ?: throw BadRequestException(FailureMessages.MULTIPART_FORM_MISSING_FILE_NAME)
                 file = FileWrapper(name, bytes)
             }
+            part.dispose()
         }
     }
     return file ?: throw BadRequestException(FailureMessages.MULTIPART_FORM_MISSING_FILE)
