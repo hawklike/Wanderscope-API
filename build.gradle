@@ -41,6 +41,9 @@ dependencies {
     //apache commons email
     implementation "org.apache.commons:commons-email:$apache_commons_email_version"
 
+    //apache commons io
+    implementation "commons-io:commons-io:$apache_commons_io_version"
+
     //exposed orm
     implementation "org.jetbrains.exposed:exposed-core:$exposed_version"
     implementation "org.jetbrains.exposed:exposed-dao:$exposed_version"

@@ -11,7 +11,7 @@ object AccomodationTable : IntIdTable("accomodation") {
     val trip = reference("trip", TripTable, onDelete = CASCADE, onUpdate = CASCADE)
 
     val name = varchar("name", DatabaseConfig.NAME_LENGTH)
-    val type = enumerationByName("type", 10, AccomodationType::class)
+    val type = enumerationByName("type", AccomodationType.MAX_LENGTH, AccomodationType::class)
     val googlePlaceId = text("google_place_id").nullable()
     val address = text("address").nullable()
     val phone = varchar("phone", DatabaseConfig.PHONE_LENGTH).nullable()

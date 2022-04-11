@@ -49,9 +49,9 @@ class DocumentController(
         }
     }
 
-    suspend fun saveData(userId: Int, tripId: Int, documentId: Int, data: ByteArray): Response {
-        return saveData(userId, tripId, data) {
-            daoFactory.documentDao.saveData(tripId, documentId, data)
+    suspend fun saveData(userId: Int, tripId: Int, documentId: Int, file: FileWrapper): Response {
+        return saveData(userId, tripId, file) { fileWithExtension ->
+            daoFactory.documentDao.saveData(tripId, documentId, fileWithExtension)
         }
     }
 
@@ -60,11 +60,11 @@ class DocumentController(
         tripId: Int,
         poiId: Int,
         documentId: Int,
-        data: ByteArray,
+        file: FileWrapper,
         poiType: PointOfInterestType
     ): Response {
-        return saveData(userId, tripId, data) {
-            daoFactory.documentDao.saveData(poiId, documentId, data, poiType)
+        return saveData(userId, tripId, file) { fileWithExtension ->
+            daoFactory.documentDao.saveData(poiId, documentId, fileWithExtension, poiType)
         }
     }
 
@@ -153,13 +153,20 @@ class DocumentController(
         }
     }
 
-    private suspend fun saveData(userId: Int, tripId: Int, data: ByteArray, dbCall: suspend () -> Boolean): Response {
+    private suspend fun saveData(
+        userId: Int,
+        tripId: Int,
+        file: FileWrapper,
+        dbCall: suspend (file: FileWrapper) -> Boolean
+    ): Response {
         return editOrThrow(userId, tripId) {
-            if (data.size > limitsConfig.documentMaxSize) {
+            if (file.rawData.size > limitsConfig.documentMaxSize) {
                 throw BadRequestException(FailureMessages.documentMaxSize(limitsConfig.documentMaxSize))
             }
 
-            if (!dbCall.invoke()) {
+            val extension = validator.validateExtension(file.originalName)
+
+            if (!dbCall.invoke(file.copy(extension = extension))) {
                 throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
             }
 

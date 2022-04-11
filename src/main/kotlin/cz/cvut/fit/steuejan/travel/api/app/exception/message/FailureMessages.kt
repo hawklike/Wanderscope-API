@@ -1,5 +1,6 @@
 package cz.cvut.fit.steuejan.travel.api.app.exception.message
 
+import cz.cvut.fit.steuejan.travel.api.app.bussines.Validator
 import cz.cvut.fit.steuejan.travel.api.app.route.DOCUMENT_KEY_HEADER
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig.Companion.NAME_LENGTH
 
@@ -44,6 +45,9 @@ object FailureMessages {
     const val DOCUMENT_DATA_NULL = "Document content not provided, nothing to see."
 
     const val MULTIPART_FORM_MISSING_FILE = "Missing file part in the multipart form data."
+    const val MULTIPART_FORM_MISSING_FILE_NAME = "Missing file name."
+    const val MULTIPART_FORM_FILE_EXTENSION_PROHIBITED =
+        "File with this extension is not permitted. Permitted files are ${Validator.ALLOWED_EXTENSIONS}."
 
     fun missingQueryParam(param: String): String {
         return "Missing query parameter '$param'."
@@ -64,6 +68,6 @@ object FailureMessages {
     }
 
     fun documentMaxSize(maxSizeInMb: Int): String {
-        return "Document is too big. Max size of a document is ${maxSizeInMb / 1_000_000} MB."
+        return "Document is too big. Max allowed size of a document is ${maxSizeInMb / 1_000_000} MB."
     }
 }

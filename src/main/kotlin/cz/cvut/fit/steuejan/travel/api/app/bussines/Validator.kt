@@ -8,6 +8,7 @@ import cz.cvut.fit.steuejan.travel.api.auth.exception.UsernameAlreadyExistsExcep
 import cz.cvut.fit.steuejan.travel.api.auth.model.AccountType
 import cz.cvut.fit.steuejan.travel.data.database.user.dao.UserDao
 import cz.cvut.fit.steuejan.travel.data.model.Username
+import org.apache.commons.io.FilenameUtils
 import org.apache.commons.validator.routines.EmailValidator
 
 class Validator(private val userDao: UserDao, private val config: LimitsConfig) {
@@ -54,5 +55,21 @@ class Validator(private val userDao: UserDao, private val config: LimitsConfig) 
         if (userDao.findByUsername(username) != null) {
             throw UsernameAlreadyExistsException()
         }
+    }
+
+    fun validateExtension(originalName: String): String {
+        try {
+            val extension = FilenameUtils.getExtension(originalName).lowercase()
+            if (extension !in ALLOWED_EXTENSIONS.split(", ")) {
+                throw Exception()
+            }
+            return extension
+        } catch (ex: Exception) {
+            throw BadRequestException(FailureMessages.MULTIPART_FORM_FILE_EXTENSION_PROHIBITED)
+        }
+    }
+
+    companion object {
+        const val ALLOWED_EXTENSIONS = "jpg, jpeg, gif, png, txt, pdf, gpx"
     }
 }

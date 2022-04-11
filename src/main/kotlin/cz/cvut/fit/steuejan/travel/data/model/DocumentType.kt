@@ -1,10 +1,10 @@
 package cz.cvut.fit.steuejan.travel.data.model
 
 @Suppress("unused") // used in DB
-enum class PlaceType {
-    PARKING, FOOD, NATURE, OTHER;
+enum class DocumentType {
+    TEXT, IMAGE, DOCUMENT, GPX;
 
     companion object {
-        const val MAX_LENGTH = 7
+        const val MAX_LENGTH = 8
     }
 }

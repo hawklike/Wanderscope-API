@@ -1,6 +1,7 @@
 package cz.cvut.fit.steuejan.travel.data.database.document
 
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
+import cz.cvut.fit.steuejan.travel.data.model.DocumentType
 import org.jetbrains.exposed.sql.ResultRow
 import org.joda.time.DateTime
 
@@ -14,7 +15,8 @@ data class DocumentDto(
     val activityId: Int?,
     val name: String,
     val created: DateTime,
-    val extension: String,
+    val type: DocumentType,
+    val extension: String?,
     val key: String?,
     val data: ByteArray?
 ) : Dto() {
@@ -29,6 +31,7 @@ data class DocumentDto(
             activityId = resultRow[DocumentTable.activity]?.value,
             name = resultRow[DocumentTable.name],
             created = resultRow[DocumentTable.created],
+            type = resultRow[DocumentTable.type],
             extension = resultRow[DocumentTable.extension],
             key = resultRow[DocumentTable.key],
             data = resultRow[DocumentTable.data]?.bytes,

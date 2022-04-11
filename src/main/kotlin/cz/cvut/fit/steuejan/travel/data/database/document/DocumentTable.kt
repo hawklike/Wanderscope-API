@@ -7,6 +7,7 @@ import cz.cvut.fit.steuejan.travel.data.database.place.PlaceTable
 import cz.cvut.fit.steuejan.travel.data.database.transport.TransportTable
 import cz.cvut.fit.steuejan.travel.data.database.trip.TripTable
 import cz.cvut.fit.steuejan.travel.data.database.user.UserTable
+import cz.cvut.fit.steuejan.travel.data.model.DocumentType
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption.CASCADE
 import org.jetbrains.exposed.sql.ReferenceOption.SET_NULL
@@ -23,7 +24,8 @@ object DocumentTable : IntIdTable("documents") {
 
     val name = varchar("name", DatabaseConfig.NAME_LENGTH)
     val created = datetime("created")
-    val extension = varchar("extension", DatabaseConfig.FILE_EXTENSION_LENGTH)
+    val extension = varchar("extension", DatabaseConfig.FILE_EXTENSION_LENGTH).nullable()
+    val type = enumerationByName("type", DocumentType.MAX_LENGTH, DocumentType::class)
     val key = text("key").nullable() //hashed with HmacSHA256
     val data = blob("data").nullable()
 }

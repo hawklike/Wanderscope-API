@@ -11,7 +11,7 @@ object PlaceTable : IntIdTable("places") {
     val trip = reference("trip", TripTable, onDelete = CASCADE, onUpdate = CASCADE)
 
     val name = varchar("name", DatabaseConfig.NAME_LENGTH)
-    val type = enumerationByName("type", 10, PlaceType::class).default(PlaceType.OTHER)
+    val type = enumerationByName("type", PlaceType.MAX_LENGTH, PlaceType::class).default(PlaceType.OTHER)
     val googlePlaceId = text("google_place_id").nullable()
     val address = text("address").nullable()
     val phone = varchar("phone", DatabaseConfig.PHONE_LENGTH).nullable()

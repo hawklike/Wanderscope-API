@@ -4,6 +4,7 @@ import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.InternalServerErrorException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.api.trip.document.model.DocumentMetadata
+import cz.cvut.fit.steuejan.travel.api.trip.document.model.FileWrapper
 import cz.cvut.fit.steuejan.travel.data.database.document.DocumentDto
 import cz.cvut.fit.steuejan.travel.data.database.document.DocumentTable
 import cz.cvut.fit.steuejan.travel.data.extension.insertAndGetIdOrNull
@@ -36,7 +37,7 @@ class DocumentDaoImpl : DocumentDao {
                 it[col] = poiId ?: throw BadRequestException(FailureMessages.ADD_DOCUMENT_METADATA_POI_NULL)
             }
             it[name] = metadata.name
-            it[extension] = metadata.extension
+            it[type] = metadata.type
             it[key] = metadata.key
             it[created] = DateTime.now(DateTimeZone.UTC)
         }?.value ?: throw BadRequestException(FailureMessages.ADD_DOCUMENT_METADATA_FAILURE)
@@ -50,11 +51,16 @@ class DocumentDaoImpl : DocumentDao {
         DocumentTable.selectFirst { findByIdInPoi(poiId, documentId, selectColumn(poiType)!!) }
     }?.let(DocumentDto::fromDb)
 
-    override suspend fun saveData(tripId: Int, documentId: Int, data: ByteArray): Boolean {
+    override suspend fun saveData(tripId: Int, documentId: Int, data: FileWrapper): Boolean {
         return saveData(findByIdInTrip(tripId, documentId), data)
     }
 
-    override suspend fun saveData(poiId: Int, documentId: Int, data: ByteArray, poiType: PointOfInterestType): Boolean {
+    override suspend fun saveData(
+        poiId: Int,
+        documentId: Int,
+        data: FileWrapper,
+        poiType: PointOfInterestType
+    ): Boolean {
         return saveData(findByIdInPoi(poiId, documentId, selectColumn(poiType)!!), data)
     }
 
@@ -72,10 +78,11 @@ class DocumentDaoImpl : DocumentDao {
         }
     }.isUpdated()
 
-    private suspend fun saveData(updateWhere: Op<Boolean>, data: ByteArray) = transaction {
+    private suspend fun saveData(updateWhere: Op<Boolean>, file: FileWrapper) = transaction {
         try {
             DocumentTable.update({ updateWhere }) {
-                it[DocumentTable.data] = ExposedBlob(data)
+                it[extension] = file.extension
+                it[data] = ExposedBlob(file.rawData)
             }
         } catch (ex: Exception) {
             throw InternalServerErrorException(FailureMessages.ADD_DOCUMENT_DATA_FAILURE + ex.message)
