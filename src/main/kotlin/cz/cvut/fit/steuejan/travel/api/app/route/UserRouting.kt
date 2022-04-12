@@ -6,7 +6,7 @@ package cz.cvut.fit.steuejan.travel.api.app.route
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.ControllerFactory
 import cz.cvut.fit.steuejan.travel.api.app.extension.getUserId
 import cz.cvut.fit.steuejan.travel.api.app.extension.respond
-import cz.cvut.fit.steuejan.travel.api.app.location.Trips
+import cz.cvut.fit.steuejan.travel.api.app.location.User
 import cz.cvut.fit.steuejan.travel.api.app.util.throwIfMissing
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig.Companion.JWT_AUTHENTICATION
 import cz.cvut.fit.steuejan.travel.api.trip.model.GetTripsType
@@ -26,7 +26,7 @@ fun Routing.userRoutes() {
 }
 
 private fun Route.showUserTrips(userController: UserController) {
-    get<Trips> {
+    get<User.Trips> {
         val response = when (it.scope) {
             GetTripsType.ALL -> {
                 userController.showAllTrips(getUserId())

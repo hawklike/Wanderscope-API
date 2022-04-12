@@ -3,9 +3,7 @@
 
 package cz.cvut.fit.steuejan.travel.api.app.location
 
-import cz.cvut.fit.steuejan.travel.api.trip.model.GetTripsType
 import io.ktor.locations.*
-import org.joda.time.DateTime
 
 @Location("${Trip.URL}/{id?}")
 class Trip(val id: Int? = null) {
@@ -200,12 +198,5 @@ class Trip(val id: Int? = null) {
                 const val URL = "/documents"
             }
         }
-    }
-}
-
-@Location(Trips.URL)
-class Trips(val scope: GetTripsType = GetTripsType.ALL, val date: DateTime? = null) {
-    companion object {
-        const val URL = "/trips"
     }
 }
