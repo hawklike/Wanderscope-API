@@ -12,8 +12,10 @@ import cz.cvut.fit.steuejan.travel.api.app.response.Success
 import cz.cvut.fit.steuejan.travel.api.trip.document.model.DocumentOverview
 import cz.cvut.fit.steuejan.travel.api.trip.document.response.DocumentOverviewListResponse
 import cz.cvut.fit.steuejan.travel.api.trip.model.TripInvitation
+import cz.cvut.fit.steuejan.travel.api.trip.model.TripUser
+import cz.cvut.fit.steuejan.travel.api.trip.response.TripUsersResponse
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
-import cz.cvut.fit.steuejan.travel.data.database.trip.TripDto
+import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripDto
 import cz.cvut.fit.steuejan.travel.data.model.Duration
 
 class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory) {
@@ -80,5 +82,11 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
             }
         }
         return Success(Status.NO_CONTENT)
+    }
+
+    suspend fun showUsers(userId: Int, tripId: Int, canEdit: Boolean?): Response {
+        viewOrThrow(userId, tripId)
+        val dto = daoFactory.tripDao.showUsers(tripId, canEdit)
+        return TripUsersResponse.success(dto.map(TripUser::fromDto))
     }
 }

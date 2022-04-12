@@ -1,8 +1,8 @@
 package cz.cvut.fit.steuejan.travel.data.database.user.dao
 
 import cz.cvut.fit.steuejan.travel.api.auth.model.AccountType
+import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripOverviewDto
 import cz.cvut.fit.steuejan.travel.data.database.user.UserDto
-import cz.cvut.fit.steuejan.travel.data.dto.TripOverviewDto
 import cz.cvut.fit.steuejan.travel.data.model.Username
 import org.joda.time.DateTime
 
