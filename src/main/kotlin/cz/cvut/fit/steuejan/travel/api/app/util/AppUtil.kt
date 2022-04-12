@@ -23,11 +23,6 @@ inline fun <T> execOrNotFound(message: String, call: () -> T?): T {
     return execOrThrow(NotFoundException(message), call)
 }
 
-suspend inline fun <T> delay(timeMillis: Long, doAfter: () -> T): T {
-    kotlinx.coroutines.delay(timeMillis)
-    return doAfter.invoke()
-}
-
 fun <T> T?.throwIfMissing(paramName: String): T {
     return this ?: throw BadRequestException(FailureMessages.missingQueryParam(paramName))
 }

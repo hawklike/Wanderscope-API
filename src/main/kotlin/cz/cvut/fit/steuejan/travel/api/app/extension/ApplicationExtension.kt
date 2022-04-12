@@ -57,13 +57,21 @@ suspend fun PipelineContext<*, ApplicationCall>.getFile(): FileWrapper {
     multipartData.forEachPart { part ->
         if (part is PartData.FileItem) {
             withContext(Dispatchers.IO) {
-                val bytes = part.streamProvider().use { it.readBytes() }
+                val bytes = part.streamProvider().readBytes()
                 val name = part.originalFileName
                     ?: throw BadRequestException(FailureMessages.MULTIPART_FORM_MISSING_FILE_NAME)
                 file = FileWrapper(name, bytes)
             }
-            part.dispose()
         }
     }
     return file ?: throw BadRequestException(FailureMessages.MULTIPART_FORM_MISSING_FILE)
+}
+
+suspend fun PipelineContext<*, ApplicationCall>.preventH18bug() {
+    try {
+        getFile()
+    } catch (ex: Exception) {
+        //this code here is to fix bug on Heroku router
+        //https://stackoverflow.com/a/63057984/9723204
+    }
 }

@@ -3,6 +3,8 @@ package cz.cvut.fit.steuejan.travel.api.app.statuspages
 import cz.cvut.fit.steuejan.travel.api.app.exception.*
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.NotFoundException
+import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import cz.cvut.fit.steuejan.travel.api.app.extension.preventH18bug
 import cz.cvut.fit.steuejan.travel.api.app.extension.respond
 import cz.cvut.fit.steuejan.travel.api.app.response.Failure
 import cz.cvut.fit.steuejan.travel.api.app.response.Status
@@ -10,6 +12,7 @@ import io.ktor.features.*
 
 fun StatusPages.Configuration.generalStatusPages() {
     exception<BadRequestException> {
+        preventH18bug()
         respond(Failure(Status.BAD_REQUEST, it.message))
     }
 
@@ -27,5 +30,10 @@ fun StatusPages.Configuration.generalStatusPages() {
 
     exception<ForbiddenException> {
         respond(Failure(Status.FORBIDDEN, it.message))
+    }
+
+    exception<ParameterConversionException> {
+        preventH18bug()
+        respond(Failure(Status.BAD_REQUEST, FailureMessages.CONVERSION_ERROR))
     }
 }
