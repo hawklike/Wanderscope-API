@@ -17,6 +17,9 @@ object FailureMessages {
     const val UNAUTHORIZED =
         "User is not authorized. Provide valid JWT as the bearer token in the Authorization header."
 
+    const val CONVERSION_ERROR =
+        "Check if your request URL is not missing any resource identification. For example if you didn't send foo/bar instead of foo/12/bar."
+
     const val USER_NOT_FOUND = "User not found."
     const val TRIP_NOT_FOUND = "Trip not found."
     const val USER_OR_TRIP_NOT_FOUND =

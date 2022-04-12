@@ -66,3 +66,12 @@ suspend fun PipelineContext<*, ApplicationCall>.getFile(): FileWrapper {
     }
     return file ?: throw BadRequestException(FailureMessages.MULTIPART_FORM_MISSING_FILE)
 }
+
+suspend fun PipelineContext<*, ApplicationCall>.preventH18bug() {
+    try {
+        getFile()
+    } catch (ex: Exception) {
+        //this code here is to fix bug on Heroku router
+        //https://stackoverflow.com/a/63057984/9723204
+    }
+}

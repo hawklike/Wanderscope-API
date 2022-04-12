@@ -76,10 +76,9 @@ private fun Route.saveDocumentMetadataInTrip(documentController: DocumentControl
 
 private fun Route.saveDataInTrip(documentController: DocumentController) {
     post<Trip.Document.Data> {
-        val file = getFile()
         val tripId = it.document.trip.id.throwIfMissing(it.document.trip::id.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
-        respond(documentController.saveData(getUserId(), tripId, documentId, file))
+        respond(documentController.saveData(getUserId(), tripId, documentId, getFile()))
     }
 }
 
@@ -163,11 +162,10 @@ private suspend fun getDataInPoi(
 @Suppress("DuplicatedCode") //IDE misinterpreted duplication
 private fun Route.saveDataInTransport(documentController: DocumentController) {
     post<Trip.Transport.Document.Data> {
-        val file = getFile()
         val tripId = it.document.transport.trip.id.throwIfMissing(it.document.transport.trip::id.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
         val transportId = it.document.transport.transportId.throwIfMissing(it.document.transport::transportId.name)
-        val response = documentController.saveData(getUserId(), tripId, transportId, documentId, file, TRANSPORT)
+        val response = documentController.saveData(getUserId(), tripId, transportId, documentId, getFile(), TRANSPORT)
         respond(response)
     }
 }
@@ -175,13 +173,12 @@ private fun Route.saveDataInTransport(documentController: DocumentController) {
 @Suppress("DuplicatedCode") //IDE misinterpreted duplication
 private fun Route.saveDataInAccommodation(documentController: DocumentController) {
     post<Trip.Accomodation.Document.Data> {
-        val file = getFile()
         val tripId = it.document.accommodation.trip.id.throwIfMissing(it.document.accommodation.trip::id.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
         val accommodationId =
             it.document.accommodation.accomodationId.throwIfMissing(it.document.accommodation::accomodationId.name)
         val response =
-            documentController.saveData(getUserId(), tripId, accommodationId, documentId, file, ACCOMMODATION)
+            documentController.saveData(getUserId(), tripId, accommodationId, documentId, getFile(), ACCOMMODATION)
         respond(response)
     }
 }
@@ -189,11 +186,10 @@ private fun Route.saveDataInAccommodation(documentController: DocumentController
 @Suppress("DuplicatedCode") //IDE misinterpreted duplication
 private fun Route.saveDataInActivity(documentController: DocumentController) {
     post<Trip.Activity.Document.Data> {
-        val file = getFile()
         val tripId = it.document.activity.trip.id.throwIfMissing(it.document.activity.trip::id.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
         val activityId = it.document.activity.activityId.throwIfMissing(it.document.activity::activityId.name)
-        val response = documentController.saveData(getUserId(), tripId, activityId, documentId, file, ACTIVITY)
+        val response = documentController.saveData(getUserId(), tripId, activityId, documentId, getFile(), ACTIVITY)
         respond(response)
     }
 }
@@ -201,11 +197,10 @@ private fun Route.saveDataInActivity(documentController: DocumentController) {
 @Suppress("DuplicatedCode") //IDE misinterpreted duplication
 private fun Route.saveDataInPlace(documentController: DocumentController) {
     post<Trip.Place.Document.Data> {
-        val file = getFile()
         val tripId = it.document.place.trip.id.throwIfMissing(it.document.place.trip::id.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
         val placeId = it.document.place.placeId.throwIfMissing(it.document.place::placeId.name)
-        val response = documentController.saveData(getUserId(), tripId, placeId, documentId, file, PLACE)
+        val response = documentController.saveData(getUserId(), tripId, placeId, documentId, getFile(), PLACE)
         respond(response)
     }
 }

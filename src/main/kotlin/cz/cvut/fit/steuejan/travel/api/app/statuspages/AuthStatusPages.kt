@@ -1,7 +1,7 @@
 package cz.cvut.fit.steuejan.travel.api.app.statuspages
 
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
-import cz.cvut.fit.steuejan.travel.api.app.extension.getFile
+import cz.cvut.fit.steuejan.travel.api.app.extension.preventH18bug
 import cz.cvut.fit.steuejan.travel.api.app.extension.respond
 import cz.cvut.fit.steuejan.travel.api.app.response.Failure
 import cz.cvut.fit.steuejan.travel.api.app.response.Status
@@ -21,12 +21,7 @@ fun StatusPages.Configuration.authStatusPages() {
     }
 
     status(HttpStatusCode.Unauthorized) {
-        try {
-            getFile()
-        } catch (ex: Exception) {
-            //this code here is to fix bug on Heroku router
-            //https://stackoverflow.com/a/63057984/9723204
-        }
+        preventH18bug()
         respond(Failure(Status.UNAUTHORIZED, FailureMessages.UNAUTHORIZED))
     }
 }
