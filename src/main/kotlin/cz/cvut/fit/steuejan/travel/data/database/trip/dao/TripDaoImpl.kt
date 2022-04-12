@@ -13,8 +13,11 @@ import cz.cvut.fit.steuejan.travel.data.extension.*
 import cz.cvut.fit.steuejan.travel.data.model.Duration
 import cz.cvut.fit.steuejan.travel.data.model.UserRole
 import cz.cvut.fit.steuejan.travel.data.util.transaction
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.JoinType
+import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.select
 
 class TripDaoImpl : TripDao {
 
@@ -71,7 +74,7 @@ class TripDaoImpl : TripDao {
 
         val query = getUsersFieldSet()
             .select(where)
-            .orderBy(TripUserTable.role, SortOrder.DESC)
+            .orderBy(TripUserTable.role)
             .withDistinct()
 
         return transaction {

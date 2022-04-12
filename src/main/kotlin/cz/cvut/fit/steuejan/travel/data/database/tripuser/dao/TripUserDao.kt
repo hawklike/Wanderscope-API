@@ -7,4 +7,7 @@ interface TripUserDao {
     suspend fun addConnection(userId: Int, tripId: Int, role: UserRole)
     suspend fun findConnection(userId: Int, tripId: Int): TripUserDto?
     suspend fun removeConnection(userId: Int, tripId: Int): Boolean
+    suspend fun changeRole(userId: Int, tripId: Int, newRole: UserRole): Boolean
+    suspend fun countUsersInTrip(tripId: Int): Long
+    suspend fun countAdminsInTrip(tripId: Int): Long
 }
