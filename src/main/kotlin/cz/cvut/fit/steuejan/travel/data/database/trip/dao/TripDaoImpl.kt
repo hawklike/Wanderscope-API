@@ -1,7 +1,6 @@
 package cz.cvut.fit.steuejan.travel.data.database.trip.dao
 
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
-import cz.cvut.fit.steuejan.travel.api.app.exception.NotFoundException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.data.database.trip.TripTable
 import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripDto
@@ -12,13 +11,14 @@ import cz.cvut.fit.steuejan.travel.data.database.user.UserDto
 import cz.cvut.fit.steuejan.travel.data.database.user.UserTable
 import cz.cvut.fit.steuejan.travel.data.extension.*
 import cz.cvut.fit.steuejan.travel.data.model.Duration
+import cz.cvut.fit.steuejan.travel.data.model.UserRole
 import cz.cvut.fit.steuejan.travel.data.util.transaction
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class TripDaoImpl : TripDao {
 
-    override suspend fun createTrip(ownerId: Int, canEdit: Boolean, trip: TripDto) = transaction {
+    override suspend fun createTrip(ownerId: Int, role: UserRole, trip: TripDto) = transaction {
         val tripId = TripTable.insertAndGetIdOrNull {
             it[name] = trip.name
             it[owner] = ownerId
@@ -31,8 +31,8 @@ class TripDaoImpl : TripDao {
         TripUserTable.insertOrNull {
             it[this.user] = ownerId
             it[this.trip] = tripId
-            it[this.canEdit] = canEdit
-        } ?: throw NotFoundException(FailureMessages.USER_OR_TRIP_NOT_FOUND)
+            it[this.role] = role
+        } ?: throw BadRequestException(FailureMessages.USER_OR_TRIP_NOT_FOUND)
 
         return@transaction tripId.value
     }
@@ -62,16 +62,16 @@ class TripDaoImpl : TripDao {
         }
     }.isUpdated()
 
-    override suspend fun showUsers(tripId: Int, canEdit: Boolean?): List<TripUsersDto> {
-        val where = if (canEdit != null) {
-            (TripTable.id eq tripId) and (TripUserTable.canEdit eq canEdit)
+    override suspend fun showUsers(tripId: Int, role: UserRole?): List<TripUsersDto> {
+        val where = if (role != null) {
+            (TripTable.id eq tripId) and (TripUserTable.role eq role)
         } else {
             TripTable.id eq tripId
         }
 
         val query = getUsersFieldSet()
             .select(where)
-            .orderBy(TripUserTable.canEdit, SortOrder.DESC)
+            .orderBy(TripUserTable.role, SortOrder.DESC)
             .withDistinct()
 
         return transaction {

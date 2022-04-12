@@ -2,6 +2,7 @@ package cz.cvut.fit.steuejan.travel.api.trip.model
 
 import cz.cvut.fit.steuejan.travel.api.auth.model.AccountType
 import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripUsersDto
+import cz.cvut.fit.steuejan.travel.data.model.UserRole
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -11,7 +12,7 @@ data class TripUser(
     val displayName: String?,
     val email: String,
     val accountType: AccountType,
-    val canEdit: Boolean
+    val role: UserRole
 ) {
     companion object {
         fun fromDto(dto: TripUsersDto) = with(dto.user) {
@@ -21,7 +22,7 @@ data class TripUser(
                 displayName = displayName,
                 email = credentials.login.email,
                 accountType = credentials.accountType,
-                canEdit = dto.connection.canEdit
+                role = dto.connection.role
             )
         }
     }
