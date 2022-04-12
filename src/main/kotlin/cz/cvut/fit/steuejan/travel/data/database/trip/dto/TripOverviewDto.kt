@@ -1,7 +1,7 @@
-package cz.cvut.fit.steuejan.travel.data.dto
+package cz.cvut.fit.steuejan.travel.data.database.trip.dto
 
-import cz.cvut.fit.steuejan.travel.data.database.trip.TripDto
 import cz.cvut.fit.steuejan.travel.data.database.tripuser.TripUserDto
+import cz.cvut.fit.steuejan.travel.data.dto.Dto
 
 data class TripOverviewDto(
     val trip: TripDto,

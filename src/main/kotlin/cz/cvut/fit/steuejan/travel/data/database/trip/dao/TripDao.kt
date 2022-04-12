@@ -1,6 +1,7 @@
 package cz.cvut.fit.steuejan.travel.data.database.trip.dao
 
-import cz.cvut.fit.steuejan.travel.data.database.trip.TripDto
+import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripDto
+import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripUsersDto
 import cz.cvut.fit.steuejan.travel.data.model.Duration
 
 interface TripDao {
@@ -10,4 +11,5 @@ interface TripDao {
     suspend fun deleteTrip(tripId: Int): Boolean
     suspend fun shareTrip()
     suspend fun editDate(tripId: Int, duration: Duration): Boolean
+    suspend fun showUsers(tripId: Int, canEdit: Boolean?): List<TripUsersDto>
 }

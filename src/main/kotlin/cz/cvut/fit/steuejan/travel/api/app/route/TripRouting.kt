@@ -34,6 +34,7 @@ fun Routing.tripRoutes() {
         changeDate(tripController)
 
         showDocuments(tripController)
+        showUsers(tripController)
     }
 }
 
@@ -79,5 +80,13 @@ private fun Route.showDocuments(tripController: TripController) {
     get<Trip.Documents> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         respond(tripController.showDocuments(getUserId(), tripId))
+    }
+}
+
+private fun Route.showUsers(tripController: TripController) {
+    get<Trip.Users> {
+        val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
+        val canEdit = it.canEdit
+        respond(tripController.showUsers(getUserId(), tripId, canEdit))
     }
 }

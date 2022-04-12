@@ -3,13 +3,13 @@ package cz.cvut.fit.steuejan.travel.data.database.user.dao
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.api.auth.model.AccountType
-import cz.cvut.fit.steuejan.travel.data.database.trip.TripDto
 import cz.cvut.fit.steuejan.travel.data.database.trip.TripTable
+import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripDto
+import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripOverviewDto
 import cz.cvut.fit.steuejan.travel.data.database.tripuser.TripUserDto
 import cz.cvut.fit.steuejan.travel.data.database.tripuser.TripUserTable
 import cz.cvut.fit.steuejan.travel.data.database.user.UserDto
 import cz.cvut.fit.steuejan.travel.data.database.user.UserTable
-import cz.cvut.fit.steuejan.travel.data.dto.TripOverviewDto
 import cz.cvut.fit.steuejan.travel.data.extension.*
 import cz.cvut.fit.steuejan.travel.data.model.Username
 import cz.cvut.fit.steuejan.travel.data.util.transaction

@@ -34,6 +34,13 @@ class Trip(val id: Int? = null) {
         }
     }
 
+    @Location(Users.URL)
+    class Users(val trip: Trip, val canEdit: Boolean? = null) {
+        companion object {
+            const val URL = "/users"
+        }
+    }
+
     @Location("${Document.URL}/{documentId?}")
     class Document(val trip: Trip, val documentId: Int? = null) {
         companion object {
