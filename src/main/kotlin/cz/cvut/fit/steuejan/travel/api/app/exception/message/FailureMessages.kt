@@ -42,7 +42,7 @@ object FailureMessages {
 
     const val NAME_TOO_LONG = "Name is too long. Max length allowed is $NAME_LENGTH"
 
-    const val DELETE_TRIP_PROHIBITED = "User is not owner of the trip."
+    const val DELETE_TRIP_PROHIBITED = "User doesn't have an admin role."
     const val EDIT_TRIP_PROHIBITED = "User cannot edit this trip."
     const val DOCUMENT_SET_KEY_PROHIBITED = "Only owner of the document may set a key."
     const val DOCUMENT_DATA_PROHIBITED =

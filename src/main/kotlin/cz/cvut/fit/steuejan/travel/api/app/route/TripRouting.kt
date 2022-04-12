@@ -86,7 +86,6 @@ private fun Route.showDocuments(tripController: TripController) {
 private fun Route.showUsers(tripController: TripController) {
     get<Trip.Users> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
-        val canEdit = it.canEdit
-        respond(tripController.showUsers(getUserId(), tripId, canEdit))
+        respond(tripController.showUsers(getUserId(), tripId, it.role))
     }
 }

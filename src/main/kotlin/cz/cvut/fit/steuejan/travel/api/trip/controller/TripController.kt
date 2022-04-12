@@ -17,6 +17,7 @@ import cz.cvut.fit.steuejan.travel.api.trip.response.TripUsersResponse
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
 import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripDto
 import cz.cvut.fit.steuejan.travel.data.model.Duration
+import cz.cvut.fit.steuejan.travel.data.model.UserRole
 
 class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory) {
 
@@ -25,7 +26,7 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
             throw BadRequestException(FailureMessages.NAME_TOO_LONG)
         }
 
-        val tripId = daoFactory.tripDao.createTrip(userId, true, trip)
+        val tripId = daoFactory.tripDao.createTrip(userId, UserRole.ADMIN, trip)
         return CreatedResponse.success(tripId)
     }
 
@@ -63,7 +64,7 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
         with(invitation) {
             val user = daoFactory.userDao.findByUsername(username)
                 ?: throw NotFoundException(FailureMessages.USER_NOT_FOUND)
-            daoFactory.tripUserDao.addConnection(user.id, tripId, canEdit)
+            daoFactory.tripUserDao.addConnection(user.id, tripId, role)
         }
 
         return Success(Status.NO_CONTENT)
@@ -84,9 +85,9 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
         return Success(Status.NO_CONTENT)
     }
 
-    suspend fun showUsers(userId: Int, tripId: Int, canEdit: Boolean?): Response {
+    suspend fun showUsers(userId: Int, tripId: Int, role: UserRole?): Response {
         viewOrThrow(userId, tripId)
-        val dto = daoFactory.tripDao.showUsers(tripId, canEdit)
+        val dto = daoFactory.tripDao.showUsers(tripId, role)
         return TripUsersResponse.success(dto.map(TripUser::fromDto))
     }
 }
