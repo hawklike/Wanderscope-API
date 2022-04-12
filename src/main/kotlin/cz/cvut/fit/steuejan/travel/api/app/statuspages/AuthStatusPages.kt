@@ -24,7 +24,8 @@ fun StatusPages.Configuration.authStatusPages() {
         try {
             getFile()
         } catch (ex: Exception) {
-            //do nothing
+            //this code here is to fix bug on Heroku router
+            //https://stackoverflow.com/a/63057984/9723204
         }
         respond(Failure(Status.UNAUTHORIZED, FailureMessages.UNAUTHORIZED))
     }
