@@ -28,6 +28,13 @@ class Trip(val id: Int? = null) {
         }
     }
 
+    @Location(Role.URL)
+    class Role(val trip: Trip) {
+        companion object {
+            const val URL = "/role"
+        }
+    }
+
     @Location(Date.URL)
     class Date(val trip: Trip) {
         companion object {

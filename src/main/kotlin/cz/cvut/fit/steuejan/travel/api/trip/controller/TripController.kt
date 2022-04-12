@@ -11,6 +11,7 @@ import cz.cvut.fit.steuejan.travel.api.app.response.Status
 import cz.cvut.fit.steuejan.travel.api.app.response.Success
 import cz.cvut.fit.steuejan.travel.api.trip.document.model.DocumentOverview
 import cz.cvut.fit.steuejan.travel.api.trip.document.response.DocumentOverviewListResponse
+import cz.cvut.fit.steuejan.travel.api.trip.model.ChangeRole
 import cz.cvut.fit.steuejan.travel.api.trip.model.TripInvitation
 import cz.cvut.fit.steuejan.travel.api.trip.model.TripUser
 import cz.cvut.fit.steuejan.travel.api.trip.response.TripUsersResponse
@@ -31,10 +32,7 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
     }
 
     suspend fun deleteTrip(userId: Int, tripId: Int): Response {
-        val trip = daoFactory.tripDao.findById(tripId)
-            ?: throw ForbiddenException(FailureMessages.USER_TRIP_NOT_FOUND)
-
-        if (trip.ownerId != userId) {
+        if (daoFactory.tripUserDao.findConnection(userId, tripId)?.role != UserRole.ADMIN) {
             throw ForbiddenException(FailureMessages.DELETE_TRIP_PROHIBITED)
         }
 
@@ -95,6 +93,23 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
         if (!daoFactory.tripUserDao.removeConnection(userId, tripId)) {
             throw NotFoundException(FailureMessages.USER_TRIP_NOT_FOUND)
         }
+        return Success(Status.NO_CONTENT)
+    }
+
+    suspend fun changeRole(userId: Int, tripId: Int, changeRole: ChangeRole): Response {
+        if (daoFactory.tripUserDao.findConnection(userId, tripId)?.role != UserRole.ADMIN) {
+            throw ForbiddenException(FailureMessages.EDIT_CHANGE_ROLE_PROHIBITED)
+        }
+
+        //remove user if no role set
+        if (changeRole.newRole == null) {
+            return leave(changeRole.whomId, tripId)
+        }
+
+        if (!daoFactory.tripUserDao.changeRole(changeRole.whomId, tripId, changeRole.newRole)) {
+            throw NotFoundException(FailureMessages.USER_TRIP_NOT_FOUND)
+        }
+
         return Success(Status.NO_CONTENT)
     }
 }
