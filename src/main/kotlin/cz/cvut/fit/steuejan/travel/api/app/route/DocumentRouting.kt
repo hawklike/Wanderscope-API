@@ -4,7 +4,6 @@
 package cz.cvut.fit.steuejan.travel.api.app.route
 
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.ControllerFactory
-import cz.cvut.fit.steuejan.travel.api.app.exception.UnauthorizedException
 import cz.cvut.fit.steuejan.travel.api.app.extension.getFile
 import cz.cvut.fit.steuejan.travel.api.app.extension.getUserId
 import cz.cvut.fit.steuejan.travel.api.app.extension.receive
@@ -40,11 +39,7 @@ fun Routing.documentRoutes() {
         val documentController = controllerFactory.documentController
 
         saveDocumentMetadataInTrip(documentController)
-        try {
-            saveDataInTrip(documentController)
-        } catch (ex: Exception) {
-            throw UnauthorizedException("fakt")
-        }
+        saveDataInTrip(documentController)
         setDocumentKeyInTrip(documentController)
         getDataInTrip(documentController)
 

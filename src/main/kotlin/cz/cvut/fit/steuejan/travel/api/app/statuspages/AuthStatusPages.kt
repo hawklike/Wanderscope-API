@@ -1,6 +1,7 @@
 package cz.cvut.fit.steuejan.travel.api.app.statuspages
 
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import cz.cvut.fit.steuejan.travel.api.app.extension.getFile
 import cz.cvut.fit.steuejan.travel.api.app.extension.respond
 import cz.cvut.fit.steuejan.travel.api.app.response.Failure
 import cz.cvut.fit.steuejan.travel.api.app.response.Status
@@ -20,7 +21,11 @@ fun StatusPages.Configuration.authStatusPages() {
     }
 
     status(HttpStatusCode.Unauthorized) {
-        finish()
+        try {
+            getFile()
+        } catch (ex: Exception) {
+            //do nothing
+        }
         respond(Failure(Status.UNAUTHORIZED, FailureMessages.UNAUTHORIZED))
     }
 }
