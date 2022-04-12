@@ -10,11 +10,8 @@ import cz.cvut.fit.steuejan.travel.data.extension.isUpdated
 import cz.cvut.fit.steuejan.travel.data.extension.selectFirst
 import cz.cvut.fit.steuejan.travel.data.model.UserRole
 import cz.cvut.fit.steuejan.travel.data.util.transaction
-import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.update
 
 class TripUserDaoImpl : TripUserDao {
     override suspend fun addConnection(userId: Int, tripId: Int, role: UserRole) {
@@ -40,6 +37,14 @@ class TripUserDaoImpl : TripUserDao {
             it[role] = newRole
         }
     }.isUpdated()
+
+    override suspend fun countUsersInTrip(tripId: Int) = transaction {
+        TripUserTable.select { TripUserTable.trip eq tripId }.count()
+    }
+
+    override suspend fun countAdminsInTrip(tripId: Int) = transaction {
+        TripUserTable.select { (TripUserTable.trip eq tripId) and (TripUserTable.role eq UserRole.ADMIN) }.count()
+    }
 
     private fun findById(userId: Int, tripId: Int): Op<Boolean> {
         return (TripUserTable.user eq userId) and (TripUserTable.trip eq tripId)

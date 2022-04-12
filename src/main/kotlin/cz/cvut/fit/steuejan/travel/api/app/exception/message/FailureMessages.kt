@@ -5,8 +5,16 @@ import cz.cvut.fit.steuejan.travel.api.app.route.DOCUMENT_KEY_HEADER
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig.Companion.NAME_LENGTH
 
 object FailureMessages {
+    const val EMAIL_ALREADY_EXISTS = "Account with this email already exists."
+    const val USERNAME_ALREADY_EXISTS = "This username already exists."
+    const val EMAIL_PASSWORD_INCORRECT = "Email or password is incorrect."
+
+    const val REFRESH_TOKEN_INVALID = "Refresh token is invalid."
+    const val REFRESH_TOKEN_EXPIRED = "Refresh token has expired."
+
     const val PASSWORDS_DONT_MATCH = "Passwords don't match."
     const val PASSWORDS_ARE_SAME_ERROR = "New password is the same as the old one."
+    const val OLD_PASSWORD_WRONG = "Given password is wrong."
     const val RESET_PASSWORD_MISSING_PASS = "Missing password parameter."
     const val RESET_PASSWORD_MISSING_COFIRM_PASS = "Missing password confirmation parameter."
     const val RESET_PASSWORD_PROHIBITED = "Resetting password prohibited."
@@ -44,7 +52,14 @@ object FailureMessages {
 
     const val DELETE_TRIP_PROHIBITED = "User doesn't have an admin role in this trip."
     const val EDIT_TRIP_PROHIBITED = "User cannot edit this trip."
-    const val EDIT_CHANGE_ROLE_PROHIBITED = "Only admin in this trip may change users role."
+    const val EDIT_CHANGE_ROLE_PROHIBITED = "Only admins in this trip may change users role."
+
+    const val INVITE_PROHIBITED = "User cannot invite in this trip."
+    const val INVITE_EDITOR_PROHIBITED = "Editor cannot invite new user who will have admin rights."
+
+    const val LEAVE_TRIP_PROHIBITED =
+        "User can't leave this trip. He/she must be alone in the trip or there must be another admin within the trip."
+    const val CHANGE_ROLE_TO_MYSELF_PROHIBITED = "At least one admin must stay in this trip."
 
     const val DOCUMENT_SET_KEY_PROHIBITED = "Only owner of the document may set a key."
     const val DOCUMENT_DATA_PROHIBITED =

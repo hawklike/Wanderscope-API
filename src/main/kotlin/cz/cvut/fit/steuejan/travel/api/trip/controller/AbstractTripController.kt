@@ -5,6 +5,7 @@ import cz.cvut.fit.steuejan.travel.api.app.exception.ForbiddenException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.data.database.dao.PointOfInterestDao
 import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
+import cz.cvut.fit.steuejan.travel.data.model.UserRole
 
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class AbstractTripController(protected val daoFactory: DaoFactory) {
@@ -16,6 +17,11 @@ abstract class AbstractTripController(protected val daoFactory: DaoFactory) {
 
     protected suspend fun canUserView(userId: Int, tripId: Int): Boolean {
         return daoFactory.tripUserDao.findConnection(userId, tripId)?.role?.canView() ?: false
+    }
+
+    protected suspend fun getUserRole(userId: Int, tripId: Int): UserRole {
+        return daoFactory.tripUserDao.findConnection(userId, tripId)?.role
+            ?: throw ForbiddenException(FailureMessages.USER_TRIP_NOT_FOUND)
     }
 
     protected suspend fun <T> editOrThrow(userId: Int, tripId: Int, edit: suspend () -> T): T {

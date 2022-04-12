@@ -1,18 +1,20 @@
 package cz.cvut.fit.steuejan.travel.api.auth.exception
 
+import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+
 open class AuthenticationException(override val message: String, val code: Int) : Exception(message)
 
 class EmailAlreadyExistsException(
-    message: String = "Account with this email already exists.",
-    code: Int = 128
+    message: String = FailureMessages.EMAIL_ALREADY_EXISTS,
+    code: Int = 1
 ) : AuthenticationException(message, code)
 
 class UsernameAlreadyExistsException(
-    message: String = "This username already exists.",
-    code: Int = 256
+    message: String = FailureMessages.USERNAME_ALREADY_EXISTS,
+    code: Int = 2
 ) : AuthenticationException(message, code)
 
 class InvalidLoginException(
-    message: String = "Email or password is incorrect.",
-    code: Int = 512
+    message: String = FailureMessages.EMAIL_PASSWORD_INCORRECT,
+    code: Int = 3
 ) : AuthenticationException(message, code)
