@@ -60,40 +60,4 @@ fun Route.exampleRoutes() {
         val all = listOf(Username("honza"), User("jan", "jan@seznam.cz"), Place("id", "horni dolni"))
         respond(AllResponse(all))
     }
-//
-//    post("/user") {
-//        with(receive<User>("")) {
-//            addUser(username, email)
-//        }
-//        respond(Success())
-//    }
-
-//    get("/trips") {
-//        val username = getQuery("id")
-//        respond(Success(message = getTrips(username.toInt())))
-//    }
-
-//    delete("/trip") {
-//        val id = getQuery("id")
-//        deleteTrip(id.toInt())
-//        respond(Success())
-//    }
-
-//    post("/place") {
-//        val tripId = getQuery("tripId").toInt()
-//        val place = receive<Place>("")
-//        addPlace(tripId, place.placeId, place.name)
-//        respond(Success())
-//    }
-//
-//    get("/places") {
-//        val tripId = getQuery("tripId").toInt()
-//        respond(Success(message = getPlaces(tripId)))
-//    }
-//
-//    delete("/place") {
-//        val id = getQuery("id")
-//        deletePlace(id.toInt())
-//        respond(Success())
-//    }
 }

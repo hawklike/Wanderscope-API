@@ -40,8 +40,8 @@ fun Routing.documentRoutes() {
 
         saveDocumentMetadataInTrip(documentController)
         saveDataInTrip(documentController)
-        setDocumentKeyInTrip(documentController)
         getDataInTrip(documentController)
+        setDocumentKeyInTrip(documentController)
 
         saveDocumentMetadataInTransport(documentController)
         saveDocumentMetadataInAccommodation(documentController)
