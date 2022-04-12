@@ -8,12 +8,15 @@ import cz.cvut.fit.steuejan.travel.api.app.extension.getUserId
 import cz.cvut.fit.steuejan.travel.api.app.extension.receive
 import cz.cvut.fit.steuejan.travel.api.app.extension.respond
 import cz.cvut.fit.steuejan.travel.api.app.location.Trip
+import cz.cvut.fit.steuejan.travel.api.app.location.Trips
 import cz.cvut.fit.steuejan.travel.api.app.util.throwIfMissing
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig.Companion.JWT_AUTHENTICATION
 import cz.cvut.fit.steuejan.travel.api.trip.controller.TripController
+import cz.cvut.fit.steuejan.travel.api.trip.model.GetTripsType
 import cz.cvut.fit.steuejan.travel.api.trip.request.TripDateRequest
 import cz.cvut.fit.steuejan.travel.api.trip.request.TripInvitationRequest
 import cz.cvut.fit.steuejan.travel.api.trip.request.TripRequest
+import cz.cvut.fit.steuejan.travel.api.user.controller.UserController
 import io.ktor.auth.*
 import io.ktor.locations.*
 import io.ktor.locations.post
@@ -26,15 +29,20 @@ fun Routing.tripRoutes() {
 
     authenticate(JWT_AUTHENTICATION) {
         val tripController = controllerFactory.tripController
+        val userController = controllerFactory.userController
 
         createTrip(tripController)
         deleteTrip(tripController)
         editTrip(tripController)
-        inviteToTrip(tripController)
         changeDate(tripController)
+
+        inviteToTrip(tripController)
+        leaveTrip(tripController)
 
         showDocuments(tripController)
         showUsers(tripController)
+
+        showUserTrips(userController)
     }
 }
 
@@ -88,5 +96,31 @@ private fun Route.showUsers(tripController: TripController) {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val canEdit = it.canEdit
         respond(tripController.showUsers(getUserId(), tripId, canEdit))
+    }
+}
+
+private fun Route.showUserTrips(userController: UserController) {
+    get<Trips> {
+        val response = when (it.scope) {
+            GetTripsType.ALL -> {
+                userController.showAllTrips(getUserId())
+            }
+            GetTripsType.UPCOMING -> {
+                val date = it.date.throwIfMissing(it::date.name)
+                userController.showUpcomingTrips(getUserId(), date)
+            }
+            GetTripsType.PAST -> {
+                val date = it.date.throwIfMissing(it::date.name)
+                userController.showPastTrips(getUserId(), date)
+            }
+        }
+        respond(response)
+    }
+}
+
+private fun Route.leaveTrip(tripController: TripController) {
+    post<Trip.Leave> {
+        val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
+        respond(tripController.leave(getUserId(), tripId))
     }
 }

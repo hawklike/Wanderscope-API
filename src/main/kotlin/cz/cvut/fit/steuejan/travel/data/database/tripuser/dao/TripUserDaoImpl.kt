@@ -5,9 +5,13 @@ import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.data.database.tripuser.TripUserDto
 import cz.cvut.fit.steuejan.travel.data.database.tripuser.TripUserTable
 import cz.cvut.fit.steuejan.travel.data.extension.insertOrNull
+import cz.cvut.fit.steuejan.travel.data.extension.isDeleted
 import cz.cvut.fit.steuejan.travel.data.extension.selectFirst
 import cz.cvut.fit.steuejan.travel.data.util.transaction
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 
 class TripUserDaoImpl : TripUserDao {
     override suspend fun addConnection(userId: Int, tripId: Int, canEdit: Boolean) {
@@ -21,8 +25,14 @@ class TripUserDaoImpl : TripUserDao {
     }
 
     override suspend fun findConnection(userId: Int, tripId: Int) = transaction {
-        TripUserTable.selectFirst {
-            (TripUserTable.user eq userId) and (TripUserTable.trip eq tripId)
-        }
+        TripUserTable.selectFirst { findById(userId, tripId) }
     }?.let { TripUserDto.fromDb(it) }
+
+    override suspend fun removeConnection(userId: Int, tripId: Int) = transaction {
+        TripUserTable.deleteWhere { findById(userId, tripId) }
+    }.isDeleted()
+
+    private fun findById(userId: Int, tripId: Int): Op<Boolean> {
+        return (TripUserTable.user eq userId) and (TripUserTable.trip eq tripId)
+    }
 }
