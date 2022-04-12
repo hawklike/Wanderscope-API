@@ -5,13 +5,13 @@ import io.ktor.application.*
 import io.ktor.locations.*
 import io.ktor.routing.*
 
+@Suppress("OPT_IN_IS_NOT_ENABLED")
 @OptIn(KtorExperimentalLocationsAPI::class)
 fun Application.configureRouting() {
     routing {
         authRoutes()
         accountRoutes()
         tripRoutes()
-        userRoutes()
         transportRoutes()
         accomodationRoutes()
         activityRoutes()

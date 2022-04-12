@@ -89,4 +89,11 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
         val dto = daoFactory.tripDao.showUsers(tripId, canEdit)
         return TripUsersResponse.success(dto.map(TripUser::fromDto))
     }
+
+    suspend fun leave(userId: Int, tripId: Int): Response {
+        if (!daoFactory.tripUserDao.removeConnection(userId, tripId)) {
+            throw NotFoundException(FailureMessages.USER_TRIP_NOT_FOUND)
+        }
+        return Success(Status.NO_CONTENT)
+    }
 }
