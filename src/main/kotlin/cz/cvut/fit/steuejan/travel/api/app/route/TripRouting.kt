@@ -34,6 +34,7 @@ fun Routing.tripRoutes() {
         val userController = controllerFactory.userController
 
         createTrip(tripController)
+        getTrip(tripController)
         deleteTrip(tripController)
         editTrip(tripController)
         changeDate(tripController)
@@ -61,6 +62,13 @@ private fun Route.createTrip(tripController: TripController) {
     post<Trip> {
         val trip = receive<TripRequest>(TripRequest.MISSING_PARAM).toDto()
         respond(tripController.createTrip(getUserId(), trip))
+    }
+}
+
+private fun Route.getTrip(tripController: TripController) {
+    get<Trip> {
+        val tripId = it.id.throwIfMissing(it::id.name)
+        respond(tripController.getTrip(getUserId(), tripId))
     }
 }
 
