@@ -5,10 +5,8 @@ import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.data.database.dao.PointOfInterestDao
 import cz.cvut.fit.steuejan.travel.data.extension.*
 import cz.cvut.fit.steuejan.travel.data.util.transaction
-import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
 
 @Suppress("DuplicatedCode")
 class ActivityDao : PointOfInterestDao<ActivityDto> {
@@ -50,6 +48,12 @@ class ActivityDao : PointOfInterestDao<ActivityDto> {
     override suspend fun delete(tripId: Int, poiId: Int) = transaction {
         ActivityTable.deleteWhere { findById(tripId, poiId) }
     }.isDeleted()
+
+    override suspend fun show(tripId: Int) = transaction {
+        ActivityTable.select { ActivityTable.trip eq tripId }
+            .orderBy(ActivityTable.startDate, SortOrder.ASC_NULLS_LAST)
+            .map(ActivityDto::fromDb)
+    }
 
     companion object {
         const val RESOURCE_NAME = "activity"

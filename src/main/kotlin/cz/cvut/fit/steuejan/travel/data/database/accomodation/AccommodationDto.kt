@@ -1,6 +1,6 @@
 package cz.cvut.fit.steuejan.travel.data.database.accomodation
 
-import cz.cvut.fit.steuejan.travel.api.trip.poi.accomodation.response.AccomodationResponse
+import cz.cvut.fit.steuejan.travel.api.trip.poi.accomodation.response.AccommodationResponse
 import cz.cvut.fit.steuejan.travel.api.trip.poi.response.AbstractPointOfInterestResponse
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
@@ -10,7 +10,7 @@ import cz.cvut.fit.steuejan.travel.data.model.Contact
 import cz.cvut.fit.steuejan.travel.data.model.Duration
 import org.jetbrains.exposed.sql.ResultRow
 
-data class AccomodationDto(
+data class AccommodationDto(
     override val id: Int,
     override val tripId: Int,
     override val duration: Duration,
@@ -22,29 +22,29 @@ data class AccomodationDto(
 ) : PointOfInterestDto, Dto() {
 
     companion object {
-        fun fromDb(resultRow: ResultRow) = AccomodationDto(
-            id = resultRow[AccomodationTable.id].value,
-            tripId = resultRow[AccomodationTable.trip].value,
+        fun fromDb(resultRow: ResultRow) = AccommodationDto(
+            id = resultRow[AccommodationTable.id].value,
+            tripId = resultRow[AccommodationTable.trip].value,
             duration = Duration(
-                startDate = resultRow[AccomodationTable.startDate],
-                endDate = resultRow[AccomodationTable.endDate],
+                startDate = resultRow[AccommodationTable.startDate],
+                endDate = resultRow[AccommodationTable.endDate],
             ),
-            name = resultRow[AccomodationTable.name],
-            type = resultRow[AccomodationTable.type],
+            name = resultRow[AccommodationTable.name],
+            type = resultRow[AccommodationTable.type],
             address = Address(
-                googlePlaceId = resultRow[AccomodationTable.googlePlaceId],
-                address = resultRow[AccomodationTable.address]
+                googlePlaceId = resultRow[AccommodationTable.googlePlaceId],
+                address = resultRow[AccommodationTable.address]
             ),
             contact = Contact(
-                phone = resultRow[AccomodationTable.phone],
-                email = resultRow[AccomodationTable.email],
-                website = resultRow[AccomodationTable.website]
+                phone = resultRow[AccommodationTable.phone],
+                email = resultRow[AccommodationTable.email],
+                website = resultRow[AccommodationTable.website]
             ),
-            description = resultRow[AccomodationTable.description]
+            description = resultRow[AccommodationTable.description]
         )
     }
 
-    override fun toResponse(): AbstractPointOfInterestResponse = AccomodationResponse(
+    override fun toResponse(): AbstractPointOfInterestResponse = AccommodationResponse(
         id = id,
         tripId = tripId,
         duration = duration,
