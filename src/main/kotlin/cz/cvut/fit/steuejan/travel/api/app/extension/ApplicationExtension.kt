@@ -13,6 +13,7 @@ import cz.cvut.fit.steuejan.travel.api.trip.document.model.FileWrapper
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
+import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -30,6 +31,18 @@ suspend fun PipelineContext<*, ApplicationCall>.respond(response: Response) {
     with(generateHttpResponse(response)) {
         call.respond(code, body)
     }
+}
+
+suspend fun PipelineContext<*, ApplicationCall>.respondFile(file: FileWrapper) {
+    //downloadable from browser and overrides the filename with the original name
+    call.response.header(
+        HttpHeaders.ContentDisposition,
+        ContentDisposition.Attachment.withParameter(
+            ContentDisposition.Parameters.FileName,
+            file.originalName
+        ).toString()
+    )
+    call.respondBytes(file.rawData)
 }
 
 fun PipelineContext<*, ApplicationCall>.getUserId(): Int {

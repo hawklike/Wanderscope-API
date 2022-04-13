@@ -4,6 +4,7 @@
 package cz.cvut.fit.steuejan.travel.api.app.location
 
 import cz.cvut.fit.steuejan.travel.api.trip.model.GetTripsType
+import cz.cvut.fit.steuejan.travel.data.model.UserRole
 import io.ktor.locations.*
 import org.joda.time.DateTime
 
@@ -20,6 +21,20 @@ class Trip(val id: Int? = null) {
         }
     }
 
+    @Location(Leave.URL)
+    class Leave(val trip: Trip) {
+        companion object {
+            const val URL = "/leave"
+        }
+    }
+
+    @Location(Role.URL)
+    class Role(val trip: Trip) {
+        companion object {
+            const val URL = "/role"
+        }
+    }
+
     @Location(Date.URL)
     class Date(val trip: Trip) {
         companion object {
@@ -31,6 +46,13 @@ class Trip(val id: Int? = null) {
     class Documents(val trip: Trip) {
         companion object {
             const val URL = "/documents"
+        }
+    }
+
+    @Location(Users.URL)
+    class Users(val trip: Trip, val role: UserRole? = null) {
+        companion object {
+            const val URL = "/users"
         }
     }
 

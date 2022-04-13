@@ -6,6 +6,7 @@ import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.api.auth.exception.EmailAlreadyExistsException
 import cz.cvut.fit.steuejan.travel.api.auth.exception.UsernameAlreadyExistsException
 import cz.cvut.fit.steuejan.travel.api.auth.model.AccountType
+import cz.cvut.fit.steuejan.travel.api.trip.document.model.FileWrapper
 import cz.cvut.fit.steuejan.travel.data.database.user.dao.UserDao
 import cz.cvut.fit.steuejan.travel.data.model.Username
 import org.apache.commons.io.FilenameUtils
@@ -66,6 +67,12 @@ class Validator(private val userDao: UserDao, private val config: LimitsConfig) 
             return extension
         } catch (ex: Exception) {
             throw BadRequestException(FailureMessages.MULTIPART_FORM_FILE_EXTENSION_PROHIBITED)
+        }
+    }
+
+    fun validateFileSize(file: FileWrapper) {
+        if (file.rawData.size > config.documentMaxSize) {
+            throw BadRequestException(FailureMessages.documentMaxSize(config.documentMaxSize))
         }
     }
 

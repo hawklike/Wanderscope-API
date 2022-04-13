@@ -11,10 +11,17 @@ import cz.cvut.fit.steuejan.travel.api.app.response.Status
 import cz.cvut.fit.steuejan.travel.api.app.response.Success
 import cz.cvut.fit.steuejan.travel.api.trip.document.model.DocumentOverview
 import cz.cvut.fit.steuejan.travel.api.trip.document.response.DocumentOverviewListResponse
+import cz.cvut.fit.steuejan.travel.api.trip.exception.CannotChangeRoleException
+import cz.cvut.fit.steuejan.travel.api.trip.exception.CannotChangeRoleToMyselfException
+import cz.cvut.fit.steuejan.travel.api.trip.exception.CannotLeaveException
+import cz.cvut.fit.steuejan.travel.api.trip.model.ChangeRole
 import cz.cvut.fit.steuejan.travel.api.trip.model.TripInvitation
+import cz.cvut.fit.steuejan.travel.api.trip.model.TripUser
+import cz.cvut.fit.steuejan.travel.api.trip.response.TripUsersResponse
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
-import cz.cvut.fit.steuejan.travel.data.database.trip.TripDto
+import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripDto
 import cz.cvut.fit.steuejan.travel.data.model.Duration
+import cz.cvut.fit.steuejan.travel.data.model.UserRole
 
 class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory) {
 
@@ -23,15 +30,12 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
             throw BadRequestException(FailureMessages.NAME_TOO_LONG)
         }
 
-        val tripId = daoFactory.tripDao.createTrip(userId, true, trip)
+        val tripId = daoFactory.tripDao.createTrip(userId, UserRole.ADMIN, trip)
         return CreatedResponse.success(tripId)
     }
 
     suspend fun deleteTrip(userId: Int, tripId: Int): Response {
-        val trip = daoFactory.tripDao.findById(tripId)
-            ?: throw ForbiddenException(FailureMessages.USER_TRIP_NOT_FOUND)
-
-        if (trip.ownerId != userId) {
+        if (getUserRole(userId, tripId) != UserRole.ADMIN) {
             throw ForbiddenException(FailureMessages.DELETE_TRIP_PROHIBITED)
         }
 
@@ -56,12 +60,21 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
     }
 
     suspend fun invite(userId: Int, invitation: TripInvitation): Response {
-        editOrThrow(userId, invitation.tripId)
+        val userRole = getUserRole(userId, invitation.tripId)
+
+        if (!userRole.canEdit()) {
+            throw ForbiddenException(FailureMessages.INVITE_PROHIBITED)
+        }
 
         with(invitation) {
             val user = daoFactory.userDao.findByUsername(username)
                 ?: throw NotFoundException(FailureMessages.USER_NOT_FOUND)
-            daoFactory.tripUserDao.addConnection(user.id, tripId, canEdit)
+
+            //editor cannot invite user who will have admin rights
+            if (userRole == UserRole.EDITOR && role == UserRole.ADMIN) {
+                throw ForbiddenException(FailureMessages.INVITE_EDITOR_PROHIBITED)
+            }
+            daoFactory.tripUserDao.addConnection(user.id, tripId, role)
         }
 
         return Success(Status.NO_CONTENT)
@@ -79,6 +92,54 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
                 throw NotFoundException(FailureMessages.TRIP_NOT_FOUND)
             }
         }
+        return Success(Status.NO_CONTENT)
+    }
+
+    suspend fun showUsers(userId: Int, tripId: Int, role: UserRole?): Response {
+        viewOrThrow(userId, tripId)
+        val dto = daoFactory.tripDao.showUsers(tripId, role)
+        return TripUsersResponse.success(dto.map(TripUser::fromDto))
+    }
+
+    suspend fun leave(userId: Int, tripId: Int): Response {
+        val dao = daoFactory.tripUserDao
+
+        val isAdmin = getUserRole(userId, tripId) == UserRole.ADMIN
+
+        //user can leave trip if he is alone or there is another admin
+        if (!isAdmin || dao.countUsersInTrip(tripId) == 1L || dao.countAdminsInTrip(tripId) >= 2L) {
+            if (!daoFactory.tripUserDao.removeConnection(userId, tripId)) {
+                throw ForbiddenException(FailureMessages.USER_TRIP_NOT_FOUND)
+            }
+        } else {
+            throw CannotLeaveException()
+        }
+
+        return Success(Status.NO_CONTENT)
+    }
+
+    suspend fun changeRole(userId: Int, tripId: Int, changeRole: ChangeRole): Response {
+        val dao = daoFactory.tripUserDao
+        val userRole = getUserRole(userId, tripId)
+
+        if (userRole != UserRole.ADMIN) {
+            throw CannotChangeRoleException()
+        }
+
+        //remove user if no role set
+        if (changeRole.newRole == null) {
+            return leave(changeRole.whomId, tripId)
+        }
+
+        //at least one admin must stay in the trip
+        if (dao.countAdminsInTrip(tripId) == 1L && userId == changeRole.whomId) {
+            throw CannotChangeRoleToMyselfException()
+        }
+
+        if (!dao.changeRole(changeRole.whomId, tripId, changeRole.newRole)) {
+            throw NotFoundException(FailureMessages.USER_TRIP_NOT_FOUND)
+        }
+
         return Success(Status.NO_CONTENT)
     }
 }

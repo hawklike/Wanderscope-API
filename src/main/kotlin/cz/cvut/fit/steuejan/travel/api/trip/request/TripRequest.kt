@@ -1,7 +1,7 @@
 package cz.cvut.fit.steuejan.travel.api.trip.request
 
 import cz.cvut.fit.steuejan.travel.api.app.request.Request
-import cz.cvut.fit.steuejan.travel.data.database.trip.TripDto
+import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripDto
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.model.Duration
 import kotlinx.serialization.Serializable

@@ -1,16 +1,13 @@
 package cz.cvut.fit.steuejan.travel.api.trip.document.controller
 
+import cz.cvut.fit.steuejan.travel.api.app.bussines.AmazonS3
 import cz.cvut.fit.steuejan.travel.api.app.bussines.Validator
-import cz.cvut.fit.steuejan.travel.api.app.config.LimitsConfig
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.ForbiddenException
 import cz.cvut.fit.steuejan.travel.api.app.exception.NotFoundException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
-import cz.cvut.fit.steuejan.travel.api.app.response.CreatedResponse
-import cz.cvut.fit.steuejan.travel.api.app.response.Response
-import cz.cvut.fit.steuejan.travel.api.app.response.Status
-import cz.cvut.fit.steuejan.travel.api.app.response.Success
+import cz.cvut.fit.steuejan.travel.api.app.response.*
 import cz.cvut.fit.steuejan.travel.api.auth.util.Encryptor
 import cz.cvut.fit.steuejan.travel.api.trip.controller.AbstractTripController
 import cz.cvut.fit.steuejan.travel.api.trip.document.model.DocumentMetadata
@@ -22,7 +19,7 @@ class DocumentController(
     daoFactory: DaoFactory,
     private val validator: Validator,
     private val encryptor: Encryptor,
-    private val limitsConfig: LimitsConfig
+    private val amazonS3: AmazonS3
 ) : AbstractTripController(daoFactory) {
 
     suspend fun saveMetadata(
@@ -50,8 +47,8 @@ class DocumentController(
     }
 
     suspend fun saveData(userId: Int, tripId: Int, documentId: Int, file: FileWrapper): Response {
-        return saveData(userId, tripId, file) { fileWithExtension ->
-            daoFactory.documentDao.saveData(tripId, documentId, fileWithExtension)
+        return saveData(userId, tripId, file) {
+            daoFactory.documentDao.getDocument(tripId, documentId)
         }
     }
 
@@ -63,8 +60,8 @@ class DocumentController(
         file: FileWrapper,
         poiType: PointOfInterestType
     ): Response {
-        return saveData(userId, tripId, file) { fileWithExtension ->
-            daoFactory.documentDao.saveData(tripId, poiId, documentId, fileWithExtension, poiType)
+        return saveData(userId, tripId, file) {
+            daoFactory.documentDao.getDocument(tripId, poiId, documentId, poiType)
         }
     }
 
@@ -96,7 +93,6 @@ class DocumentController(
         viewOrThrow(userId, tripId)
 
         val document = dbCall.invoke() ?: throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
-        document.data ?: throw NotFoundException(FailureMessages.DOCUMENT_DATA_NULL)
 
         //document is secret
         document.key?.let { hashedKey ->
@@ -105,7 +101,8 @@ class DocumentController(
             }
         }
 
-        return FileWrapper(document.name, document.data)
+        return amazonS3.downloadFile(document.id.toString())
+            ?: throw BadRequestException(FailureMessages.DOCUMENT_DATA_NULL)
     }
 
     suspend fun setKey(userId: Int, tripId: Int, documentId: Int, key: String): Response {
@@ -157,20 +154,23 @@ class DocumentController(
         userId: Int,
         tripId: Int,
         file: FileWrapper,
-        dbCall: suspend (file: FileWrapper) -> Boolean
+        dbCall: suspend () -> DocumentDto?
     ): Response {
         editOrThrow(userId, tripId)
+        validator.validateFileSize(file)
+        validator.validateExtension(file.originalName)
 
-        if (file.rawData.size > limitsConfig.documentMaxSize) {
-            throw BadRequestException(FailureMessages.documentMaxSize(limitsConfig.documentMaxSize))
+        val document = dbCall.invoke() ?: throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
+
+        if (document.userId != userId) {
+            throw ForbiddenException(FailureMessages.DOCUMENT_UPLOAD_PROHIBITED)
         }
 
-        val extension = validator.validateExtension(file.originalName)
-
-        if (!dbCall.invoke(file.copy(extension = extension))) {
-            throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
+        return if (amazonS3.uploadFile(document.id.toString(), document.name, file)) {
+            daoFactory.documentDao.updateTime(document.id)
+            Success(Status.NO_CONTENT)
+        } else {
+            Failure(Status.INTERNAL_ERROR, FailureMessages.DOCUMENT_UPLOAD_FAILED)
         }
-
-        return Success(Status.NO_CONTENT)
     }
 }

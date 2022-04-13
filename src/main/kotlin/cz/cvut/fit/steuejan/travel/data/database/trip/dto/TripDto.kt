@@ -1,5 +1,6 @@
-package cz.cvut.fit.steuejan.travel.data.database.trip
+package cz.cvut.fit.steuejan.travel.data.database.trip.dto
 
+import cz.cvut.fit.steuejan.travel.data.database.trip.TripTable
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.model.Duration
 import org.jetbrains.exposed.sql.ResultRow

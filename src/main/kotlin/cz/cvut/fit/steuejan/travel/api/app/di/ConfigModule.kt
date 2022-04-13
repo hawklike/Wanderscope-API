@@ -1,9 +1,6 @@
 package cz.cvut.fit.steuejan.travel.api.app.di
 
-import cz.cvut.fit.steuejan.travel.api.app.config.AppConfig
-import cz.cvut.fit.steuejan.travel.api.app.config.DeploymentConfig
-import cz.cvut.fit.steuejan.travel.api.app.config.EmailConfig
-import cz.cvut.fit.steuejan.travel.api.app.config.LimitsConfig
+import cz.cvut.fit.steuejan.travel.api.app.config.*
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
 import cz.cvut.fit.steuejan.travel.data.config.Hikari
@@ -25,6 +22,7 @@ val Application.configModule: Module
         single { LimitsConfig(get()) } bind AppConfig::class
         single { EmailConfig(get()) } bind AppConfig::class
         single { DeploymentConfig(get()) } bind AppConfig::class
+        single { AmazonS3Config(get()) } bind AppConfig::class
 
         single<Hikari> { PostgresHikari(get()) }
     }

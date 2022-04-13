@@ -5,7 +5,7 @@ plugins {
 }
 
 group "cz.cvut.fit.steuejan"
-version "0.1.1"
+version "0.2.4"
 mainClassName = "io.ktor.server.netty.EngineMain"
 
 repositories {
@@ -55,6 +55,9 @@ dependencies {
 
     //postgres
     implementation "org.postgresql:postgresql:$postgres_version"
+
+    //aws s3
+    implementation "aws.sdk.kotlin:$aws_s3_version"
 
     //tests
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
