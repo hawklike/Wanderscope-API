@@ -18,7 +18,6 @@ val authModule = module {
     single { JWTControllerImpl(get(), get()) } bind JWTController::class
 
     factory { EmailSender(get()) }
-
     single { Validator(get(), get()) }
 
     single<Encryptor> { ApiEncryptor(config = get()) }

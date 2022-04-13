@@ -1,21 +1,19 @@
 package cz.cvut.fit.steuejan.travel.data.database.document.dao
 
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
-import cz.cvut.fit.steuejan.travel.api.app.exception.InternalServerErrorException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.api.trip.document.model.DocumentMetadata
-import cz.cvut.fit.steuejan.travel.api.trip.document.model.FileWrapper
 import cz.cvut.fit.steuejan.travel.data.database.document.DocumentDto
 import cz.cvut.fit.steuejan.travel.data.database.document.DocumentTable
 import cz.cvut.fit.steuejan.travel.data.extension.insertAndGetIdOrNull
 import cz.cvut.fit.steuejan.travel.data.extension.isUpdated
 import cz.cvut.fit.steuejan.travel.data.extension.selectFirst
+import cz.cvut.fit.steuejan.travel.data.extension.updateById
 import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
 import cz.cvut.fit.steuejan.travel.data.util.transaction
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 
@@ -59,20 +57,6 @@ class DocumentDaoImpl : DocumentDao {
         }.map(DocumentDto::fromDb)
     }
 
-    override suspend fun saveData(tripId: Int, documentId: Int, data: FileWrapper): Boolean {
-        return saveData(findByIdInTrip(tripId, documentId), data)
-    }
-
-    override suspend fun saveData(
-        tripId: Int,
-        poiId: Int,
-        documentId: Int,
-        data: FileWrapper,
-        poiType: PointOfInterestType
-    ): Boolean {
-        return saveData(findByIdInPoi(tripId, poiId, documentId, selectColumn(poiType)!!), data)
-    }
-
     override suspend fun setKey(tripId: Int, documentId: Int, key: String): Boolean {
         return setKey(findByIdInTrip(tripId, documentId), key)
     }
@@ -87,21 +71,15 @@ class DocumentDaoImpl : DocumentDao {
         return setKey(findByIdInPoi(tripId, poiId, documentId, selectColumn(poiType)!!), key)
     }
 
+    override suspend fun updateTime(documentId: Int) = transaction {
+        DocumentTable.updateById(documentId) {
+            it[updated] = DateTime.now(DateTimeZone.UTC)
+        }.isUpdated()
+    }
+
     private suspend fun setKey(updateWhere: Op<Boolean>, key: String) = transaction {
         DocumentTable.update({ updateWhere }) {
             it[DocumentTable.key] = key
-        }
-    }.isUpdated()
-
-    private suspend fun saveData(updateWhere: Op<Boolean>, file: FileWrapper) = transaction {
-        try {
-            DocumentTable.update({ updateWhere }) {
-                it[extension] = file.extension
-                it[updated] = DateTime.now(DateTimeZone.UTC)
-                it[data] = ExposedBlob(file.rawData)
-            }
-        } catch (ex: Exception) {
-            throw InternalServerErrorException(FailureMessages.ADD_DOCUMENT_DATA_FAILURE + ex.message)
         }
     }.isUpdated()
 
@@ -115,7 +93,7 @@ class DocumentDaoImpl : DocumentDao {
 
     companion object {
         private fun findByIdInTrip(tripId: Int, documentId: Int): Op<Boolean> {
-            return ((DocumentTable.id eq documentId) and (DocumentTable.trip eq tripId))
+            return (DocumentTable.id eq documentId) and (DocumentTable.trip eq tripId)
         }
 
         private fun findByIdInPoi(
@@ -124,7 +102,7 @@ class DocumentDaoImpl : DocumentDao {
             documentId: Int,
             poiColumn: Column<EntityID<Int>?>
         ): Op<Boolean> {
-            return ((DocumentTable.id eq documentId) and (DocumentTable.trip eq tripId) and (poiColumn eq poiId))
+            return (DocumentTable.id eq documentId) and (DocumentTable.trip eq tripId) and (poiColumn eq poiId)
         }
     }
 }

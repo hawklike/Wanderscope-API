@@ -16,9 +16,7 @@ data class DocumentDto(
     val name: String,
     val updated: DateTime,
     val type: DocumentType,
-    val extension: String?,
-    val key: String?,
-    val data: ByteArray?
+    val key: String?
 ) : Dto() {
     companion object {
         fun fromDb(resultRow: ResultRow) = DocumentDto(
@@ -32,9 +30,7 @@ data class DocumentDto(
             name = resultRow[DocumentTable.name],
             updated = resultRow[DocumentTable.updated],
             type = resultRow[DocumentTable.type],
-            extension = resultRow[DocumentTable.extension],
-            key = resultRow[DocumentTable.key],
-            data = resultRow[DocumentTable.data]?.bytes,
+            key = resultRow[DocumentTable.key]
         )
     }
 
