@@ -61,6 +61,7 @@ object FailureMessages {
         "User can't leave this trip. He/she must be alone in the trip or there must be another admin within the trip."
     const val CHANGE_ROLE_TO_MYSELF_PROHIBITED = "At least one admin must stay in this trip."
 
+    const val DOCUMENT_UPLOAD_PROHIBITED = "Only owner of the document may upload data."
     const val DOCUMENT_SET_KEY_PROHIBITED = "Only owner of the document may set a key."
     const val DOCUMENT_DATA_PROHIBITED =
         "Document is secured with a key. Provide correct key using custom header $DOCUMENT_KEY_HEADER"

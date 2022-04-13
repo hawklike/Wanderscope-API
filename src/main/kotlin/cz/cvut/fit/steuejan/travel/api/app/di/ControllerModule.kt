@@ -20,7 +20,7 @@ val controllerModule = module {
     single { AccomodationController(get()) }
     single { ActivityController(get()) }
     single { PlaceController(get()) }
-    single { DocumentController(get(), get(), get(), get()) }
+    single { DocumentController(get(), get(), get()) }
 
     single { ControllerFactory(get(), get(), get(), get(), get(), get(), get(), get()) }
 }

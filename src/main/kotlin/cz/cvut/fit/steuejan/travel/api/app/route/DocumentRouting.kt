@@ -4,28 +4,21 @@
 package cz.cvut.fit.steuejan.travel.api.app.route
 
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.ControllerFactory
-import cz.cvut.fit.steuejan.travel.api.app.extension.getFile
-import cz.cvut.fit.steuejan.travel.api.app.extension.getUserId
-import cz.cvut.fit.steuejan.travel.api.app.extension.receive
-import cz.cvut.fit.steuejan.travel.api.app.extension.respond
+import cz.cvut.fit.steuejan.travel.api.app.extension.*
 import cz.cvut.fit.steuejan.travel.api.app.location.Trip
 import cz.cvut.fit.steuejan.travel.api.app.util.throwIfMissing
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig
 import cz.cvut.fit.steuejan.travel.api.trip.document.controller.DocumentController
-import cz.cvut.fit.steuejan.travel.api.trip.document.model.FileWrapper
 import cz.cvut.fit.steuejan.travel.api.trip.document.request.DocumentKeyRequest
 import cz.cvut.fit.steuejan.travel.api.trip.document.request.DocumentMetadataRequest
 import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
 import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType.*
 import io.ktor.application.*
 import io.ktor.auth.*
-import io.ktor.http.*
-import io.ktor.http.ContentDisposition.Parameters.FileName
 import io.ktor.locations.*
 import io.ktor.locations.post
 import io.ktor.locations.put
 import io.ktor.request.*
-import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.util.pipeline.*
 import org.koin.ktor.ext.inject
@@ -88,18 +81,7 @@ private fun Route.getDataInTrip(documentController: DocumentController) {
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
         val key = call.request.header(DOCUMENT_KEY_HEADER)
         val file = documentController.getData(getUserId(), tripId, documentId, key)
-        getData(this, file)
-    }
-}
-
-private suspend fun getData(context: PipelineContext<Unit, ApplicationCall>, file: FileWrapper) {
-    with(context) {
-        //downloadable from browser and overrides the filename with the original name
-        call.response.header(
-            HttpHeaders.ContentDisposition,
-            ContentDisposition.Attachment.withParameter(FileName, file.originalName).toString()
-        )
-        call.respondBytes(file.rawData)
+        respondFile(file)
     }
 }
 
@@ -109,7 +91,7 @@ private fun Route.getDataInTransport(documentController: DocumentController) {
         val tripId = it.document.transport.trip.id.throwIfMissing(it.document.transport.trip::id.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
         val transportId = it.document.transport.transportId.throwIfMissing(it.document.transport::transportId.name)
-        getDataInPoi(this, documentController, tripId, transportId, documentId, TRANSPORT)
+        getDataInPoi(documentController, tripId, transportId, documentId, TRANSPORT)
     }
 }
 
@@ -120,7 +102,7 @@ private fun Route.getDataInAccommodation(documentController: DocumentController)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
         val transportId =
             it.document.accommodation.accomodationId.throwIfMissing(it.document.accommodation::accomodationId.name)
-        getDataInPoi(this, documentController, tripId, transportId, documentId, ACCOMMODATION)
+        getDataInPoi(documentController, tripId, transportId, documentId, ACCOMMODATION)
     }
 }
 
@@ -130,7 +112,7 @@ private fun Route.getDataInActivity(documentController: DocumentController) {
         val tripId = it.document.activity.trip.id.throwIfMissing(it.document.activity.trip::id.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
         val activityId = it.document.activity.activityId.throwIfMissing(it.document.activity::activityId.name)
-        getDataInPoi(this, documentController, tripId, activityId, documentId, ACTIVITY)
+        getDataInPoi(documentController, tripId, activityId, documentId, ACTIVITY)
     }
 }
 
@@ -140,23 +122,20 @@ private fun Route.getDataInPlace(documentController: DocumentController) {
         val tripId = it.document.place.trip.id.throwIfMissing(it.document.place.trip::id.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
         val placeId = it.document.place.placeId.throwIfMissing(it.document.place::placeId.name)
-        getDataInPoi(this, documentController, tripId, placeId, documentId, PLACE)
+        getDataInPoi(documentController, tripId, placeId, documentId, PLACE)
     }
 }
 
-private suspend fun getDataInPoi(
-    context: PipelineContext<Unit, ApplicationCall>,
+private suspend fun PipelineContext<Unit, ApplicationCall>.getDataInPoi(
     documentController: DocumentController,
     tripId: Int,
     poiId: Int,
     documentId: Int,
     poiType: PointOfInterestType
 ) {
-    with(context) {
-        val key = call.request.header(DOCUMENT_KEY_HEADER)
-        val file = documentController.getData(getUserId(), tripId, poiId, documentId, key, poiType)
-        getData(this, file)
-    }
+    val key = call.request.header(DOCUMENT_KEY_HEADER)
+    val file = documentController.getData(getUserId(), tripId, poiId, documentId, key, poiType)
+    respondFile(file)
 }
 
 @Suppress("DuplicatedCode") //IDE misinterpreted duplication
