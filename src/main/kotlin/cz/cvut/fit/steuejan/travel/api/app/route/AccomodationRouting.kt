@@ -10,7 +10,7 @@ import cz.cvut.fit.steuejan.travel.api.app.extension.respond
 import cz.cvut.fit.steuejan.travel.api.app.location.Trip
 import cz.cvut.fit.steuejan.travel.api.app.util.throwIfMissing
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig
-import cz.cvut.fit.steuejan.travel.api.trip.poi.accomodation.controller.AccomodationController
+import cz.cvut.fit.steuejan.travel.api.trip.poi.accomodation.controller.AccommodationController
 import cz.cvut.fit.steuejan.travel.api.trip.poi.accomodation.request.AccomodationRequest
 import io.ktor.auth.*
 import io.ktor.locations.*
@@ -23,7 +23,7 @@ fun Routing.accomodationRoutes() {
     val controllerFactory: ControllerFactory by inject()
 
     authenticate(JWTConfig.JWT_AUTHENTICATION) {
-        val accomodationController = controllerFactory.accomodationController
+        val accomodationController = controllerFactory.accommodationController
 
         addAccomodation(accomodationController)
         showAccomodation(accomodationController)
@@ -33,44 +33,44 @@ fun Routing.accomodationRoutes() {
     }
 }
 
-private fun Route.addAccomodation(accomodationController: AccomodationController) {
-    post<Trip.Accomodation> {
+private fun Route.addAccomodation(accommodationController: AccommodationController) {
+    post<Trip.Accommodation> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val accomodation = receive<AccomodationRequest>(AccomodationRequest.MISSING_PARAM).toDto()
-        respond(accomodationController.add(getUserId(), tripId, accomodation))
+        respond(accommodationController.add(getUserId(), tripId, accomodation))
     }
 }
 
-private fun Route.showAccomodation(accomodationController: AccomodationController) {
-    get<Trip.Accomodation> {
+private fun Route.showAccomodation(accommodationController: AccommodationController) {
+    get<Trip.Accommodation> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
-        val accomodationId = it.accomodationId.throwIfMissing(it::accomodationId.name)
-        respond(accomodationController.getAccomodation(getUserId(), tripId, accomodationId))
+        val accomodationId = it.accommodationId.throwIfMissing(it::accommodationId.name)
+        respond(accommodationController.getAccommodation(getUserId(), tripId, accomodationId))
     }
 }
 
-private fun Route.editAccomodation(accomodationController: AccomodationController) {
-    put<Trip.Accomodation> {
+private fun Route.editAccomodation(accommodationController: AccommodationController) {
+    put<Trip.Accommodation> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
-        val accomodationId = it.accomodationId.throwIfMissing(it::accomodationId.name)
+        val accomodationId = it.accommodationId.throwIfMissing(it::accommodationId.name)
         val transport = receive<AccomodationRequest>(AccomodationRequest.MISSING_PARAM).toDto()
-        respond(accomodationController.edit(getUserId(), tripId, accomodationId, transport))
+        respond(accommodationController.edit(getUserId(), tripId, accomodationId, transport))
     }
 }
 
-private fun Route.deleteAccomodation(accomodationController: AccomodationController) {
-    delete<Trip.Accomodation> {
+private fun Route.deleteAccomodation(accommodationController: AccommodationController) {
+    delete<Trip.Accommodation> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
-        val accomodationId = it.accomodationId.throwIfMissing(it::accomodationId.name)
-        respond(accomodationController.delete(getUserId(), tripId, accomodationId))
+        val accomodationId = it.accommodationId.throwIfMissing(it::accommodationId.name)
+        respond(accommodationController.delete(getUserId(), tripId, accomodationId))
     }
 }
 
-private fun Route.showDocuments(accomodationController: AccomodationController) {
-    get<Trip.Accomodation.Documents> {
+private fun Route.showDocuments(accommodationController: AccommodationController) {
+    get<Trip.Accommodation.Documents> {
         val tripId = it.accommodation.trip.id.throwIfMissing(it.accommodation.trip::id.name)
-        val accomodationId = it.accommodation.accomodationId.throwIfMissing(it.accommodation::accomodationId.name)
-        respond(accomodationController.showDocuments(getUserId(), tripId, accomodationId))
+        val accomodationId = it.accommodation.accommodationId.throwIfMissing(it.accommodation::accommodationId.name)
+        respond(accommodationController.showDocuments(getUserId(), tripId, accomodationId))
     }
 }
 

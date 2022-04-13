@@ -97,11 +97,11 @@ private fun Route.getDataInTransport(documentController: DocumentController) {
 
 @Suppress("DuplicatedCode") //IDE misinterpreted duplication
 private fun Route.getDataInAccommodation(documentController: DocumentController) {
-    get<Trip.Accomodation.Document.Data> {
+    get<Trip.Accommodation.Document.Data> {
         val tripId = it.document.accommodation.trip.id.throwIfMissing(it.document.accommodation.trip::id.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
         val transportId =
-            it.document.accommodation.accomodationId.throwIfMissing(it.document.accommodation::accomodationId.name)
+            it.document.accommodation.accommodationId.throwIfMissing(it.document.accommodation::accommodationId.name)
         getDataInPoi(documentController, tripId, transportId, documentId, ACCOMMODATION)
     }
 }
@@ -151,11 +151,11 @@ private fun Route.saveDataInTransport(documentController: DocumentController) {
 
 @Suppress("DuplicatedCode") //IDE misinterpreted duplication
 private fun Route.saveDataInAccommodation(documentController: DocumentController) {
-    post<Trip.Accomodation.Document.Data> {
+    post<Trip.Accommodation.Document.Data> {
         val tripId = it.document.accommodation.trip.id.throwIfMissing(it.document.accommodation.trip::id.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
         val accommodationId =
-            it.document.accommodation.accomodationId.throwIfMissing(it.document.accommodation::accomodationId.name)
+            it.document.accommodation.accommodationId.throwIfMissing(it.document.accommodation::accommodationId.name)
         val response =
             documentController.saveData(getUserId(), tripId, accommodationId, documentId, getFile(), ACCOMMODATION)
         respond(response)
@@ -193,9 +193,9 @@ private fun Route.saveDocumentMetadataInTransport(documentController: DocumentCo
 }
 
 private fun Route.saveDocumentMetadataInAccommodation(documentController: DocumentController) {
-    post<Trip.Accomodation.Document> {
+    post<Trip.Accommodation.Document> {
         val tripId = it.accommodation.trip.id.throwIfMissing(it.accommodation.trip::id.name)
-        val poiId = it.accommodation.accomodationId.throwIfMissing(it.accommodation::accomodationId.name)
+        val poiId = it.accommodation.accommodationId.throwIfMissing(it.accommodation::accommodationId.name)
         saveDocumentMetadataInPoi(this, documentController, tripId, poiId, ACCOMMODATION)
     }
 }
@@ -249,10 +249,10 @@ private fun Route.setDocumentKeyInTransport(documentController: DocumentControll
 
 @Suppress("DuplicatedCode") //IDE misinterpreted duplication
 private fun Route.setDocumentKeyInAccommodation(documentController: DocumentController) {
-    put<Trip.Accomodation.Document.Key> {
+    put<Trip.Accommodation.Document.Key> {
         val tripId = it.document.accommodation.trip.id.throwIfMissing(it.document.accommodation.trip::id.name)
         val poiId =
-            it.document.accommodation.accomodationId.throwIfMissing(it.document.accommodation::accomodationId.name)
+            it.document.accommodation.accommodationId.throwIfMissing(it.document.accommodation::accommodationId.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
         setDocumentKeyInPoi(this, documentController, tripId, poiId, documentId, ACCOMMODATION)
     }

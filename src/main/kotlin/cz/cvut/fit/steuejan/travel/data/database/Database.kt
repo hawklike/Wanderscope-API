@@ -1,7 +1,7 @@
 package cz.cvut.fit.steuejan.travel.data.database
 
 import cz.cvut.fit.steuejan.travel.data.config.Hikari
-import cz.cvut.fit.steuejan.travel.data.database.accomodation.AccomodationTable
+import cz.cvut.fit.steuejan.travel.data.database.accomodation.AccommodationTable
 import cz.cvut.fit.steuejan.travel.data.database.activity.ActivityTable
 import cz.cvut.fit.steuejan.travel.data.database.document.DocumentTable
 import cz.cvut.fit.steuejan.travel.data.database.forgotpassword.ForgotPasswordTable
@@ -22,7 +22,7 @@ fun initDatabase(hikari: Hikari) {
         TripUserTable,
         PlaceTable,
         TransportTable,
-        AccomodationTable,
+        AccommodationTable,
         ActivityTable,
         DocumentTable,
         TokenTable,

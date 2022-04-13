@@ -13,6 +13,10 @@ import cz.cvut.fit.steuejan.travel.api.app.util.throwIfMissing
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig.Companion.JWT_AUTHENTICATION
 import cz.cvut.fit.steuejan.travel.api.trip.controller.TripController
 import cz.cvut.fit.steuejan.travel.api.trip.model.GetTripsType
+import cz.cvut.fit.steuejan.travel.api.trip.poi.accomodation.controller.AccommodationController
+import cz.cvut.fit.steuejan.travel.api.trip.poi.activity.controller.ActivityController
+import cz.cvut.fit.steuejan.travel.api.trip.poi.place.controller.PlaceController
+import cz.cvut.fit.steuejan.travel.api.trip.poi.transport.controller.TransportController
 import cz.cvut.fit.steuejan.travel.api.trip.request.*
 import cz.cvut.fit.steuejan.travel.api.user.controller.UserController
 import io.ktor.auth.*
@@ -41,6 +45,13 @@ fun Routing.tripRoutes() {
 
         showDocuments(tripController)
         showUsers(tripController)
+
+        with(controllerFactory) {
+            showTransports(transportController)
+            showAccommodation(accommodationController)
+            showActivities(activityController)
+            showPlaces(placeController)
+        }
 
         showUserTrips(userController)
     }
@@ -137,5 +148,33 @@ private fun Route.removeRole(tripController: TripController) {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val removeRole = receive<RemoveRoleRequest>(RemoveRoleRequest.MISSING_PARAM).toModel()
         respond(tripController.changeRole(getUserId(), tripId, removeRole))
+    }
+}
+
+private fun Route.showTransports(transportController: TransportController) {
+    get<Trip.Transports> {
+        val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
+        respond(transportController.showTransportsInTrip(getUserId(), tripId))
+    }
+}
+
+private fun Route.showAccommodation(accommodationController: AccommodationController) {
+    get<Trip.Accommodation> {
+        val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
+        respond(accommodationController.showAccommodationInTrip(getUserId(), tripId))
+    }
+}
+
+private fun Route.showActivities(activityController: ActivityController) {
+    get<Trip.Activities> {
+        val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
+        respond(activityController.showActivitiesInTrip(getUserId(), tripId))
+    }
+}
+
+private fun Route.showPlaces(placeController: PlaceController) {
+    get<Trip.Places> {
+        val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
+        respond(placeController.showPlacesInTrip(getUserId(), tripId))
     }
 }

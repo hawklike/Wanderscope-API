@@ -7,4 +7,5 @@ interface PointOfInterestDao<T : PointOfInterestDto> {
     suspend fun find(tripId: Int, id: Int): T?
     suspend fun edit(tripId: Int, poiId: Int, dto: T): Boolean
     suspend fun delete(tripId: Int, poiId: Int): Boolean
+    suspend fun show(tripId: Int): List<T>
 }

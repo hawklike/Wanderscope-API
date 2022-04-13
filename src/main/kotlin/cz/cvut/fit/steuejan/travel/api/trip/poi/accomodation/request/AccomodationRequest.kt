@@ -1,7 +1,7 @@
 package cz.cvut.fit.steuejan.travel.api.trip.poi.accomodation.request
 
 import cz.cvut.fit.steuejan.travel.api.trip.poi.request.PointOfInterestRequest
-import cz.cvut.fit.steuejan.travel.data.database.accomodation.AccomodationDto
+import cz.cvut.fit.steuejan.travel.data.database.accomodation.AccommodationDto
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.model.AccomodationType
 import cz.cvut.fit.steuejan.travel.data.model.Address
@@ -17,9 +17,9 @@ data class AccomodationRequest(
     val address: Address?,
     val contact: Contact?,
     val description: String?
-) : PointOfInterestRequest<AccomodationDto>() {
+) : PointOfInterestRequest<AccommodationDto>() {
 
-    override fun toDto() = AccomodationDto(
+    override fun toDto() = AccommodationDto(
         id = Dto.UNKNOWN_ID,
         tripId = Dto.UNKNOWN_ID,
         duration = duration ?: Duration(),

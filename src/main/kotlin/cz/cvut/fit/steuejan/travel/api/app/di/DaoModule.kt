@@ -1,7 +1,7 @@
 package cz.cvut.fit.steuejan.travel.api.app.di
 
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
-import cz.cvut.fit.steuejan.travel.data.database.accomodation.AccomodationDao
+import cz.cvut.fit.steuejan.travel.data.database.accomodation.AccommodationDao
 import cz.cvut.fit.steuejan.travel.data.database.activity.ActivityDao
 import cz.cvut.fit.steuejan.travel.data.database.document.dao.DocumentDao
 import cz.cvut.fit.steuejan.travel.data.database.document.dao.DocumentDaoImpl
@@ -27,7 +27,7 @@ val daoModule = module {
     single<TripUserDao> { TripUserDaoImpl() }
 
     single { TransportDao() }
-    single { AccomodationDao() }
+    single { AccommodationDao() }
     single { ActivityDao() }
     single { PlaceDao() }
     single<DocumentDao> { DocumentDaoImpl() }

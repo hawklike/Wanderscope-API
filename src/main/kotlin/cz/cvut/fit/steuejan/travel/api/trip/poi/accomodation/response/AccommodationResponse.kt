@@ -8,7 +8,7 @@ import cz.cvut.fit.steuejan.travel.data.model.Duration
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AccomodationResponse(
+data class AccommodationResponse(
     override val id: Int,
     override val tripId: Int,
     override val duration: Duration,

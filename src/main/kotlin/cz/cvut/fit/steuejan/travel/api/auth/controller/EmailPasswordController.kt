@@ -135,7 +135,7 @@ class EmailPasswordController(
     }
 
     companion object {
-        private const val FORGOT_PASSWORD_EXPIRATION = 60
+        private const val FORGOT_PASSWORD_EXPIRATION = 60 //minutes
         private const val SUBJECT = "Create new password"
     }
 }
