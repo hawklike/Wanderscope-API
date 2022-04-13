@@ -57,7 +57,7 @@ dependencies {
     implementation "org.postgresql:postgresql:$postgres_version"
 
     //aws s3
-    implementation "aws.sdk.kotlin:s3:0.9.4-beta"
+    implementation "aws.sdk.kotlin:$aws_s3_version"
 
     //tests
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
