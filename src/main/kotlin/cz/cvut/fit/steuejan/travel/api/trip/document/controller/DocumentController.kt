@@ -18,7 +18,8 @@ import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
 class DocumentController(
     daoFactory: DaoFactory,
     private val validator: Validator,
-    private val encryptor: Encryptor
+    private val encryptor: Encryptor,
+    private val amazonS3: AmazonS3
 ) : AbstractTripController(daoFactory) {
 
     suspend fun saveMetadata(
@@ -100,7 +101,7 @@ class DocumentController(
             }
         }
 
-        return AmazonS3().downloadFile(document.id.toString())
+        return amazonS3.downloadFile(document.id.toString())
             ?: throw BadRequestException(FailureMessages.DOCUMENT_DATA_NULL)
     }
 
@@ -165,10 +166,11 @@ class DocumentController(
             throw ForbiddenException(FailureMessages.DOCUMENT_UPLOAD_PROHIBITED)
         }
 
-        return if (AmazonS3().uploadFile(document.id.toString(), document.name, file)) {
+        return if (amazonS3.uploadFile(document.id.toString(), document.name, file)) {
+            daoFactory.documentDao.updateTime(document.id)
             Success(Status.NO_CONTENT)
         } else {
-            Failure(Status.INTERNAL_ERROR, "Upload failed.")
+            Failure(Status.INTERNAL_ERROR, FailureMessages.DOCUMENT_UPLOAD_FAILED)
         }
     }
 }

@@ -46,7 +46,6 @@ object FailureMessages {
         "Cannot add this document. Check name length, extension length and if both owner and trip exist."
     const val ADD_DOCUMENT_METADATA_POI_NULL =
         "Point of interest aka transport, accommodation, activity or place cannot be null."
-    const val ADD_DOCUMENT_DATA_FAILURE = "Saving document to database failed: "
 
     const val NAME_TOO_LONG = "Name is too long. Max length allowed is $NAME_LENGTH"
 
@@ -62,6 +61,7 @@ object FailureMessages {
     const val CHANGE_ROLE_TO_MYSELF_PROHIBITED = "At least one admin must stay in this trip."
 
     const val DOCUMENT_UPLOAD_PROHIBITED = "Only owner of the document may upload data."
+    const val DOCUMENT_UPLOAD_FAILED = "Document upload failed."
     const val DOCUMENT_SET_KEY_PROHIBITED = "Only owner of the document may set a key."
     const val DOCUMENT_DATA_PROHIBITED =
         "Document is secured with a key. Provide correct key using custom header $DOCUMENT_KEY_HEADER"

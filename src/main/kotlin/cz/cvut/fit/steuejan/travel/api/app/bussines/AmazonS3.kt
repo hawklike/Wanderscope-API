@@ -5,23 +5,24 @@ import aws.sdk.kotlin.services.s3.model.GetObjectRequest
 import aws.sdk.kotlin.services.s3.model.PutObjectRequest
 import aws.smithy.kotlin.runtime.content.ByteStream
 import aws.smithy.kotlin.runtime.content.toByteArray
+import cz.cvut.fit.steuejan.travel.api.app.config.AmazonS3Config
 import cz.cvut.fit.steuejan.travel.api.trip.document.model.FileWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class AmazonS3 {
+class AmazonS3(private val config: AmazonS3Config) {
 
     suspend fun uploadFile(id: String, filename: String, file: FileWrapper) = withContext(Dispatchers.IO) {
-        val fileMetadata = mapOf("name" to filename)
+        val fileMetadata = mapOf(NAME to filename)
 
         val request = PutObjectRequest {
-            bucket = "wanderscope-dev"
+            bucket = config.bucket
             key = id
             metadata = fileMetadata
             body = ByteStream.fromBytes(file.rawData)
         }
 
-        val response = S3Client { region = "eu-central-1" }.use { s3 ->
+        val response = S3Client { region = config.region }.use { s3 ->
             s3.putObject(request)
         }
 
@@ -30,13 +31,13 @@ class AmazonS3 {
 
     suspend fun downloadFile(id: String) = withContext(Dispatchers.IO) {
         val request = GetObjectRequest {
-            bucket = "wanderscope-dev"
+            bucket = config.bucket
             key = id
         }
 
-        S3Client { region = "eu-central-1" }.use { s3 ->
+        S3Client { region = config.region }.use { s3 ->
             s3.getObject(request) { response ->
-                val name = response.metadata?.get("name")
+                val name = response.metadata?.get(NAME)
                 val bytes = response.body?.toByteArray()
 
                 if (name == null || bytes == null) {
@@ -46,5 +47,9 @@ class AmazonS3 {
                 }
             }
         }
+    }
+
+    companion object {
+        const val NAME = "name"
     }
 }
