@@ -21,7 +21,7 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
             it[phone] = dto.contact.phone
             it[email] = dto.contact.email
             it[website] = dto.contact.website
-            it[wikiBrief] = dto.wikiBrief
+            it[wikiBrief] = truncateWiki(dto.wikiBrief)
             it[imageUrl] = dto.imageUrl
             it[description] = dto.description
             it[startDate] = dto.duration.startDate
@@ -42,7 +42,7 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
             it[phone] = dto.contact.phone
             it[email] = dto.contact.email
             it[website] = dto.contact.website
-            it[wikiBrief] = dto.wikiBrief
+            it[wikiBrief] = truncateWiki(dto.wikiBrief)
             it[imageUrl] = dto.imageUrl
             it[description] = dto.description
             it[startDate] = dto.duration.startDate
@@ -66,11 +66,15 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
             .map(PlaceItinerary::fromDto)
     }
 
+    private fun findById(tripId: Int, placeId: Int): Op<Boolean> {
+        return (PlaceTable.id eq placeId) and (PlaceTable.trip eq tripId)
+    }
+
+    private fun truncateWiki(wikiBrief: String?): String? {
+        return wikiBrief?.take(cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig.WIKI_MAX_LENGTH)?.plus("…")
+    }
+
     companion object {
         const val RESOURCE_NAME = "place"
-
-        private fun findById(tripId: Int, placeId: Int): Op<Boolean> {
-            return (PlaceTable.id eq placeId) and (PlaceTable.trip eq tripId)
-        }
     }
 }
