@@ -23,7 +23,7 @@ data class ActivityRequest(
     override fun toDto() = ActivityDto(
         id = Dto.UNKNOWN_ID,
         tripId = Dto.UNKNOWN_ID,
-        duration = duration ?: Duration(),
+        duration = duration?.validate() ?: Duration(),
         name = name,
         type = type,
         address = address ?: Address(),

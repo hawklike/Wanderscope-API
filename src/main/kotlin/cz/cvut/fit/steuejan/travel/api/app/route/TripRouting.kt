@@ -101,7 +101,7 @@ private fun Route.inviteToTrip(tripController: TripController) {
 private fun Route.changeDate(tripController: TripController) {
     put<Trip.Date> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
-        val duration = receive<TripDateRequest>(TripDateRequest.MISSING_PARAM).duration
+        val duration = receive<TripDateRequest>(TripDateRequest.MISSING_PARAM).duration.validate()
         respond(tripController.changeDate(getUserId(), tripId, duration))
     }
 }

@@ -22,7 +22,7 @@ data class AccomodationRequest(
     override fun toDto() = AccommodationDto(
         id = Dto.UNKNOWN_ID,
         tripId = Dto.UNKNOWN_ID,
-        duration = duration ?: Duration(),
+        duration = duration?.validate() ?: Duration(),
         name = name,
         type = type,
         address = address ?: Address(),

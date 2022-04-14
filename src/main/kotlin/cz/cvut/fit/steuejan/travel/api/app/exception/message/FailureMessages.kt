@@ -12,6 +12,8 @@ object FailureMessages {
     const val REFRESH_TOKEN_INVALID = "Refresh token is invalid."
     const val REFRESH_TOKEN_EXPIRED = "Refresh token has expired."
 
+    const val END_DATE_BEFORE_START_DATE_ERROR = "Time of 'endDate' cannot be before time of 'startDate'."
+
     const val PASSWORDS_DONT_MATCH = "Passwords don't match."
     const val PASSWORDS_ARE_SAME_ERROR = "New password is the same as the old one."
     const val OLD_PASSWORD_WRONG = "Given password is wrong."
