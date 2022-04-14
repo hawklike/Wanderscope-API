@@ -20,6 +20,7 @@ fun Application.configureSerialization() {
             prettyPrint = true
             ignoreUnknownKeys = true
             explicitNulls = false
+            classDiscriminator = "class"
         })
     }
 }

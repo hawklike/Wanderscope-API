@@ -35,7 +35,7 @@ object FailureMessages {
     const val USER_TRIP_NOT_FOUND = "User is not a member of this trip."
 
     const val TRANSPORT_NOT_FOUND = "Transport not found."
-    const val ACCOMMODATION_NOT_FOUND = "Accomodation not found."
+    const val ACCOMMODATION_NOT_FOUND = "Accommodation not found."
     const val ACTIVITY_NOT_FOUND = "Activity not found."
     const val PLACE_NOT_FOUND = "Place not found."
     const val DOCUMENT_NOT_FOUND = "Document not found."

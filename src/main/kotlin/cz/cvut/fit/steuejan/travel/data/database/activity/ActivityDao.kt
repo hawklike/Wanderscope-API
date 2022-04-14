@@ -2,6 +2,7 @@ package cz.cvut.fit.steuejan.travel.data.database.activity
 
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import cz.cvut.fit.steuejan.travel.api.trip.itinerary.model.ActivityItinerary
 import cz.cvut.fit.steuejan.travel.data.database.dao.PointOfInterestDao
 import cz.cvut.fit.steuejan.travel.data.extension.*
 import cz.cvut.fit.steuejan.travel.data.util.transaction
@@ -55,11 +56,17 @@ class ActivityDao : PointOfInterestDao<ActivityDto> {
             .map(ActivityDto::fromDb)
     }
 
+    override suspend fun showItinerary(tripId: Int) = transaction {
+        ActivityTable.select { ActivityTable.trip eq tripId }
+            .map(ActivityDto::fromDb)
+            .map(ActivityItinerary::fromDto)
+    }
+
     companion object {
         const val RESOURCE_NAME = "activity"
 
         private fun findById(tripId: Int, activityId: Int): Op<Boolean> {
-            return ((ActivityTable.id eq activityId) and (ActivityTable.trip eq tripId))
+            return (ActivityTable.id eq activityId) and (ActivityTable.trip eq tripId)
         }
     }
 }
