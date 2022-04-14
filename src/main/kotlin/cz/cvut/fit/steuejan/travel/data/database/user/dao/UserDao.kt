@@ -11,6 +11,7 @@ interface UserDao {
     suspend fun findById(id: Int): UserDto?
     suspend fun findByEmail(email: String, accountType: AccountType): UserDto?
     suspend fun findByUsername(username: Username): UserDto?
+    suspend fun deleteUser(userId: Int): Boolean
     suspend fun changePassword(userId: Int, newPassword: String): Boolean
     suspend fun getAllTrips(userId: Int): List<TripOverviewDto>
     suspend fun getUpcomingTrips(userId: Int, localTime: DateTime): List<TripOverviewDto>

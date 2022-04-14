@@ -71,7 +71,11 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
             val user = daoFactory.userDao.findByUsername(username)
                 ?: throw NotFoundException(FailureMessages.USER_NOT_FOUND)
 
-            //editor cannot invite user who will have admin rights
+            if (user.deleted) {
+                throw NotFoundException(FailureMessages.USER_NOT_FOUND)
+            }
+
+            //editor cannot invite user who would have then admin rights
             if (userRole == UserRole.EDITOR && role == UserRole.ADMIN) {
                 throw ForbiddenException(FailureMessages.INVITE_EDITOR_PROHIBITED)
             }

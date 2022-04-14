@@ -7,6 +7,8 @@ import io.ktor.locations.*
 
 @Location(Account.URL)
 object Account {
+    const val URL = "/account"
+
     @Location(ChangePassword.URL)
     class ChangePassword {
         companion object {
@@ -27,6 +29,4 @@ object Account {
             const val URL = "/logoutAll"
         }
     }
-
-    const val URL = "/account"
 }

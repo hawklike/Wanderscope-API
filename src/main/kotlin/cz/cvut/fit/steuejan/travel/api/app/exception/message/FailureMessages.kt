@@ -55,7 +55,7 @@ object FailureMessages {
     const val EDIT_TRIP_PROHIBITED = "User cannot edit this trip."
     const val EDIT_CHANGE_ROLE_PROHIBITED = "Only admins in this trip may change users role."
 
-    const val INVITE_PROHIBITED = "User cannot invite in this trip."
+    const val INVITE_PROHIBITED = "User in this trip cannot invite anyone."
     const val INVITE_EDITOR_PROHIBITED = "Editor cannot invite new user who will have admin rights."
 
     const val LEAVE_TRIP_PROHIBITED =
