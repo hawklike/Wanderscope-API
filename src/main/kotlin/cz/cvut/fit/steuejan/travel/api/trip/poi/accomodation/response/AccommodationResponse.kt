@@ -1,7 +1,7 @@
 package cz.cvut.fit.steuejan.travel.api.trip.poi.accomodation.response
 
 import cz.cvut.fit.steuejan.travel.api.trip.poi.response.AbstractPointOfInterestResponse
-import cz.cvut.fit.steuejan.travel.data.model.AccomodationType
+import cz.cvut.fit.steuejan.travel.data.model.AccommodationType
 import cz.cvut.fit.steuejan.travel.data.model.Address
 import cz.cvut.fit.steuejan.travel.data.model.Contact
 import cz.cvut.fit.steuejan.travel.data.model.Duration
@@ -15,6 +15,6 @@ data class AccommodationResponse(
     override val name: String,
     val address: Address,
     val contact: Contact,
-    val type: AccomodationType,
+    val type: AccommodationType,
     val description: String?
 ) : AbstractPointOfInterestResponse()

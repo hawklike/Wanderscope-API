@@ -23,7 +23,7 @@ data class TransportRequest(
     override fun toDto() = TransportDto(
         id = Dto.UNKNOWN_ID,
         tripId = Dto.UNKNOWN_ID,
-        duration = duration ?: Duration(),
+        duration = duration?.validate() ?: Duration(),
         name = name,
         from = from ?: Address(),
         to = to ?: Address(),

@@ -2,6 +2,7 @@ package cz.cvut.fit.steuejan.travel.data.database.accomodation
 
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import cz.cvut.fit.steuejan.travel.api.trip.itinerary.model.AccommodationItinerary
 import cz.cvut.fit.steuejan.travel.data.database.dao.PointOfInterestDao
 import cz.cvut.fit.steuejan.travel.data.extension.*
 import cz.cvut.fit.steuejan.travel.data.util.transaction
@@ -53,6 +54,12 @@ class AccommodationDao : PointOfInterestDao<AccommodationDto> {
         AccommodationTable.select { AccommodationTable.trip eq tripId }
             .orderBy(AccommodationTable.startDate, SortOrder.ASC_NULLS_LAST)
             .map(AccommodationDto::fromDb)
+    }
+
+    override suspend fun showItinerary(tripId: Int) = transaction {
+        AccommodationTable.select { AccommodationTable.trip eq tripId }
+            .map(AccommodationDto::fromDb)
+            .map(AccommodationItinerary::fromDto)
     }
 
     companion object {

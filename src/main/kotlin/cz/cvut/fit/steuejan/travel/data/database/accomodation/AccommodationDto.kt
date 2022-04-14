@@ -4,7 +4,7 @@ import cz.cvut.fit.steuejan.travel.api.trip.poi.accomodation.response.Accommodat
 import cz.cvut.fit.steuejan.travel.api.trip.poi.response.AbstractPointOfInterestResponse
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
-import cz.cvut.fit.steuejan.travel.data.model.AccomodationType
+import cz.cvut.fit.steuejan.travel.data.model.AccommodationType
 import cz.cvut.fit.steuejan.travel.data.model.Address
 import cz.cvut.fit.steuejan.travel.data.model.Contact
 import cz.cvut.fit.steuejan.travel.data.model.Duration
@@ -15,7 +15,7 @@ data class AccommodationDto(
     override val tripId: Int,
     override val duration: Duration,
     override val name: String,
-    val type: AccomodationType,
+    val type: AccommodationType,
     val address: Address,
     val contact: Contact,
     val description: String?
