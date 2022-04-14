@@ -48,6 +48,13 @@ class UserDaoImpl : UserDao {
         UserTable.selectFirst { UserTable.username eq username.it }
     }?.let(UserDto::fromDb)
 
+    override suspend fun deleteUser(userId: Int) = transaction {
+        UserTable.updateById(userId) {
+            it[deleted] = true
+            it[displayName] = USER_DELETED
+        }
+    }.isUpdated()
+
     override suspend fun changePassword(userId: Int, newPassword: String) = transaction {
         UserTable.updateById(userId) { it[password] = newPassword }
     }.isUpdated()
@@ -96,5 +103,9 @@ class UserDaoImpl : UserDao {
             trips.add(TripOverviewDto(trip, connection))
         }
         return trips
+    }
+
+    companion object {
+        const val USER_DELETED = "<deleted>"
     }
 }

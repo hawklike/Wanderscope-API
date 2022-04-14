@@ -67,6 +67,11 @@ class EmailPasswordController(
         }
 
         val user = daoFactory.userDao.findByEmail(email, AccountType.EMAIL) ?: throw InvalidLoginException()
+
+        if (user.deleted) {
+            throw InvalidLoginException()
+        }
+
         val userPassword = (user.credentials.login as EmailLogin).password
 
         if (!encryptor.checkPassword(userPassword, login.password)) {
