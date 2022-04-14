@@ -17,6 +17,7 @@ import cz.cvut.fit.steuejan.travel.api.trip.exception.CannotLeaveException
 import cz.cvut.fit.steuejan.travel.api.trip.model.ChangeRole
 import cz.cvut.fit.steuejan.travel.api.trip.model.TripInvitation
 import cz.cvut.fit.steuejan.travel.api.trip.model.TripUser
+import cz.cvut.fit.steuejan.travel.api.trip.response.TripResponse
 import cz.cvut.fit.steuejan.travel.api.trip.response.TripUsersResponse
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
 import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripDto
@@ -26,12 +27,16 @@ import cz.cvut.fit.steuejan.travel.data.model.UserRole
 class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory) {
 
     suspend fun createTrip(userId: Int, trip: TripDto): Response {
-        if (trip.name.length > DatabaseConfig.NAME_LENGTH) {
-            throw BadRequestException(FailureMessages.NAME_TOO_LONG)
-        }
-
+        validateNameLength(trip)
         val tripId = daoFactory.tripDao.createTrip(userId, UserRole.ADMIN, trip)
         return CreatedResponse.success(tripId)
+    }
+
+    suspend fun getTrip(userId: Int, tripId: Int): Response {
+        viewOrThrow(userId, tripId)
+        val trip = daoFactory.tripDao.findById(tripId)
+            ?: throw NotFoundException(FailureMessages.TRIP_NOT_FOUND)
+        return TripResponse.success(trip)
     }
 
     suspend fun deleteTrip(userId: Int, tripId: Int): Response {
@@ -47,14 +52,10 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
     }
 
     suspend fun editTrip(userId: Int, tripId: Int, trip: TripDto): Response {
-        if (trip.name.length > DatabaseConfig.NAME_LENGTH) {
-            throw BadRequestException(FailureMessages.NAME_TOO_LONG)
-        }
-
-        editOrThrow(userId, tripId) {
-            if (!daoFactory.tripDao.editTrip(tripId, trip)) {
-                throw NotFoundException(FailureMessages.TRIP_NOT_FOUND)
-            }
+        validateNameLength(trip)
+        editOrThrow(userId, tripId)
+        if (!daoFactory.tripDao.editTrip(tripId, trip)) {
+            throw NotFoundException(FailureMessages.TRIP_NOT_FOUND)
         }
         return Success(Status.NO_CONTENT)
     }
@@ -70,7 +71,11 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
             val user = daoFactory.userDao.findByUsername(username)
                 ?: throw NotFoundException(FailureMessages.USER_NOT_FOUND)
 
-            //editor cannot invite user who will have admin rights
+            if (user.deleted) {
+                throw NotFoundException(FailureMessages.USER_NOT_FOUND)
+            }
+
+            //editor cannot invite user who would have then admin rights
             if (userRole == UserRole.EDITOR && role == UserRole.ADMIN) {
                 throw ForbiddenException(FailureMessages.INVITE_EDITOR_PROHIBITED)
             }
@@ -87,10 +92,9 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
     }
 
     suspend fun changeDate(userId: Int, tripId: Int, duration: Duration): Response {
-        editOrThrow(userId, tripId) {
-            if (!daoFactory.tripDao.editDate(tripId, duration)) {
-                throw NotFoundException(FailureMessages.TRIP_NOT_FOUND)
-            }
+        editOrThrow(userId, tripId)
+        if (!daoFactory.tripDao.editDate(tripId, duration)) {
+            throw NotFoundException(FailureMessages.TRIP_NOT_FOUND)
         }
         return Success(Status.NO_CONTENT)
     }
@@ -141,5 +145,11 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
         }
 
         return Success(Status.NO_CONTENT)
+    }
+
+    private fun validateNameLength(trip: TripDto) {
+        if (trip.name.length > DatabaseConfig.NAME_LENGTH) {
+            throw BadRequestException(FailureMessages.NAME_TOO_LONG)
+        }
     }
 }

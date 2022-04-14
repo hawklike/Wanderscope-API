@@ -16,9 +16,11 @@ class DatabaseConfig(override val config: ApplicationConfig) : AppConfig {
         const val EMAIL_LENGTH = 254
         const val USERNAME_LENGTH = 30
         const val LON_LAT_LENTGH = 15
-        const val FILE_EXTENSION_LENGTH = 10
         const val DOCUMENT_KEY_LENTGH = 5
         const val TRIP_lINK_LENGTH = 8
         const val FORGOT_PASSWORD_TOKEN_LENGTH = 32
+        const val DESCRIPTION_LENGTH = 1000
+        const val TEXT_MAX_LENGTH = 1000
+        const val WIKI_MAX_LENGTH = 2000
     }
 }

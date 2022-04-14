@@ -2,18 +2,17 @@ package cz.cvut.fit.steuejan.travel.data.database.accomodation
 
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import cz.cvut.fit.steuejan.travel.api.trip.itinerary.model.AccommodationItinerary
 import cz.cvut.fit.steuejan.travel.data.database.dao.PointOfInterestDao
 import cz.cvut.fit.steuejan.travel.data.extension.*
 import cz.cvut.fit.steuejan.travel.data.util.transaction
-import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
 
 @Suppress("DuplicatedCode")
-class AccomodationDao : PointOfInterestDao<AccomodationDto> {
-    override suspend fun add(tripId: Int, dto: AccomodationDto) = transaction {
-        AccomodationTable.insertAndGetIdOrNull {
+class AccommodationDao : PointOfInterestDao<AccommodationDto> {
+    override suspend fun add(tripId: Int, dto: AccommodationDto) = transaction {
+        AccommodationTable.insertAndGetIdOrNull {
             it[trip] = tripId
             it[name] = dto.name
             it[type] = dto.type
@@ -29,11 +28,11 @@ class AccomodationDao : PointOfInterestDao<AccomodationDto> {
     }
 
     override suspend fun find(tripId: Int, id: Int) = transaction {
-        AccomodationTable.selectFirst { findById(tripId, id) }
-    }?.let(AccomodationDto::fromDb)
+        AccommodationTable.selectFirst { findById(tripId, id) }
+    }?.let(AccommodationDto::fromDb)
 
-    override suspend fun edit(tripId: Int, poiId: Int, dto: AccomodationDto) = transaction {
-        AccomodationTable.updateOrNull({ findById(tripId, poiId) }) {
+    override suspend fun edit(tripId: Int, poiId: Int, dto: AccommodationDto) = transaction {
+        AccommodationTable.updateOrNull({ findById(tripId, poiId) }) {
             it[name] = dto.name
             it[type] = dto.type
             it[googlePlaceId] = dto.address.googlePlaceId
@@ -48,14 +47,26 @@ class AccomodationDao : PointOfInterestDao<AccomodationDto> {
     }.isUpdated()
 
     override suspend fun delete(tripId: Int, poiId: Int) = transaction {
-        AccomodationTable.deleteWhere { findById(tripId, poiId) }
+        AccommodationTable.deleteWhere { findById(tripId, poiId) }
     }.isDeleted()
 
+    override suspend fun show(tripId: Int) = transaction {
+        AccommodationTable.select { AccommodationTable.trip eq tripId }
+            .orderBy(AccommodationTable.startDate, SortOrder.ASC_NULLS_LAST)
+            .map(AccommodationDto::fromDb)
+    }
+
+    override suspend fun showItinerary(tripId: Int) = transaction {
+        AccommodationTable.select { AccommodationTable.trip eq tripId }
+            .map(AccommodationDto::fromDb)
+            .map(AccommodationItinerary::fromDto)
+    }
+
     companion object {
-        const val RESOURCE_NAME = "accomodation"
+        const val RESOURCE_NAME = "accommodation"
 
         private fun findById(tripId: Int, accommodationId: Int): Op<Boolean> {
-            return ((AccomodationTable.id eq accommodationId) and (AccomodationTable.trip eq tripId))
+            return (AccommodationTable.id eq accommodationId) and (AccommodationTable.trip eq tripId)
         }
     }
 }

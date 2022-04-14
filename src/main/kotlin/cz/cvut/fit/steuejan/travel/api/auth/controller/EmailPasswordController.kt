@@ -7,7 +7,6 @@ import cz.cvut.fit.steuejan.travel.api.app.bussines.Validator
 import cz.cvut.fit.steuejan.travel.api.app.config.DeploymentConfig
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
-import cz.cvut.fit.steuejan.travel.api.app.exception.ForbiddenException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.api.app.location.Auth
 import cz.cvut.fit.steuejan.travel.api.app.response.Failure
@@ -68,6 +67,11 @@ class EmailPasswordController(
         }
 
         val user = daoFactory.userDao.findByEmail(email, AccountType.EMAIL) ?: throw InvalidLoginException()
+
+        if (user.deleted) {
+            throw InvalidLoginException()
+        }
+
         val userPassword = (user.credentials.login as EmailLogin).password
 
         if (!encryptor.checkPassword(userPassword, login.password)) {
@@ -103,11 +107,11 @@ class EmailPasswordController(
         val hashedToken = encryptor.hash(token)
 
         val passwordResetDto = dao.getForgotPassword(hashedToken)
-            ?: throw ForbiddenException(FailureMessages.RESET_PASSWORD_PROHIBITED)
+            ?: return Failure(Status.FORBIDDEN, FailureMessages.RESET_PASSWORD_PROHIBITED)
 
         if (passwordResetDto.expiresAt.isExpired()) {
             dao.deleteForgotPassword(hashedToken)
-            throw ForbiddenException(FailureMessages.RESET_PASSWORD_PROHIBITED)
+            return Failure(Status.FORBIDDEN, FailureMessages.RESET_PASSWORD_PROHIBITED)
         }
 
         return try {
@@ -136,7 +140,7 @@ class EmailPasswordController(
     }
 
     companion object {
-        private const val FORGOT_PASSWORD_EXPIRATION = 60
+        private const val FORGOT_PASSWORD_EXPIRATION = 60 //minutes
         private const val SUBJECT = "Create new password"
     }
 }

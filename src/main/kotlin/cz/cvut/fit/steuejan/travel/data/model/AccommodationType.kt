@@ -1,7 +1,7 @@
 package cz.cvut.fit.steuejan.travel.data.model
 
 @Suppress("unused") // used in DB
-enum class AccomodationType {
+enum class AccommodationType {
     HOTEL, HOSTEL, PENSION, CAMP, OUTDOOR, AIRBNB;
 
     companion object {

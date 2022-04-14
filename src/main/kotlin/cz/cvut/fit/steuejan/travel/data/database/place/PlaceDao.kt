@@ -2,13 +2,12 @@ package cz.cvut.fit.steuejan.travel.data.database.place
 
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import cz.cvut.fit.steuejan.travel.api.trip.itinerary.model.PlaceItinerary
 import cz.cvut.fit.steuejan.travel.data.database.dao.PointOfInterestDao
 import cz.cvut.fit.steuejan.travel.data.extension.*
 import cz.cvut.fit.steuejan.travel.data.util.transaction
-import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
 
 @Suppress("DuplicatedCode")
 class PlaceDao : PointOfInterestDao<PlaceDto> {
@@ -22,7 +21,7 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
             it[phone] = dto.contact.phone
             it[email] = dto.contact.email
             it[website] = dto.contact.website
-            it[wikiBrief] = dto.wikiBrief
+            it[wikiBrief] = truncateWiki(dto.wikiBrief)
             it[imageUrl] = dto.imageUrl
             it[description] = dto.description
             it[startDate] = dto.duration.startDate
@@ -43,7 +42,7 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
             it[phone] = dto.contact.phone
             it[email] = dto.contact.email
             it[website] = dto.contact.website
-            it[wikiBrief] = dto.wikiBrief
+            it[wikiBrief] = truncateWiki(dto.wikiBrief)
             it[imageUrl] = dto.imageUrl
             it[description] = dto.description
             it[startDate] = dto.duration.startDate
@@ -55,11 +54,27 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
         PlaceTable.deleteWhere { findById(tripId, poiId) }
     }.isDeleted()
 
+    override suspend fun show(tripId: Int) = transaction {
+        PlaceTable.select { PlaceTable.trip eq tripId }
+            .orderBy(PlaceTable.startDate, SortOrder.ASC_NULLS_LAST)
+            .map(PlaceDto::fromDb)
+    }
+
+    override suspend fun showItinerary(tripId: Int) = transaction {
+        PlaceTable.select { PlaceTable.trip eq tripId }
+            .map(PlaceDto::fromDb)
+            .map(PlaceItinerary::fromDto)
+    }
+
+    private fun findById(tripId: Int, placeId: Int): Op<Boolean> {
+        return (PlaceTable.id eq placeId) and (PlaceTable.trip eq tripId)
+    }
+
+    private fun truncateWiki(wikiBrief: String?): String? {
+        return wikiBrief?.take(cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig.WIKI_MAX_LENGTH)?.plus("…")
+    }
+
     companion object {
         const val RESOURCE_NAME = "place"
-
-        private fun findById(tripId: Int, placeId: Int): Op<Boolean> {
-            return ((PlaceTable.id eq placeId) and (PlaceTable.trip eq tripId))
-        }
     }
 }

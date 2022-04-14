@@ -56,6 +56,13 @@ class Trip(val id: Int? = null) {
         }
     }
 
+    @Location(Itinerary.URL)
+    class Itinerary(val trip: Trip) {
+        companion object {
+            const val URL = "/itinerary"
+        }
+    }
+
     @Location("${Document.URL}/{documentId?}")
     class Document(val trip: Trip, val documentId: Int? = null) {
         companion object {
@@ -74,6 +81,13 @@ class Trip(val id: Int? = null) {
             companion object {
                 const val URL = "/data"
             }
+        }
+    }
+
+    @Location(Transports.URL)
+    class Transports(val trip: Trip) {
+        companion object {
+            const val URL = "/transports"
         }
     }
 
@@ -112,14 +126,14 @@ class Trip(val id: Int? = null) {
         }
     }
 
-    @Location("${Accomodation.URL}/{accomodationId?}")
-    class Accomodation(val trip: Trip, val accomodationId: Int? = null) {
+    @Location("${Accommodation.URL}/{accommodationId?}")
+    class Accommodation(val trip: Trip, val accommodationId: Int? = null) {
         companion object {
             const val URL = "/accommodation"
         }
 
         @Location("${Document.URL}/{documentId?}")
-        class Document(val accommodation: Accomodation, val documentId: Int? = null) {
+        class Document(val accommodation: Accommodation, val documentId: Int? = null) {
             companion object {
                 const val URL = "/document"
             }
@@ -140,10 +154,17 @@ class Trip(val id: Int? = null) {
         }
 
         @Location(Documents.URL)
-        class Documents(val accommodation: Accomodation) {
+        class Documents(val accommodation: Accommodation) {
             companion object {
                 const val URL = "/documents"
             }
+        }
+    }
+
+    @Location(Activities.URL)
+    class Activities(val trip: Trip) {
+        companion object {
+            const val URL = "/activities"
         }
     }
 
@@ -179,6 +200,13 @@ class Trip(val id: Int? = null) {
             companion object {
                 const val URL = "/documents"
             }
+        }
+    }
+
+    @Location(Places.URL)
+    class Places(val trip: Trip) {
+        companion object {
+            const val URL = "/places"
         }
     }
 

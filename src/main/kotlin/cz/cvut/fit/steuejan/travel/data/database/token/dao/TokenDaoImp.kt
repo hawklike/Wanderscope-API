@@ -7,6 +7,7 @@ import cz.cvut.fit.steuejan.travel.data.extension.selectFirst
 import cz.cvut.fit.steuejan.travel.data.util.transaction
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
+import org.joda.time.DateTime
 
 class TokenDaoImp : TokenDao {
 
@@ -15,6 +16,7 @@ class TokenDaoImp : TokenDao {
             TokenTable.insert {
                 it[this.user] = userId
                 it[this.refreshToken] = refreshToken
+                it[this.created] = DateTime.now()
             }
         }
     }

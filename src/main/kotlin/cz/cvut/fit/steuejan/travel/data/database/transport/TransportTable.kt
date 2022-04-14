@@ -12,15 +12,15 @@ object TransportTable : IntIdTable("transports") {
 
     val name = varchar("name", DatabaseConfig.NAME_LENGTH)
     val type = enumerationByName("type", TransportType.MAX_LENGTH, TransportType::class)
-    val fromGooglePlaceId = text("from_google_place_id").nullable()
-    val fromAddress = text("from_address").nullable()
-    val toGooglePlaceId = text("to_google_place_id").nullable()
-    val toAddress = text("to_address").nullable()
-    val description = text("description").nullable()
+    val fromGooglePlaceId = varchar("from_google_place_id", DatabaseConfig.TEXT_MAX_LENGTH).nullable()
+    val fromAddress = varchar("from_address", DatabaseConfig.TEXT_MAX_LENGTH).nullable()
+    val toGooglePlaceId = varchar("to_google_place_id", DatabaseConfig.TEXT_MAX_LENGTH).nullable()
+    val toAddress = varchar("to_address", DatabaseConfig.TEXT_MAX_LENGTH).nullable()
+    val description = varchar("description", DatabaseConfig.DESCRIPTION_LENGTH).nullable()
     val startDate = datetime("start_date").nullable()
     val endDate = datetime("end_date").nullable()
-    val cars = text("cars").nullable()
-    val seats = text("seats").nullable()
+    val cars = varchar("cars", DatabaseConfig.DESCRIPTION_LENGTH).nullable()
+    val seats = varchar("seats", DatabaseConfig.DESCRIPTION_LENGTH).nullable()
 
     fun parseList(list: List<String>?): String? {
         return list?.joinToString(ARRAY_SEPARATOR)

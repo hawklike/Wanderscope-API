@@ -2,13 +2,12 @@ package cz.cvut.fit.steuejan.travel.data.database.activity
 
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import cz.cvut.fit.steuejan.travel.api.trip.itinerary.model.ActivityItinerary
 import cz.cvut.fit.steuejan.travel.data.database.dao.PointOfInterestDao
 import cz.cvut.fit.steuejan.travel.data.extension.*
 import cz.cvut.fit.steuejan.travel.data.util.transaction
-import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
 
 @Suppress("DuplicatedCode")
 class ActivityDao : PointOfInterestDao<ActivityDto> {
@@ -51,11 +50,23 @@ class ActivityDao : PointOfInterestDao<ActivityDto> {
         ActivityTable.deleteWhere { findById(tripId, poiId) }
     }.isDeleted()
 
+    override suspend fun show(tripId: Int) = transaction {
+        ActivityTable.select { ActivityTable.trip eq tripId }
+            .orderBy(ActivityTable.startDate, SortOrder.ASC_NULLS_LAST)
+            .map(ActivityDto::fromDb)
+    }
+
+    override suspend fun showItinerary(tripId: Int) = transaction {
+        ActivityTable.select { ActivityTable.trip eq tripId }
+            .map(ActivityDto::fromDb)
+            .map(ActivityItinerary::fromDto)
+    }
+
     companion object {
         const val RESOURCE_NAME = "activity"
 
         private fun findById(tripId: Int, activityId: Int): Op<Boolean> {
-            return ((ActivityTable.id eq activityId) and (ActivityTable.trip eq tripId))
+            return (ActivityTable.id eq activityId) and (ActivityTable.trip eq tripId)
         }
     }
 }

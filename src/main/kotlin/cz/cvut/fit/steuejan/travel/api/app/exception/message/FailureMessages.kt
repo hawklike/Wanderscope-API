@@ -12,6 +12,8 @@ object FailureMessages {
     const val REFRESH_TOKEN_INVALID = "Refresh token is invalid."
     const val REFRESH_TOKEN_EXPIRED = "Refresh token has expired."
 
+    const val END_DATE_BEFORE_START_DATE_ERROR = "Time of 'endDate' cannot be before time of 'startDate'."
+
     const val PASSWORDS_DONT_MATCH = "Passwords don't match."
     const val PASSWORDS_ARE_SAME_ERROR = "New password is the same as the old one."
     const val OLD_PASSWORD_WRONG = "Given password is wrong."
@@ -35,7 +37,7 @@ object FailureMessages {
     const val USER_TRIP_NOT_FOUND = "User is not a member of this trip."
 
     const val TRANSPORT_NOT_FOUND = "Transport not found."
-    const val ACCOMODATION_NOT_FOUND = "Accomodation not found."
+    const val ACCOMMODATION_NOT_FOUND = "Accommodation not found."
     const val ACTIVITY_NOT_FOUND = "Activity not found."
     const val PLACE_NOT_FOUND = "Place not found."
     const val DOCUMENT_NOT_FOUND = "Document not found."
@@ -53,7 +55,7 @@ object FailureMessages {
     const val EDIT_TRIP_PROHIBITED = "User cannot edit this trip."
     const val EDIT_CHANGE_ROLE_PROHIBITED = "Only admins in this trip may change users role."
 
-    const val INVITE_PROHIBITED = "User cannot invite in this trip."
+    const val INVITE_PROHIBITED = "User in this trip cannot invite anyone."
     const val INVITE_EDITOR_PROHIBITED = "Editor cannot invite new user who will have admin rights."
 
     const val LEAVE_TRIP_PROHIBITED =

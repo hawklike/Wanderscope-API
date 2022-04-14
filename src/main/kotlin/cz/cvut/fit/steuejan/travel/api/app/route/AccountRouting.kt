@@ -24,8 +24,11 @@ fun Routing.accountRoutes() {
     logout(controllerFactory.accountController)
 
     authenticate(JWT_AUTHENTICATION) {
-        logoutAll(controllerFactory.accountController)
-        changePassword(controllerFactory.accountController)
+        val accountController = controllerFactory.accountController
+
+        logoutAll(accountController)
+        changePassword(accountController)
+        delete(accountController)
     }
 }
 
@@ -46,5 +49,11 @@ private fun Route.changePassword(accountController: AccountController) {
     post<Account.ChangePassword> {
         val request = receive<ChangePasswordRequest>(ChangePasswordRequest.MISSING_PARAM)
         respond(accountController.changePassword(getUserId(), request.toChangePassword(), addToDb = true))
+    }
+}
+
+private fun Route.delete(accountController: AccountController) {
+    delete<Account> {
+        respond(accountController.delete(getUserId()))
     }
 }

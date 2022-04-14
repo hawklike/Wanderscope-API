@@ -49,7 +49,7 @@ abstract class AbstractTripController(protected val daoFactory: DaoFactory) {
     protected fun getDao(poiType: PointOfInterestType): PointOfInterestDao<*> {
         return when (poiType) {
             PointOfInterestType.TRANSPORT -> daoFactory.transportDao
-            PointOfInterestType.ACCOMMODATION -> daoFactory.accomodationDao
+            PointOfInterestType.ACCOMMODATION -> daoFactory.accommodationDao
             PointOfInterestType.ACTIVITY -> daoFactory.activityDao
             PointOfInterestType.PLACE -> daoFactory.placeDao
         }

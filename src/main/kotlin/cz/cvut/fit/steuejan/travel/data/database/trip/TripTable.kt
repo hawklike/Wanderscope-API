@@ -12,8 +12,8 @@ object TripTable : IntIdTable("trips") {
     val owner = reference("owner", UserTable, onDelete = SET_NULL, onUpdate = CASCADE)
     val startDate = date("start_date").nullable()
     val endDate = date("end_date").nullable()
-    val description = text("description").nullable()
-    val imageUrl = text("image_url").nullable()
+    val description = varchar("description", DatabaseConfig.DESCRIPTION_LENGTH).nullable()
+    val imageUrl = varchar("image_url", DatabaseConfig.TEXT_MAX_LENGTH).nullable()
     val linkView = char("link_view", DatabaseConfig.TRIP_lINK_LENGTH).uniqueIndex().nullable()
     val linkEdit = char("link_edit", DatabaseConfig.TRIP_lINK_LENGTH).uniqueIndex().nullable()
 }
