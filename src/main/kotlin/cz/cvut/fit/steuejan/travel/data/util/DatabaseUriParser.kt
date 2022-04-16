@@ -19,6 +19,9 @@ interface DatabaseUriParser {
 }
 
 class PostgresUriParser : DatabaseUriParser {
+    /**
+     * @param dbUri provide in the following format: postgres://username:password@host/dbname
+     */
     override fun getConnection(dbUri: String): JdbcConnection {
         val uri = URI(dbUri)
         val username = uri.userInfo.split(":")[0]
