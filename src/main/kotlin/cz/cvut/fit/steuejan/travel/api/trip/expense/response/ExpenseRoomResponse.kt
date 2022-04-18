@@ -1,4 +1,4 @@
-package cz.cvut.fit.steuejan.travel.api.expense.response
+package cz.cvut.fit.steuejan.travel.api.trip.expense.response
 
 import cz.cvut.fit.steuejan.travel.api.app.response.Response
 import cz.cvut.fit.steuejan.travel.api.app.response.Success

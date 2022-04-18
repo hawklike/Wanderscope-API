@@ -1,4 +1,4 @@
-package cz.cvut.fit.steuejan.travel.api.expense.request
+package cz.cvut.fit.steuejan.travel.api.trip.expense.request
 
 import cz.cvut.fit.steuejan.travel.api.app.request.Request
 import cz.cvut.fit.steuejan.travel.data.database.expense.dto.ExpenseRoomDto

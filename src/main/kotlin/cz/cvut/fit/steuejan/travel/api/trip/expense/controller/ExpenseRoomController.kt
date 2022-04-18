@@ -1,4 +1,4 @@
-package cz.cvut.fit.steuejan.travel.api.expense.controller
+package cz.cvut.fit.steuejan.travel.api.trip.expense.controller
 
 import cz.cvut.fit.steuejan.travel.api.app.bussines.Validator
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
@@ -9,8 +9,8 @@ import cz.cvut.fit.steuejan.travel.api.app.response.CreatedResponse
 import cz.cvut.fit.steuejan.travel.api.app.response.Response
 import cz.cvut.fit.steuejan.travel.api.app.response.Status
 import cz.cvut.fit.steuejan.travel.api.app.response.Success
-import cz.cvut.fit.steuejan.travel.api.expense.response.ExpenseRoomResponse
 import cz.cvut.fit.steuejan.travel.api.trip.controller.AbstractTripController
+import cz.cvut.fit.steuejan.travel.api.trip.expense.response.ExpenseRoomResponse
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
 import cz.cvut.fit.steuejan.travel.data.database.expense.dto.ExpenseRoomDto
 

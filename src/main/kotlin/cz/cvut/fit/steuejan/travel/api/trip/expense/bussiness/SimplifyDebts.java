@@ -1,4 +1,4 @@
-package cz.cvut.fit.steuejan.travel.api.expense.bussiness;
+package cz.cvut.fit.steuejan.travel.api.trip.expense.bussiness;
 
 import java.math.BigDecimal;
 import java.util.*;

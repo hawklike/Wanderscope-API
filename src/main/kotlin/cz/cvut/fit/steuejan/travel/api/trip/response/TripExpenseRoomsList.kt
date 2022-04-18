@@ -2,7 +2,7 @@ package cz.cvut.fit.steuejan.travel.api.trip.response
 
 import cz.cvut.fit.steuejan.travel.api.app.response.Response
 import cz.cvut.fit.steuejan.travel.api.app.response.Success
-import cz.cvut.fit.steuejan.travel.api.expense.response.ExpenseRoomResponse
+import cz.cvut.fit.steuejan.travel.api.trip.expense.response.ExpenseRoomResponse
 import kotlinx.serialization.Serializable
 
 @Serializable
