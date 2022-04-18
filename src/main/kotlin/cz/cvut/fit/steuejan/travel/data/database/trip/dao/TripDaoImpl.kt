@@ -96,7 +96,9 @@ class TripDaoImpl : TripDao {
         query.forEach {
             val user = UserDto.fromDb(it)
             val connection = TripUserDto.fromDb(it)
-            users.add(TripUsersDto(user, connection))
+            if (!user.deleted) {
+                users.add(TripUsersDto(user, connection))
+            }
         }
         return users
     }

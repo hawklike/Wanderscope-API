@@ -6,7 +6,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 
 object UserTable : IntIdTable("users") {
     val username = varchar("username", DatabaseConfig.USERNAME_LENGTH).uniqueIndex()
-    val accountType = enumerationByName("account_type", 8, AccountType::class)
+    val accountType = enumerationByName("account_type", AccountType.MAX_LENGTH, AccountType::class)
     val email = varchar("email", DatabaseConfig.EMAIL_LENGTH)
     val password = text("password").nullable() //hashed with BCrypt
     val displayName = varchar("display_name", DatabaseConfig.USERNAME_LENGTH).nullable()

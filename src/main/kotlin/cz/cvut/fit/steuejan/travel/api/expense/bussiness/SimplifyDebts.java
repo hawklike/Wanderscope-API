@@ -59,11 +59,7 @@ public class SimplifyDebts {
 
         @Override
         public String toString() {
-            return "SuggestedPayment{" +
-                    "from='" + from + '\'' +
-                    ", to='" + to + '\'' +
-                    ", amount=" + amount +
-                    '}';
+            return from + " ------ " + amount + " -----> " + to;
         }
     }
 
@@ -120,9 +116,23 @@ public class SimplifyDebts {
 
     private void addAllTransactions(Dinics solver, Transaction[] transactions) {
         for (Transaction transaction : transactions) {
-            int whoPaidIdx = usersWithIdx.get(transaction.whoPaid);
-            int whoOwesIdx = usersWithIdx.get(transaction.whoOwes);
-            solver.addEdge(whoOwesIdx, whoPaidIdx, BigDecimal.valueOf(transaction.amount));
+            int whoPaidIdx, whoOwesIdx;
+
+            try {
+                whoPaidIdx = usersWithIdx.get(transaction.whoPaid);
+            } catch (NullPointerException exception) {
+                throw new IllegalArgumentException(String.format("Person %s not found.", transaction.whoPaid));
+            }
+
+            try {
+                whoOwesIdx = usersWithIdx.get(transaction.whoOwes);
+            } catch (NullPointerException exception) {
+                throw new IllegalArgumentException(String.format("Person %s not found.", transaction.whoOwes));
+            }
+
+            if (whoPaidIdx != whoOwesIdx) {
+                solver.addEdge(whoOwesIdx, whoPaidIdx, BigDecimal.valueOf(transaction.amount));
+            }
         }
     }
 

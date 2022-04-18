@@ -19,19 +19,11 @@ fun Int.isDeleted() = this > 0
 fun Int.isUpdated() = this > 0
 
 fun <T : Table> T.insertOrNull(body: T.(InsertStatement<Number>) -> Unit): InsertStatement<Number>? {
-    return try {
-        insert(body)
-    } catch (ex: Exception) {
-        null
-    }
+    return runCatching { insert(body) }.getOrNull()
 }
 
 fun <Key : Comparable<Key>, T : IdTable<Key>> T.insertAndGetIdOrNull(body: T.(InsertStatement<EntityID<Key>>) -> Unit): EntityID<Key>? {
-    return try {
-        insertAndGetId(body)
-    } catch (ex: Exception) {
-        null
-    }
+    return runCatching { insertAndGetId(body) }.getOrNull()
 }
 
 fun <T : IntIdTable> T.updateById(id: Int, limit: Int? = null, body: T.(UpdateStatement) -> Unit): Int {
@@ -39,11 +31,7 @@ fun <T : IntIdTable> T.updateById(id: Int, limit: Int? = null, body: T.(UpdateSt
 }
 
 fun <T : IntIdTable> T.updateByIdOrNull(id: Int, limit: Int? = null, body: T.(UpdateStatement) -> Unit): Int? {
-    return try {
-        updateById(id, limit, body)
-    } catch (ex: Exception) {
-        null
-    }
+    return runCatching { updateById(id, limit, body) }.getOrNull()
 }
 
 fun <T : Table> T.updateOrNull(
@@ -51,11 +39,7 @@ fun <T : Table> T.updateOrNull(
     limit: Int? = null,
     body: T.(UpdateStatement) -> Unit
 ): Int? {
-    return try {
-        update(where, limit, body)
-    } catch (ex: Exception) {
-        null
-    }
+    return runCatching { update(where, limit, body) }.getOrNull()
 }
 
 fun IntIdTable.deleteById(id: Int, limit: Int? = null, offset: Long? = null): Int {
