@@ -5,6 +5,8 @@ import cz.cvut.fit.steuejan.travel.data.database.accomodation.AccommodationDao
 import cz.cvut.fit.steuejan.travel.data.database.activity.ActivityDao
 import cz.cvut.fit.steuejan.travel.data.database.document.dao.DocumentDao
 import cz.cvut.fit.steuejan.travel.data.database.document.dao.DocumentDaoImpl
+import cz.cvut.fit.steuejan.travel.data.database.expense.dao.ExpenseDao
+import cz.cvut.fit.steuejan.travel.data.database.expense.dao.ExpenseDaoImpl
 import cz.cvut.fit.steuejan.travel.data.database.expense.dao.ExpenseRoomDao
 import cz.cvut.fit.steuejan.travel.data.database.expense.dao.ExpenseRoomDaoImpl
 import cz.cvut.fit.steuejan.travel.data.database.forgotpassword.dao.ForgotPasswordDao
@@ -27,13 +29,14 @@ val daoModule = module {
     single<ForgotPasswordDao> { ForgotPasswordDaoImpl() }
     single<TripDao> { TripDaoImpl() }
     single<TripUserDao> { TripUserDaoImpl() }
-    single<ExpenseRoomDao> { ExpenseRoomDaoImpl() }
     single<DocumentDao> { DocumentDaoImpl() }
+    single<ExpenseRoomDao> { ExpenseRoomDaoImpl() }
+    single<ExpenseDao> { ExpenseDaoImpl() }
 
     single { TransportDao() }
     single { AccommodationDao() }
     single { ActivityDao() }
     single { PlaceDao() }
 
-    single { DaoFactory(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    single { DaoFactory(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 }

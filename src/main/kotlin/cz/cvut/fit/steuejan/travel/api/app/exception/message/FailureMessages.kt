@@ -52,8 +52,10 @@ object FailureMessages {
         "Point of interest aka transport, accommodation, activity or place cannot be null."
 
     const val CURRENCY_TOO_lONG = "Currency code is too long. Max length allowed is $CURRENCY_CODE_LENGTH."
-    const val ADD_EXPENSE_ROOM_FAILURE = "Cannot add room. Check both name and currency lengths and if the trip exists."
+    const val ADD_EXPENSE_ROOM_FAILURE = "Cannot add room. Check if the trip exists."
     const val EXPENSE_PERSONS_NOT_UNIQUE = "Persons names are not unique but should be."
+
+    const val ADD_EXPENSE_FAILURE = "Cannot add expense. Check if both the room and the trip exist."
 
     const val NAME_TOO_LONG = "Name is too long. Max length allowed is $NAME_LENGTH."
 
