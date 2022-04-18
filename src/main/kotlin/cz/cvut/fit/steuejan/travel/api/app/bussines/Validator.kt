@@ -45,13 +45,20 @@ class Validator(private val userDao: UserDao, private val config: LimitsConfig) 
         }
     }
 
-    suspend fun validateName(name: String, what: String, dbLookup: Boolean = false) = with(config) {
+    suspend fun validateName(
+        name: String,
+        what: String,
+        dbLookup: Boolean = false,
+        minLength: Int = config.usernameLengthMin
+    ) {
         if (name.isBlank()) {
             throw BadRequestException(FailureMessages.isBlank(what))
         }
 
-        if (name.length !in (usernameLengthMin..usernameLengthMax)) {
-            throw BadRequestException(FailureMessages.lengthIsBad(what, usernameLengthMin, usernameLengthMax))
+        with(config) {
+            if (name.length !in (minLength..usernameLengthMax)) {
+                throw BadRequestException(FailureMessages.lengthIsBad(what, usernameLengthMin, usernameLengthMax))
+            }
         }
 
         if (!name.isNameAllowed()) {

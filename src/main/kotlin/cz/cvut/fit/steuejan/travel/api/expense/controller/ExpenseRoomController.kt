@@ -75,7 +75,7 @@ class ExpenseRoomController(
 
     private suspend fun validateNames(persons: List<String>) {
         persons.forEach {
-            validator.validateName(it, "person's name")
+            validator.validateName(it, "person's name", minLength = 1)
         }
     }
 }

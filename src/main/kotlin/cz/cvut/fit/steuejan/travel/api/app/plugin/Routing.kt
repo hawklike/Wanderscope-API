@@ -17,6 +17,7 @@ fun Application.configureRouting() {
         activityRoutes()
         placeRoutes()
         documentRoutes()
+        expenseRoutes()
 
         exampleRoutes()
     }

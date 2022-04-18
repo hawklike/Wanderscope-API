@@ -27,5 +27,5 @@ val controllerModule = module {
     single { ItineraryController(get()) }
     single { ExpenseRoomController(get(), get()) }
 
-    single { ControllerFactory(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    single { ControllerFactory(get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 }

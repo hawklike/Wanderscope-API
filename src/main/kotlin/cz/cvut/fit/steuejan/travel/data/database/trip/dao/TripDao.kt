@@ -1,5 +1,6 @@
 package cz.cvut.fit.steuejan.travel.data.database.trip.dao
 
+import cz.cvut.fit.steuejan.travel.data.database.expense.dto.ExpenseRoomDto
 import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripDto
 import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripUsersDto
 import cz.cvut.fit.steuejan.travel.data.model.Duration
@@ -13,4 +14,5 @@ interface TripDao {
     suspend fun shareTrip()
     suspend fun editDate(tripId: Int, duration: Duration): Boolean
     suspend fun showUsers(tripId: Int, role: UserRole?): List<TripUsersDto>
+    suspend fun showExpenseRooms(tripId: Int): List<ExpenseRoomDto>
 }

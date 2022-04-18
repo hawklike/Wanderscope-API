@@ -2,6 +2,8 @@ package cz.cvut.fit.steuejan.travel.data.database.trip.dao
 
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import cz.cvut.fit.steuejan.travel.data.database.expense.ExpenseRoomTable
+import cz.cvut.fit.steuejan.travel.data.database.expense.dto.ExpenseRoomDto
 import cz.cvut.fit.steuejan.travel.data.database.trip.TripTable
 import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripDto
 import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripUsersDto
@@ -80,6 +82,10 @@ class TripDaoImpl : TripDao {
         return transaction {
             queryToTripUsers(query)
         }
+    }
+
+    override suspend fun showExpenseRooms(tripId: Int) = transaction {
+        ExpenseRoomTable.select { ExpenseRoomTable.trip eq tripId }.map(ExpenseRoomDto::fromDb)
     }
 
     override suspend fun shareTrip() {

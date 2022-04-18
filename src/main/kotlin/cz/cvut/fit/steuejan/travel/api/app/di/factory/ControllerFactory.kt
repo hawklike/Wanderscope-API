@@ -1,6 +1,7 @@
 package cz.cvut.fit.steuejan.travel.api.app.di.factory
 
 import cz.cvut.fit.steuejan.travel.api.account.controller.AccountController
+import cz.cvut.fit.steuejan.travel.api.expense.controller.ExpenseRoomController
 import cz.cvut.fit.steuejan.travel.api.trip.controller.TripController
 import cz.cvut.fit.steuejan.travel.api.trip.document.controller.DocumentController
 import cz.cvut.fit.steuejan.travel.api.trip.itinerary.controller.ItineraryController
@@ -19,5 +20,6 @@ class ControllerFactory(
     val activityController: ActivityController,
     val placeController: PlaceController,
     val documentController: DocumentController,
-    val itineraryController: ItineraryController
+    val itineraryController: ItineraryController,
+    val expenseRoomController: ExpenseRoomController
 )

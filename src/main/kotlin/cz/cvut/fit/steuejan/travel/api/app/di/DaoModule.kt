@@ -28,12 +28,12 @@ val daoModule = module {
     single<TripDao> { TripDaoImpl() }
     single<TripUserDao> { TripUserDaoImpl() }
     single<ExpenseRoomDao> { ExpenseRoomDaoImpl() }
+    single<DocumentDao> { DocumentDaoImpl() }
 
     single { TransportDao() }
     single { AccommodationDao() }
     single { ActivityDao() }
     single { PlaceDao() }
-    single<DocumentDao> { DocumentDaoImpl() }
 
     single { DaoFactory(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 }
