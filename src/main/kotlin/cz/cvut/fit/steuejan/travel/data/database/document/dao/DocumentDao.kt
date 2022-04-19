@@ -19,6 +19,9 @@ interface DocumentDao {
     suspend fun getDocuments(tripId: Int): List<DocumentDto>
     suspend fun getDocuments(tripId: Int, poiId: Int, poiType: PointOfInterestType): List<DocumentDto>
 
+    suspend fun deleteDocument(tripId: Int, documentId: Int): Boolean
+    suspend fun deleteDocument(tripId: Int, poiId: Int, documentId: Int, poiType: PointOfInterestType): Boolean
+
     suspend fun setKey(tripId: Int, documentId: Int, key: String): Boolean
     suspend fun setKey(tripId: Int, poiId: Int, documentId: Int, key: String, poiType: PointOfInterestType): Boolean
 
