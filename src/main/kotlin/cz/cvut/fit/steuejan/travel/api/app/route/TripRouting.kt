@@ -49,6 +49,7 @@ fun Routing.tripRoutes() {
         showDocuments(tripController)
         showUsers(tripController)
         showItinerary(itineraryController)
+        showExpenseRooms(tripController)
 
         with(controllerFactory) {
             showTransports(transportController)
@@ -124,6 +125,13 @@ private fun Route.showItinerary(itineraryController: ItineraryController) {
     get<Trip.Itinerary> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         respond(itineraryController.showItinerary(getUserId(), tripId))
+    }
+}
+
+private fun Route.showExpenseRooms(tripController: TripController) {
+    get<Trip.ExpenseRooms> {
+        val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
+        respond(tripController.showExpenseRooms(getUserId(), tripId))
     }
 }
 

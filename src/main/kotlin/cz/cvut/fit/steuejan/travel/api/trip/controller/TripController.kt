@@ -14,6 +14,8 @@ import cz.cvut.fit.steuejan.travel.api.trip.document.response.DocumentOverviewLi
 import cz.cvut.fit.steuejan.travel.api.trip.exception.CannotChangeRoleException
 import cz.cvut.fit.steuejan.travel.api.trip.exception.CannotChangeRoleToMyselfException
 import cz.cvut.fit.steuejan.travel.api.trip.exception.CannotLeaveException
+import cz.cvut.fit.steuejan.travel.api.trip.expense.response.ExpenseRoomOverviewListList
+import cz.cvut.fit.steuejan.travel.api.trip.expense.response.ExpenseRoomResponse
 import cz.cvut.fit.steuejan.travel.api.trip.model.ChangeRole
 import cz.cvut.fit.steuejan.travel.api.trip.model.TripInvitation
 import cz.cvut.fit.steuejan.travel.api.trip.model.TripUser
@@ -103,6 +105,12 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
         viewOrThrow(userId, tripId)
         val dto = daoFactory.tripDao.showUsers(tripId, role)
         return TripUsersResponse.success(dto.map(TripUser::fromDto))
+    }
+
+    suspend fun showExpenseRooms(userId: Int, tripId: Int): Response {
+        viewOrThrow(userId, tripId)
+        val rooms = daoFactory.expenseRoomDao.showExpenseRooms(tripId)
+        return ExpenseRoomOverviewListList.success(rooms.map(ExpenseRoomResponse::success))
     }
 
     suspend fun leave(userId: Int, tripId: Int): Response {

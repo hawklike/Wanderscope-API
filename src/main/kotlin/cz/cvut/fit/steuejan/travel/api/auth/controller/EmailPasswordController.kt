@@ -43,7 +43,7 @@ class EmailPasswordController(
         with(validator) {
             validatePassword(login.password)
             validateEmail(login.email, register = true)
-            validateUsername(credentials.username)
+            validateName(credentials.username.it, "username", dbLookup = true)
         }
 
         val passwordHash = encryptor.hashPassword(login.password)

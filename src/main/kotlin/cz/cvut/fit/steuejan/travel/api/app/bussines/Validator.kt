@@ -3,6 +3,7 @@ package cz.cvut.fit.steuejan.travel.api.app.bussines
 import cz.cvut.fit.steuejan.travel.api.app.config.LimitsConfig
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import cz.cvut.fit.steuejan.travel.api.app.extension.isNameAllowed
 import cz.cvut.fit.steuejan.travel.api.auth.exception.EmailAlreadyExistsException
 import cz.cvut.fit.steuejan.travel.api.auth.exception.UsernameAlreadyExistsException
 import cz.cvut.fit.steuejan.travel.api.auth.model.AccountType
@@ -44,16 +45,27 @@ class Validator(private val userDao: UserDao, private val config: LimitsConfig) 
         }
     }
 
-    suspend fun validateUsername(username: Username) = with(config) {
-        if (username.it.isBlank()) {
-            throw BadRequestException(FailureMessages.isBlank("username"))
+    suspend fun validateName(
+        name: String,
+        what: String,
+        dbLookup: Boolean = false,
+        minLength: Int = config.usernameLengthMin
+    ) {
+        if (name.isBlank()) {
+            throw BadRequestException(FailureMessages.isBlank(what))
         }
 
-        if (username.it.length !in (usernameLengthMin..usernameLengthMax)) {
-            throw BadRequestException(FailureMessages.lengthIsBad("username", usernameLengthMin, usernameLengthMax))
+        with(config) {
+            if (name.length !in (minLength..usernameLengthMax)) {
+                throw BadRequestException(FailureMessages.lengthIsBad(what, usernameLengthMin, usernameLengthMax))
+            }
         }
 
-        if (userDao.findByUsername(username) != null) {
+        if (!name.isNameAllowed()) {
+            throw BadRequestException(FailureMessages.illegalName(what))
+        }
+
+        if (dbLookup && userDao.findByUsername(Username(name)) != null) {
             throw UsernameAlreadyExistsException()
         }
     }
