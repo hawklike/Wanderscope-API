@@ -5,6 +5,8 @@ import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.NotFoundException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import cz.cvut.fit.steuejan.travel.api.app.extension.fromCents
+import cz.cvut.fit.steuejan.travel.api.app.extension.toCents
 import cz.cvut.fit.steuejan.travel.api.app.response.CreatedResponse
 import cz.cvut.fit.steuejan.travel.api.app.response.Response
 import cz.cvut.fit.steuejan.travel.api.app.response.Status
@@ -19,6 +21,8 @@ import cz.cvut.fit.steuejan.travel.api.trip.expense.response.SuggestedPaymentsRe
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
 import cz.cvut.fit.steuejan.travel.data.database.expense.dto.ExpenseDto
 import cz.cvut.fit.steuejan.travel.data.database.expense.dto.ExpenseRoomDto
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class ExpenseRoomController(
     daoFactory: DaoFactory,
@@ -64,10 +68,10 @@ class ExpenseRoomController(
 
     suspend fun showSuggestedPayments(userId: Int, tripId: Int, roomId: Int): Response {
         viewOrThrow(userId, tripId)
-        val room = daoFactory.expenseRoomDao.findRoom(tripId, roomId)
-            ?: throw NotFoundException(FailureMessages.EXPENSE_ROOM_NOT_FOUND)
         val expenses = daoFactory.expenseDao.showExpenses(tripId, roomId)
-        val payments = SimplifyDebts(getPersons(expenses)).suggestPayments(getTransactions(expenses))
+        val payments = withContext(Dispatchers.Default) {
+            SimplifyDebts(getPersons(expenses)).suggestPayments(getTransactions(expenses))
+        }
         return SuggestedPaymentsResponse.success(payments.map(SuggestedPayment::create))
     }
 
@@ -81,12 +85,14 @@ class ExpenseRoomController(
     private fun getTransactions(expenses: List<ExpenseDto>): Array<SimplifyDebts.Transaction> {
         val transactions = mutableListOf<SimplifyDebts.Transaction>()
         expenses.forEach { expense ->
+            val nPersons = expense.whoOwes.toSet().size
             expense.whoOwes.forEach { whoOwes ->
+                val roundedAmountInCents = (expense.amountInCents.fromCents() / nPersons).toCents()
                 transactions.add(
                     SimplifyDebts.Transaction(
                         expense.whoPaid,
                         whoOwes,
-                        expense.amountInCents
+                        roundedAmountInCents
                     )
                 )
             }

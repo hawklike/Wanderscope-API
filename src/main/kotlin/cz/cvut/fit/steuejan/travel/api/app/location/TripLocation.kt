@@ -82,6 +82,13 @@ class Trip(val id: Int? = null) {
                 const val URL = "/expenses"
             }
         }
+
+        @Location(SuggestedPayments.URL)
+        class SuggestedPayments(val room: ExpenseRoom) {
+            companion object {
+                const val URL = "/suggestedPayments"
+            }
+        }
     }
 
     @Location(ExpenseRooms.URL)

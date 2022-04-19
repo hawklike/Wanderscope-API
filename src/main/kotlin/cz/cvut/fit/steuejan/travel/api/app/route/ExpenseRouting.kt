@@ -34,6 +34,7 @@ fun Routing.expenseRoutes() {
         deleteExpenseRoom(expenseRoomController)
 
         showExpenses(expenseRoomController)
+        showSuggestedPayments(expenseRoomController)
 
         addExpense(expenseController)
         showExpense(expenseController)
@@ -72,6 +73,14 @@ private fun Route.showExpenses(expenseRoomController: ExpenseRoomController) {
         val tripId = it.room.trip.id.throwIfMissing(it.room.trip::id.name)
         val roomId = it.room.expenseRoomId.throwIfMissing(it.room::expenseRoomId.name)
         respond(expenseRoomController.showExpenses(getUserId(), tripId, roomId))
+    }
+}
+
+private fun Route.showSuggestedPayments(expenseRoomController: ExpenseRoomController) {
+    get<Trip.ExpenseRoom.SuggestedPayments> {
+        val tripId = it.room.trip.id.throwIfMissing(it.room.trip::id.name)
+        val roomId = it.room.expenseRoomId.throwIfMissing(it.room::expenseRoomId.name)
+        respond(expenseRoomController.showSuggestedPayments(getUserId(), tripId, roomId))
     }
 }
 
