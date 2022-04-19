@@ -41,6 +41,14 @@ class AccountController(
         return Success(Status.NO_CONTENT)
     }
 
+    suspend fun setDisplayName(userId: Int, displayName: String): Response {
+        validator.validateName(displayName, "display name")
+        if (!daoFactory.userDao.changeDisplayName(userId, displayName)) {
+            throw NotFoundException(FailureMessages.USER_NOT_FOUND)
+        }
+        return Success(Status.NO_CONTENT)
+    }
+
     suspend fun changePassword(userId: Int, passwordRequest: ChangePassword, addToDb: Boolean): Response {
         val newPassword = passwordRequest.newPassword
         val oldPassword = passwordRequest.oldPassword
