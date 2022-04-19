@@ -35,6 +35,7 @@ fun Routing.documentRoutes() {
         saveDataInTrip(documentController)
         getDataInTrip(documentController)
         setDocumentKeyInTrip(documentController)
+        deleteDocumentInTrip(documentController)
 
         saveDocumentMetadataInTransport(documentController)
         saveDocumentMetadataInAccommodation(documentController)
@@ -55,6 +56,11 @@ fun Routing.documentRoutes() {
         setDocumentKeyInAccommodation(documentController)
         setDocumentKeyInActivity(documentController)
         setDocumentKeyInPlace(documentController)
+
+        deleteDocumentInTransport(documentController)
+        deleteDocumentInAccommodation(documentController)
+        deleteDocumentInActivity(documentController)
+        deleteDocumentInPlace(documentController)
     }
 }
 
@@ -243,7 +249,7 @@ private fun Route.setDocumentKeyInTransport(documentController: DocumentControll
         val tripId = it.document.transport.trip.id.throwIfMissing(it.document.transport.trip::id.name)
         val poiId = it.document.transport.transportId.throwIfMissing(it.document.transport::transportId.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
-        setDocumentKeyInPoi(this, documentController, tripId, poiId, documentId, TRANSPORT)
+        setDocumentKeyInPoi(documentController, tripId, poiId, documentId, TRANSPORT)
     }
 }
 
@@ -254,7 +260,7 @@ private fun Route.setDocumentKeyInAccommodation(documentController: DocumentCont
         val poiId =
             it.document.accommodation.accommodationId.throwIfMissing(it.document.accommodation::accommodationId.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
-        setDocumentKeyInPoi(this, documentController, tripId, poiId, documentId, ACCOMMODATION)
+        setDocumentKeyInPoi(documentController, tripId, poiId, documentId, ACCOMMODATION)
     }
 }
 
@@ -264,7 +270,7 @@ private fun Route.setDocumentKeyInActivity(documentController: DocumentControlle
         val tripId = it.document.activity.trip.id.throwIfMissing(it.document.activity.trip::id.name)
         val poiId = it.document.activity.activityId.throwIfMissing(it.document.activity::activityId.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
-        setDocumentKeyInPoi(this, documentController, tripId, poiId, documentId, ACTIVITY)
+        setDocumentKeyInPoi(documentController, tripId, poiId, documentId, ACTIVITY)
     }
 }
 
@@ -274,18 +280,61 @@ private fun Route.setDocumentKeyInPlace(documentController: DocumentController) 
         val tripId = it.document.place.trip.id.throwIfMissing(it.document.place.trip::id.name)
         val poiId = it.document.place.placeId.throwIfMissing(it.document.place::placeId.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
-        setDocumentKeyInPoi(this, documentController, tripId, poiId, documentId, PLACE)
+        setDocumentKeyInPoi(documentController, tripId, poiId, documentId, PLACE)
     }
 }
 
-private suspend fun setDocumentKeyInPoi(
-    context: PipelineContext<Unit, ApplicationCall>,
+private suspend fun PipelineContext<Unit, ApplicationCall>.setDocumentKeyInPoi(
     documentController: DocumentController,
     tripId: Int,
     poiId: Int,
     documentId: Int,
     poiType: PointOfInterestType
 ) {
-    val key = context.receive<DocumentKeyRequest>(DocumentKeyRequest.MISSING_PARAM).key
-    context.respond(documentController.setKey(context.getUserId(), tripId, poiId, documentId, key, poiType))
+    val key = receive<DocumentKeyRequest>(DocumentKeyRequest.MISSING_PARAM).key
+    respond(documentController.setKey(getUserId(), tripId, poiId, documentId, key, poiType))
+}
+
+private fun Route.deleteDocumentInTrip(documentController: DocumentController) {
+    delete<Trip.Document> {
+        val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
+        val documentId = it.documentId.throwIfMissing(it::documentId.name)
+        respond(documentController.deleteDocument(getUserId(), tripId, documentId))
+    }
+}
+
+private fun Route.deleteDocumentInTransport(documentController: DocumentController) {
+    delete<Trip.Transport.Document> {
+        val tripId = it.transport.trip.id.throwIfMissing(it.transport.trip::id.name)
+        val poiId = it.transport.transportId.throwIfMissing(it.transport::transportId.name)
+        val documentId = it.documentId.throwIfMissing(it::documentId.name)
+        respond(documentController.deleteDocument(getUserId(), tripId, poiId, documentId, TRANSPORT))
+    }
+}
+
+private fun Route.deleteDocumentInAccommodation(documentController: DocumentController) {
+    delete<Trip.Accommodation.Document> {
+        val tripId = it.accommodation.trip.id.throwIfMissing(it.accommodation.trip::id.name)
+        val poiId = it.accommodation.accommodationId.throwIfMissing(it.accommodation::accommodationId.name)
+        val documentId = it.documentId.throwIfMissing(it::documentId.name)
+        respond(documentController.deleteDocument(getUserId(), tripId, poiId, documentId, ACCOMMODATION))
+    }
+}
+
+private fun Route.deleteDocumentInActivity(documentController: DocumentController) {
+    delete<Trip.Activity.Document> {
+        val tripId = it.activity.trip.id.throwIfMissing(it.activity.trip::id.name)
+        val poiId = it.activity.activityId.throwIfMissing(it.activity::activityId.name)
+        val documentId = it.documentId.throwIfMissing(it::documentId.name)
+        respond(documentController.deleteDocument(getUserId(), tripId, poiId, documentId, ACTIVITY))
+    }
+}
+
+private fun Route.deleteDocumentInPlace(documentController: DocumentController) {
+    delete<Trip.Place.Document> {
+        val tripId = it.place.trip.id.throwIfMissing(it.place.trip::id.name)
+        val poiId = it.place.placeId.throwIfMissing(it.place::placeId.name)
+        val documentId = it.documentId.throwIfMissing(it::documentId.name)
+        respond(documentController.deleteDocument(getUserId(), tripId, poiId, documentId, PLACE))
+    }
 }

@@ -14,6 +14,7 @@ import cz.cvut.fit.steuejan.travel.api.trip.document.model.DocumentMetadata
 import cz.cvut.fit.steuejan.travel.api.trip.document.model.FileWrapper
 import cz.cvut.fit.steuejan.travel.data.database.document.DocumentDto
 import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
+import cz.cvut.fit.steuejan.travel.data.model.UserRole
 
 class DocumentController(
     daoFactory: DaoFactory,
@@ -91,18 +92,18 @@ class DocumentController(
         dbCall: suspend () -> DocumentDto?
     ): FileWrapper {
         viewOrThrow(userId, tripId)
-
         val document = dbCall.invoke() ?: throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
+        validateKey(document, key)
+        return amazonS3.downloadFile(document.id.toString())
+            ?: throw BadRequestException(FailureMessages.DOCUMENT_DATA_NULL)
+    }
 
-        //document is secret
+    private fun validateKey(document: DocumentDto, key: String?) {
         document.key?.let { hashedKey ->
             if (key == null || hashedKey != encryptor.hash(key)) {
                 throw ForbiddenException(FailureMessages.DOCUMENT_DATA_PROHIBITED)
             }
         }
-
-        return amazonS3.downloadFile(document.id.toString())
-            ?: throw BadRequestException(FailureMessages.DOCUMENT_DATA_NULL)
     }
 
     suspend fun setKey(userId: Int, tripId: Int, documentId: Int, key: String): Response {
@@ -147,6 +148,47 @@ class DocumentController(
         if (!dbCall.invoke(hashedKey)) {
             throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
         }
+        return Success(Status.NO_CONTENT)
+    }
+
+    suspend fun deleteDocument(userId: Int, tripId: Int, documentId: Int): Response {
+        return deleteDocument(userId, tripId, documentId) {
+            daoFactory.documentDao.deleteDocument(tripId, documentId)
+        }
+    }
+
+    suspend fun deleteDocument(
+        userId: Int,
+        tripId: Int,
+        poiId: Int,
+        documentId: Int,
+        poiType: PointOfInterestType
+    ): Response {
+        return deleteDocument(userId, tripId, documentId) {
+            daoFactory.documentDao.deleteDocument(tripId, poiId, documentId, poiType)
+        }
+    }
+
+    private suspend fun deleteDocument(
+        userId: Int,
+        tripId: Int,
+        documentId: Int,
+        dbCall: suspend () -> Boolean
+    ): Response {
+        val document = daoFactory.documentDao.getDocument(tripId, documentId)
+            ?: throw NotFoundException(FailureMessages.DOCUMENT_NOT_FOUND)
+
+        //not admin nor owner of the document
+        if (getUserRole(userId, tripId) != UserRole.ADMIN && document.userId != userId) {
+            throw ForbiddenException(FailureMessages.DOCUMENT_DELETE_PROHIBITED)
+        }
+
+        if (amazonS3.deleteFile(documentId.toString())) {
+            dbCall.invoke()
+        } else {
+            throw NotFoundException(FailureMessages.DOCUMENT_DELETE_FAILED)
+        }
+
         return Success(Status.NO_CONTENT)
     }
 

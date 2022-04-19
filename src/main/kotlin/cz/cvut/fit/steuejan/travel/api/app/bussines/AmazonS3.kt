@@ -1,8 +1,7 @@
 package cz.cvut.fit.steuejan.travel.api.app.bussines
 
 import aws.sdk.kotlin.services.s3.S3Client
-import aws.sdk.kotlin.services.s3.model.GetObjectRequest
-import aws.sdk.kotlin.services.s3.model.PutObjectRequest
+import aws.sdk.kotlin.services.s3.model.*
 import aws.smithy.kotlin.runtime.content.ByteStream
 import aws.smithy.kotlin.runtime.content.toByteArray
 import cz.cvut.fit.steuejan.travel.api.app.config.AmazonS3Config
@@ -47,6 +46,25 @@ class AmazonS3(private val config: AmazonS3Config) {
                 }
             }
         }
+    }
+
+    suspend fun deleteFile(id: String) = withContext(Dispatchers.IO) {
+        val objectId = ObjectIdentifier {
+            key = id
+        }
+
+        val request = DeleteObjectsRequest {
+            bucket = config.bucket
+            delete = Delete {
+                objects = listOf(objectId)
+            }
+        }
+
+        val response = S3Client { region = config.region }.use { s3 ->
+            s3.deleteObjects(request)
+        }
+
+        response.deleted != null
     }
 
     companion object {
