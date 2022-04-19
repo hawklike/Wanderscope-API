@@ -10,8 +10,14 @@ import cz.cvut.fit.steuejan.travel.api.app.response.Response
 import cz.cvut.fit.steuejan.travel.api.app.response.Status
 import cz.cvut.fit.steuejan.travel.api.app.response.Success
 import cz.cvut.fit.steuejan.travel.api.trip.controller.AbstractTripController
+import cz.cvut.fit.steuejan.travel.api.trip.expense.bussiness.SimplifyDebts
+import cz.cvut.fit.steuejan.travel.api.trip.expense.model.ExpenseOverview
+import cz.cvut.fit.steuejan.travel.api.trip.expense.model.SuggestedPayment
+import cz.cvut.fit.steuejan.travel.api.trip.expense.response.ExpenseOverviewListResponse
 import cz.cvut.fit.steuejan.travel.api.trip.expense.response.ExpenseRoomResponse
+import cz.cvut.fit.steuejan.travel.api.trip.expense.response.SuggestedPaymentsResponse
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
+import cz.cvut.fit.steuejan.travel.data.database.expense.dto.ExpenseDto
 import cz.cvut.fit.steuejan.travel.data.database.expense.dto.ExpenseRoomDto
 
 class ExpenseRoomController(
@@ -48,6 +54,44 @@ class ExpenseRoomController(
             throw NotFoundException(FailureMessages.EXPENSE_ROOM_NOT_FOUND)
         }
         return Success(Status.NO_CONTENT)
+    }
+
+    suspend fun showExpenses(userId: Int, tripId: Int, roomId: Int): Response {
+        viewOrThrow(userId, tripId)
+        val expenses = daoFactory.expenseDao.showExpenses(tripId, roomId)
+        return ExpenseOverviewListResponse.success(expenses.map(ExpenseOverview::fromDto))
+    }
+
+    suspend fun showSuggestedPayments(userId: Int, tripId: Int, roomId: Int): Response {
+        viewOrThrow(userId, tripId)
+        val room = daoFactory.expenseRoomDao.findRoom(tripId, roomId)
+            ?: throw NotFoundException(FailureMessages.EXPENSE_ROOM_NOT_FOUND)
+        val expenses = daoFactory.expenseDao.showExpenses(tripId, roomId)
+        val payments = SimplifyDebts(getPersons(expenses)).suggestPayments(getTransactions(expenses))
+        return SuggestedPaymentsResponse.success(payments.map(SuggestedPayment::create))
+    }
+
+    private fun getPersons(expenses: List<ExpenseDto>): Array<String> {
+        val whoPaid = expenses.map { it.whoPaid }
+        val whoOwes = expenses.flatMap { it.whoOwes }
+        val persons = (whoPaid + whoOwes).toSet()
+        return persons.toTypedArray()
+    }
+
+    private fun getTransactions(expenses: List<ExpenseDto>): Array<SimplifyDebts.Transaction> {
+        val transactions = mutableListOf<SimplifyDebts.Transaction>()
+        expenses.forEach { expense ->
+            expense.whoOwes.forEach { whoOwes ->
+                transactions.add(
+                    SimplifyDebts.Transaction(
+                        expense.whoPaid,
+                        whoOwes,
+                        expense.amountInCents
+                    )
+                )
+            }
+        }
+        return transactions.toTypedArray()
     }
 
     private suspend fun <T> upsert(userId: Int, tripId: Int, room: ExpenseRoomDto, dbCall: suspend () -> T): T {

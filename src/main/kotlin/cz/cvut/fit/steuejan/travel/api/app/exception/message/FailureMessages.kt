@@ -43,6 +43,7 @@ object FailureMessages {
     const val PLACE_NOT_FOUND = "Place not found."
     const val DOCUMENT_NOT_FOUND = "Document not found."
     const val EXPENSE_ROOM_NOT_FOUND = "Expense room not found."
+    const val EXPENSE_NOT_FOUND = "Expense not found."
 
     const val ADD_USER_FAILURE = "Cannot add this user. Check duplicates."
     const val ADD_TRIP_FAILURE = "Cannot add this trip. Check name length and if the owner exists."
@@ -107,5 +108,9 @@ object FailureMessages {
     @Suppress("DEPRECATION")
     fun illegalName(what: String): String {
         return "${what.capitalize()} cannot contain newline, ~ and ; characters."
+    }
+
+    fun expensePersonNotFound(vararg person: String): String {
+        return "${person.joinToString()} not found."
     }
 }

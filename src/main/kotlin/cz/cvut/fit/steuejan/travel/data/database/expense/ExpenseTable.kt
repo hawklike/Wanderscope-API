@@ -11,10 +11,10 @@ object ExpenseTable : LongIdTable("expenses") {
     val trip = reference("trip", TripTable, onDelete = CASCADE, onUpdate = CASCADE)
 
     val name = varchar("name", DatabaseConfig.NAME_LENGTH)
-    val amountInCents = integer("amountInCents")
+    val amountInCents = long("amountInCents")
     val whoPaid = varchar("whoPaid", DatabaseConfig.NAME_LENGTH)
     val whoOwes = text("whoOwes")
-    val date = datetime("date")
+    val date = datetime("date").nullable()
 
     fun parseList(list: List<String>): String {
         return list.joinToString(ARRAY_SEPARATOR)

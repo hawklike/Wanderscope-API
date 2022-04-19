@@ -10,4 +10,5 @@ interface ExpenseRoomDao {
     suspend fun editName(tripId: Int, roomId: Int, name: String): Boolean
     suspend fun editPersons(tripId: Int, roomId: Int, persons: List<String>): Boolean
     suspend fun getPersons(tripId: Int, roomId: Int): List<String>
+    suspend fun showExpenseRooms(tripId: Int): List<ExpenseRoomDto>
 }

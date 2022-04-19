@@ -19,7 +19,7 @@ class DatabaseConfig(override val config: ApplicationConfig) : AppConfig {
         const val DOCUMENT_KEY_LENTGH = 5
         const val TRIP_lINK_LENGTH = 8
         const val FORGOT_PASSWORD_TOKEN_LENGTH = 32
-        const val DESCRIPTION_LENGTH = 1000
+        const val DESCRIPTION_LENGTH = 2000
         const val TEXT_LENGTH = 1000
         const val WIKI_LENGTH = 2000
         const val CURRENCY_CODE_LENGTH = 3

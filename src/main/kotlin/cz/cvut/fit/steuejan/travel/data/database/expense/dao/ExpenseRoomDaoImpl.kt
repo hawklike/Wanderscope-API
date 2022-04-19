@@ -10,11 +10,8 @@ import cz.cvut.fit.steuejan.travel.data.extension.isDeleted
 import cz.cvut.fit.steuejan.travel.data.extension.isUpdated
 import cz.cvut.fit.steuejan.travel.data.extension.selectFirst
 import cz.cvut.fit.steuejan.travel.data.util.transaction
-import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.update
 
 class ExpenseRoomDaoImpl : ExpenseRoomDao {
     override suspend fun createRoom(tripId: Int, room: ExpenseRoomDto) = transaction {
@@ -53,6 +50,10 @@ class ExpenseRoomDaoImpl : ExpenseRoomDao {
             it[this.persons] = parseList(persons)
         }
     }.isUpdated()
+
+    override suspend fun showExpenseRooms(tripId: Int) = transaction {
+        ExpenseRoomTable.select { ExpenseRoomTable.trip eq tripId }.map(ExpenseRoomDto::fromDb)
+    }
 
     override suspend fun getPersons(tripId: Int, roomId: Int) = transaction {
         ExpenseRoomTable.selectFirst { findById(tripId, roomId) }

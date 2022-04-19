@@ -2,8 +2,6 @@ package cz.cvut.fit.steuejan.travel.data.database.trip.dao
 
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
-import cz.cvut.fit.steuejan.travel.data.database.expense.ExpenseRoomTable
-import cz.cvut.fit.steuejan.travel.data.database.expense.dto.ExpenseRoomDto
 import cz.cvut.fit.steuejan.travel.data.database.trip.TripTable
 import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripDto
 import cz.cvut.fit.steuejan.travel.data.database.trip.dto.TripUsersDto
@@ -67,6 +65,10 @@ class TripDaoImpl : TripDao {
         }
     }.isUpdated()
 
+    override suspend fun shareTrip() {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun showUsers(tripId: Int, role: UserRole?): List<TripUsersDto> {
         val where = if (role != null) {
             (TripTable.id eq tripId) and (TripUserTable.role eq role)
@@ -82,14 +84,6 @@ class TripDaoImpl : TripDao {
         return transaction {
             queryToTripUsers(query)
         }
-    }
-
-    override suspend fun showExpenseRooms(tripId: Int) = transaction {
-        ExpenseRoomTable.select { ExpenseRoomTable.trip eq tripId }.map(ExpenseRoomDto::fromDb)
-    }
-
-    override suspend fun shareTrip() {
-        TODO("Not yet implemented")
     }
 
     private fun getUsersFieldSet() = TripTable

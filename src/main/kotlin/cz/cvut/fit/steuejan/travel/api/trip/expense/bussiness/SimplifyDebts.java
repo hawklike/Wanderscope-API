@@ -1,7 +1,8 @@
 package cz.cvut.fit.steuejan.travel.api.trip.expense.bussiness;
 
-import java.math.BigDecimal;
 import java.util.*;
+
+import static java.lang.Math.min;
 
 /**
  * Implementation of algorithm to simplify debts using Dinic's network flow algorithm. The algorithm picks edges one at a time and
@@ -11,6 +12,7 @@ import java.util.*;
  * <p>Time Complexity: O(E²V²)
  *
  * @author Mithun Mohan K, mithunmk93@gmail.com
+ * @link https://github.com/mithun-mohan/Algorithms-Java-Cookbook/blob/master/MaximumFlow/Dinics/SimplifyDebts.java
  */
 public class SimplifyDebts {
     private static final long OFFSET = 1000000000L;
@@ -20,7 +22,7 @@ public class SimplifyDebts {
 
     private final HashMap<String, Integer> usersWithIdx;
 
-    SimplifyDebts(String[] users) {
+    public SimplifyDebts(String[] users) {
         Set<String> tmp = new HashSet<>(List.of(users));
         if (tmp.size() != users.length) {
             throw new IllegalArgumentException("User names must be unique.");
@@ -37,33 +39,33 @@ public class SimplifyDebts {
     public static class Transaction {
         private final String whoPaid;
         private final String whoOwes;
-        private final Double amount;
+        private final long amountInCents;
 
-        public Transaction(String whoPaid, String whoOwes, Double amount) {
+        public Transaction(String whoPaid, String whoOwes, long amountInCents) {
             this.whoPaid = whoPaid;
             this.whoOwes = whoOwes;
-            this.amount = amount;
+            this.amountInCents = amountInCents;
         }
     }
 
     public static class SuggestedPayment {
-        private final String from;
-        private final String to;
-        private final BigDecimal amount;
+        public final String from;
+        public final String to;
+        public final long amountInCents;
 
-        public SuggestedPayment(String from, String to, BigDecimal amount) {
+        public SuggestedPayment(String from, String to, long amountInCents) {
             this.from = from;
             this.to = to;
-            this.amount = amount;
+            this.amountInCents = amountInCents;
         }
 
         @Override
         public String toString() {
-            return from + " ------ " + amount + " -----> " + to;
+            return from + " ------ " + amountInCents / 100.0 + " -----> " + to;
         }
     }
 
-    public List<SuggestedPayment> createGraphForDebts(Transaction[] transactions) {
+    public List<SuggestedPayment> suggestPayments(Transaction[] transactions) {
         //  List of all people in the group
         int n = users.length;
         //  Creating a graph with n vertices
@@ -88,17 +90,17 @@ public class SimplifyDebts {
 
             for (List<Dinics.Edge> allEdges : residualGraph) {
                 for (Dinics.Edge edge : allEdges) {
-                    BigDecimal remainingFlow = ((edge.flow.compareTo(BigDecimal.ZERO) < 0) ? edge.capacity : (edge.capacity.subtract(edge.flow)));
+                    long remainingFlow = ((edge.flow < 0) ? edge.capacity : (edge.capacity - edge.flow));
                     //  If there is capacity remaining in the graph, then add the remaining capacity as an edge
                     //  so that it can be used for optimizing other debts within the graph
-                    if (remainingFlow.compareTo(BigDecimal.ZERO) > 0) {
+                    if (remainingFlow > 0) {
                         newEdges.add(new Dinics.Edge(edge.from, edge.to, remainingFlow));
                     }
                 }
             }
 
             //  Get the maximum flow between the source and sink
-            BigDecimal maxFlow = solver.getMaxFlow();
+            long maxFlow = solver.getMaxFlow();
             //  Mark the edge from source to sink as visited
             int source = solver.getSource();
             int sink = solver.getSink();
@@ -131,7 +133,7 @@ public class SimplifyDebts {
             }
 
             if (whoPaidIdx != whoOwesIdx) {
-                solver.addEdge(whoOwesIdx, whoPaidIdx, BigDecimal.valueOf(transaction.amount));
+                solver.addEdge(whoOwesIdx, whoPaidIdx, transaction.amountInCents);
             }
         }
     }
@@ -199,8 +201,8 @@ class Dinics extends NetworkFlowSolverBase {
         while (bfs()) {
             Arrays.fill(next, 0);
             // Find max flow by adding all augmenting path flows.
-            for (BigDecimal f = dfs(s, next, INF); f.compareTo(BigDecimal.ZERO) != 0; f = dfs(s, next, INF)) {
-                maxFlow = maxFlow.add(f);
+            for (long f = dfs(s, next, INF); f != 0; f = dfs(s, next, INF)) {
+                maxFlow += f;
             }
         }
 
@@ -217,8 +219,8 @@ class Dinics extends NetworkFlowSolverBase {
         while (!q.isEmpty()) {
             int node = q.poll();
             for (Edge edge : graph[node]) {
-                BigDecimal cap = edge.remainingCapacity();
-                if (cap.compareTo(BigDecimal.ZERO) > 0 && level[edge.to] == -1) {
+                long cap = edge.remainingCapacity();
+                if (cap > 0 && level[edge.to] == -1) {
                     level[edge.to] = level[node] + 1;
                     q.offer(edge.to);
                 }
@@ -227,23 +229,23 @@ class Dinics extends NetworkFlowSolverBase {
         return level[t] != -1;
     }
 
-    private BigDecimal dfs(int at, int[] next, BigDecimal flow) {
+    private long dfs(int at, int[] next, long flow) {
         if (at == t) return flow;
         final int numEdges = graph[at].size();
 
         for (; next[at] < numEdges; next[at]++) {
             Edge edge = graph[at].get(next[at]);
-            BigDecimal cap = edge.remainingCapacity();
-            if (cap.compareTo(BigDecimal.ZERO) > 0 && level[edge.to] == level[at] + 1) {
+            long cap = edge.remainingCapacity();
+            if (cap > 0 && level[edge.to] == level[at] + 1) {
 
-                BigDecimal bottleNeck = dfs(edge.to, next, flow.min(cap));
-                if (bottleNeck.compareTo(BigDecimal.ZERO) > 0) {
+                long bottleNeck = dfs(edge.to, next, min(flow, cap));
+                if (bottleNeck > 0) {
                     edge.augment(bottleNeck);
                     return bottleNeck;
                 }
             }
         }
-        return BigDecimal.ZERO;
+        return 0;
     }
 }
 
@@ -251,19 +253,19 @@ class Dinics extends NetworkFlowSolverBase {
 abstract class NetworkFlowSolverBase {
 
     // To avoid overflow, set infinity to a value less than Long.MAX_VALUE;
-    protected static final BigDecimal INF = BigDecimal.valueOf(Long.MAX_VALUE / 2);
+    protected static final long INF = Long.MAX_VALUE / 2;
 
     public static class Edge {
         public int from, to;
         public Edge residual;
-        public BigDecimal flow = BigDecimal.ZERO;
-        public final BigDecimal capacity, originalCost;
+        public long flow;
+        public final long capacity, originalCost;
 
-        public Edge(int from, int to, BigDecimal capacity) {
-            this(from, to, capacity, BigDecimal.ZERO /* unused */);
+        public Edge(int from, int to, long capacity) {
+            this(from, to, capacity, 0 /* unused */);
         }
 
-        public Edge(int from, int to, BigDecimal capacity, BigDecimal cost) {
+        public Edge(int from, int to, long capacity, long cost) {
             this.from = from;
             this.to = to;
             this.capacity = capacity;
@@ -271,31 +273,31 @@ abstract class NetworkFlowSolverBase {
         }
 
         public boolean isResidual() {
-            return capacity.compareTo(BigDecimal.ZERO) == 0;
+            return capacity == 0;
         }
 
-        public BigDecimal remainingCapacity() {
-            return capacity.subtract(flow);
+        public long remainingCapacity() {
+            return capacity - flow;
         }
 
-        public void augment(BigDecimal bottleNeck) {
-            flow = flow.add(bottleNeck);
-            residual.flow = residual.flow.subtract(bottleNeck);
+        public void augment(long bottleNeck) {
+            flow += bottleNeck;
+            residual.flow -= bottleNeck;
         }
 
         public String toString(int s, int t) {
             String u = (from == s) ? "s" : ((from == t) ? "t" : String.valueOf(from));
             String v = (to == s) ? "s" : ((to == t) ? "t" : String.valueOf(to));
             return String.format(
-                    "Edge %s -> %s | flow = %s | capacity = %s | is residual: %s",
-                    u, v, flow.toPlainString(), capacity.toPlainString(), isResidual());
+                    "Edge %s -> %s | flow = %d | capacity = %d | is residual: %s",
+                    u, v, flow, capacity, isResidual());
         }
     }
 
     // Inputs: n = number of nodes, s = source, t = sink
     protected int n, s, t;
 
-    protected BigDecimal maxFlow = BigDecimal.ZERO;
+    protected long maxFlow;
 
     protected boolean[] minCut;
     protected List<Edge>[] graph;
@@ -353,10 +355,10 @@ abstract class NetworkFlowSolverBase {
      * @param to       - The index of the node the directed edge ends at.
      * @param capacity - The capacity of the edge.
      */
-    public void addEdge(int from, int to, BigDecimal capacity) {
-        if (capacity.compareTo(BigDecimal.ZERO) < 0) throw new IllegalArgumentException("Capacity < 0");
+    public void addEdge(int from, int to, long capacity) {
+        if (capacity < 0) throw new IllegalArgumentException("Capacity < 0");
         Edge e1 = new Edge(from, to, capacity);
-        Edge e2 = new Edge(to, from, BigDecimal.ZERO);
+        Edge e2 = new Edge(to, from, 0);
         e1.residual = e2;
         e2.residual = e1;
         graph[from].add(e1);
@@ -382,7 +384,7 @@ abstract class NetworkFlowSolverBase {
     }
 
     // Returns the maximum flow from the source to the sink.
-    public BigDecimal getMaxFlow() {
+    public long getMaxFlow() {
         execute();
         return maxFlow;
     }

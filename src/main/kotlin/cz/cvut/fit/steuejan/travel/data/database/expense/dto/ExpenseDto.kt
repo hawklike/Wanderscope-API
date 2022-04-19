@@ -7,16 +7,18 @@ import org.joda.time.DateTime
 
 data class ExpenseDto(
     val id: Long,
+    val tripId: Int,
     val roomId: Int,
     val name: String,
-    val amountInCents: Int,
+    val amountInCents: Long,
     val whoPaid: String,
     val whoOwes: List<String>,
-    val date: DateTime
+    val date: DateTime?
 ) : Dto() {
     companion object {
         fun fromDb(resultRow: ResultRow) = ExpenseDto(
             id = resultRow[ExpenseTable.id].value,
+            tripId = resultRow[ExpenseTable.trip].value,
             roomId = resultRow[ExpenseTable.room].value,
             name = resultRow[ExpenseTable.name],
             amountInCents = resultRow[ExpenseTable.amountInCents],
