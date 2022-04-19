@@ -5,10 +5,7 @@ import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.api.trip.document.model.DocumentMetadata
 import cz.cvut.fit.steuejan.travel.data.database.document.DocumentDto
 import cz.cvut.fit.steuejan.travel.data.database.document.DocumentTable
-import cz.cvut.fit.steuejan.travel.data.extension.insertAndGetIdOrNull
-import cz.cvut.fit.steuejan.travel.data.extension.isUpdated
-import cz.cvut.fit.steuejan.travel.data.extension.selectFirst
-import cz.cvut.fit.steuejan.travel.data.extension.updateById
+import cz.cvut.fit.steuejan.travel.data.extension.*
 import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
 import cz.cvut.fit.steuejan.travel.data.util.transaction
 import org.jetbrains.exposed.dao.id.EntityID
@@ -56,6 +53,21 @@ class DocumentDaoImpl : DocumentDao {
             (DocumentTable.trip eq tripId) and (selectColumn(poiType)!! eq poiId)
         }.map(DocumentDto::fromDb)
     }
+
+    override suspend fun deleteDocument(tripId: Int, documentId: Int) = transaction {
+        DocumentTable.deleteWhere { findByIdInTrip(tripId, documentId) }
+    }.isDeleted()
+
+    override suspend fun deleteDocument(
+        tripId: Int,
+        poiId: Int,
+        documentId: Int,
+        poiType: PointOfInterestType
+    ) = transaction {
+        DocumentTable.deleteWhere {
+            findByIdInPoi(tripId, poiId, documentId, selectColumn(poiType)!!)
+        }
+    }.isDeleted()
 
     override suspend fun setKey(tripId: Int, documentId: Int, key: String): Boolean {
         return setKey(findByIdInTrip(tripId, documentId), key)

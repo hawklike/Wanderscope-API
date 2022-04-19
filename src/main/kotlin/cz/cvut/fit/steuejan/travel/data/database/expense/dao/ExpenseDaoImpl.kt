@@ -31,6 +31,7 @@ class ExpenseDaoImpl : ExpenseDao {
 
     override suspend fun showExpenses(tripId: Int, roomId: Int) = transaction {
         ExpenseTable.select { (ExpenseTable.trip eq tripId) and (ExpenseTable.room eq roomId) }
+            .orderBy(ExpenseTable.date, SortOrder.DESC_NULLS_LAST)
             .map(ExpenseDto::fromDb)
     }
 

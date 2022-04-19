@@ -4,6 +4,7 @@
 package cz.cvut.fit.steuejan.travel.api.app.route
 
 import cz.cvut.fit.steuejan.travel.api.account.controller.AccountController
+import cz.cvut.fit.steuejan.travel.api.account.request.ChangeDisplayNameRequest
 import cz.cvut.fit.steuejan.travel.api.account.request.ChangePasswordRequest
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.ControllerFactory
 import cz.cvut.fit.steuejan.travel.api.app.extension.getUserId
@@ -15,6 +16,7 @@ import cz.cvut.fit.steuejan.travel.api.auth.request.RefreshTokenRequest
 import io.ktor.auth.*
 import io.ktor.locations.*
 import io.ktor.locations.post
+import io.ktor.locations.put
 import io.ktor.routing.*
 import org.koin.ktor.ext.inject
 
@@ -28,7 +30,8 @@ fun Routing.accountRoutes() {
 
         logoutAll(accountController)
         changePassword(accountController)
-        delete(accountController)
+        deleteAccount(accountController)
+        setDisplayName(accountController)
     }
 }
 
@@ -52,8 +55,15 @@ private fun Route.changePassword(accountController: AccountController) {
     }
 }
 
-private fun Route.delete(accountController: AccountController) {
+private fun Route.deleteAccount(accountController: AccountController) {
     delete<Account> {
         respond(accountController.delete(getUserId()))
+    }
+}
+
+private fun Route.setDisplayName(accountController: AccountController) {
+    put<Account.DisplayName> {
+        val request = receive<ChangeDisplayNameRequest>(ChangeDisplayNameRequest.MISSING_PARAM)
+        respond(accountController.setDisplayName(getUserId(), request.displayName))
     }
 }
