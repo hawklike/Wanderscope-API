@@ -59,6 +59,10 @@ class UserDaoImpl : UserDao {
         UserTable.updateById(userId) { it[password] = newPassword }
     }.isUpdated()
 
+    override suspend fun changeDisplayName(userId: Int, displayName: String) = transaction {
+        UserTable.updateById(userId) { it[UserTable.displayName] = displayName }
+    }.isUpdated()
+
     override suspend fun getAllTrips(userId: Int): List<TripOverviewDto> {
         val selection = UserTable.id eq userId
         return getTrips(selection, TripTable.startDate, SortOrder.DESC_NULLS_LAST)

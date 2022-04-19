@@ -29,4 +29,11 @@ object Account {
             const val URL = "/logoutAll"
         }
     }
+
+    @Location(DisplayName.URL)
+    class DisplayName {
+        companion object {
+            const val URL = "/name"
+        }
+    }
 }
