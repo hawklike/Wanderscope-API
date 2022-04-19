@@ -63,6 +63,41 @@ class Trip(val id: Int? = null) {
         }
     }
 
+    @Location("${ExpenseRoom.URL}/{expenseRoomId?}")
+    class ExpenseRoom(val trip: Trip, val expenseRoomId: Int? = null) {
+        companion object {
+            const val URL = "/room"
+        }
+
+        @Location("${Expense.URL}/{expenseId?}")
+        class Expense(val room: ExpenseRoom, val expenseId: Long? = null) {
+            companion object {
+                const val URL = "/expense"
+            }
+        }
+
+        @Location(Expenses.URL)
+        class Expenses(val room: ExpenseRoom) {
+            companion object {
+                const val URL = "/expenses"
+            }
+        }
+
+        @Location(SuggestedPayments.URL)
+        class SuggestedPayments(val room: ExpenseRoom) {
+            companion object {
+                const val URL = "/suggestedPayments"
+            }
+        }
+    }
+
+    @Location(ExpenseRooms.URL)
+    class ExpenseRooms(val trip: Trip) {
+        companion object {
+            const val URL = "/rooms"
+        }
+    }
+
     @Location("${Document.URL}/{documentId?}")
     class Document(val trip: Trip, val documentId: Int? = null) {
         companion object {

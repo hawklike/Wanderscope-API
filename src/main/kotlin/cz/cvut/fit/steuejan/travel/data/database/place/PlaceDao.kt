@@ -71,7 +71,7 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
     }
 
     private fun truncateWiki(wikiBrief: String?): String? {
-        return wikiBrief?.take(cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig.WIKI_MAX_LENGTH)?.plus("…")
+        return wikiBrief?.take(cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig.WIKI_LENGTH)?.plus("…")
     }
 
     companion object {

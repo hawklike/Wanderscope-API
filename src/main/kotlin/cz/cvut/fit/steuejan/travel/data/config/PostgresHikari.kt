@@ -15,6 +15,7 @@ class PostgresHikari(dbConfig: DatabaseConfig) : Hikari(dbConfig) {
             isAutoCommit = false
             maximumPoolSize = dbConfig.maxPoolSize
             transactionIsolation = "TRANSACTION_REPEATABLE_READ"
+            addDataSourceProperty("rewriteBatchedInserts", true.toString())
         }
         config.validate()
         return HikariDataSource(config)

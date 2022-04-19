@@ -4,6 +4,8 @@ import cz.cvut.fit.steuejan.travel.data.config.Hikari
 import cz.cvut.fit.steuejan.travel.data.database.accomodation.AccommodationTable
 import cz.cvut.fit.steuejan.travel.data.database.activity.ActivityTable
 import cz.cvut.fit.steuejan.travel.data.database.document.DocumentTable
+import cz.cvut.fit.steuejan.travel.data.database.expense.ExpenseRoomTable
+import cz.cvut.fit.steuejan.travel.data.database.expense.ExpenseTable
 import cz.cvut.fit.steuejan.travel.data.database.forgotpassword.ForgotPasswordTable
 import cz.cvut.fit.steuejan.travel.data.database.place.PlaceTable
 import cz.cvut.fit.steuejan.travel.data.database.token.TokenTable
@@ -26,7 +28,9 @@ fun initDatabase(hikari: Hikari) {
         ActivityTable,
         DocumentTable,
         TokenTable,
-        ForgotPasswordTable
+        ForgotPasswordTable,
+        ExpenseRoomTable,
+        ExpenseTable
     )
 
     Database.connect(hikari.init())

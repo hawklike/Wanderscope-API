@@ -65,6 +65,10 @@ class TripDaoImpl : TripDao {
         }
     }.isUpdated()
 
+    override suspend fun shareTrip() {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun showUsers(tripId: Int, role: UserRole?): List<TripUsersDto> {
         val where = if (role != null) {
             (TripTable.id eq tripId) and (TripUserTable.role eq role)
@@ -82,10 +86,6 @@ class TripDaoImpl : TripDao {
         }
     }
 
-    override suspend fun shareTrip() {
-        TODO("Not yet implemented")
-    }
-
     private fun getUsersFieldSet() = TripTable
         .innerJoin(TripUserTable)
         .join(UserTable, JoinType.INNER, TripUserTable.user, UserTable.id)
@@ -96,7 +96,9 @@ class TripDaoImpl : TripDao {
         query.forEach {
             val user = UserDto.fromDb(it)
             val connection = TripUserDto.fromDb(it)
-            users.add(TripUsersDto(user, connection))
+            if (!user.deleted) {
+                users.add(TripUsersDto(user, connection))
+            }
         }
         return users
     }

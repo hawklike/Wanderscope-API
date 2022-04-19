@@ -2,6 +2,7 @@ package cz.cvut.fit.steuejan.travel.api.app.exception.message
 
 import cz.cvut.fit.steuejan.travel.api.app.bussines.Validator
 import cz.cvut.fit.steuejan.travel.api.app.route.DOCUMENT_KEY_HEADER
+import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig.Companion.CURRENCY_CODE_LENGTH
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig.Companion.NAME_LENGTH
 
 object FailureMessages {
@@ -41,15 +42,23 @@ object FailureMessages {
     const val ACTIVITY_NOT_FOUND = "Activity not found."
     const val PLACE_NOT_FOUND = "Place not found."
     const val DOCUMENT_NOT_FOUND = "Document not found."
+    const val EXPENSE_ROOM_NOT_FOUND = "Expense room not found."
+    const val EXPENSE_NOT_FOUND = "Expense not found."
 
     const val ADD_USER_FAILURE = "Cannot add this user. Check duplicates."
-    const val ADD_TRIP_FAILURE = "Cannot add this trip. Check name length and if owner exists."
+    const val ADD_TRIP_FAILURE = "Cannot add this trip. Check name length and if the owner exists."
     const val ADD_DOCUMENT_METADATA_FAILURE =
         "Cannot add this document. Check name length, extension length and if both owner and trip exist."
     const val ADD_DOCUMENT_METADATA_POI_NULL =
         "Point of interest aka transport, accommodation, activity or place cannot be null."
 
-    const val NAME_TOO_LONG = "Name is too long. Max length allowed is $NAME_LENGTH"
+    const val CURRENCY_TOO_lONG = "Currency code is too long. Max length allowed is $CURRENCY_CODE_LENGTH."
+    const val ADD_EXPENSE_ROOM_FAILURE = "Cannot add room. Check if the trip exists."
+    const val EXPENSE_PERSONS_NOT_UNIQUE = "Persons names are not unique but should be."
+
+    const val ADD_EXPENSE_FAILURE = "Cannot add expense. Check if both the room and the trip exist."
+
+    const val NAME_TOO_LONG = "Name is too long. Max length allowed is $NAME_LENGTH."
 
     const val DELETE_TRIP_PROHIBITED = "User doesn't have an admin role in this trip."
     const val EDIT_TRIP_PROHIBITED = "User cannot edit this trip."
@@ -94,5 +103,14 @@ object FailureMessages {
 
     fun documentMaxSize(maxSizeInMb: Int): String {
         return "Document is too big. Max allowed size of a document is ${maxSizeInMb / 1_000_000} MB."
+    }
+
+    @Suppress("DEPRECATION")
+    fun illegalName(what: String): String {
+        return "${what.capitalize()} cannot contain newline, ~ and ; characters."
+    }
+
+    fun expensePersonNotFound(vararg person: String): String {
+        return "${person.joinToString()} not found."
     }
 }

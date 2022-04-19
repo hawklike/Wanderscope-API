@@ -12,10 +12,10 @@ object TransportTable : IntIdTable("transports") {
 
     val name = varchar("name", DatabaseConfig.NAME_LENGTH)
     val type = enumerationByName("type", TransportType.MAX_LENGTH, TransportType::class)
-    val fromGooglePlaceId = varchar("from_google_place_id", DatabaseConfig.TEXT_MAX_LENGTH).nullable()
-    val fromAddress = varchar("from_address", DatabaseConfig.TEXT_MAX_LENGTH).nullable()
-    val toGooglePlaceId = varchar("to_google_place_id", DatabaseConfig.TEXT_MAX_LENGTH).nullable()
-    val toAddress = varchar("to_address", DatabaseConfig.TEXT_MAX_LENGTH).nullable()
+    val fromGooglePlaceId = varchar("from_google_place_id", DatabaseConfig.TEXT_LENGTH).nullable()
+    val fromAddress = varchar("from_address", DatabaseConfig.TEXT_LENGTH).nullable()
+    val toGooglePlaceId = varchar("to_google_place_id", DatabaseConfig.TEXT_LENGTH).nullable()
+    val toAddress = varchar("to_address", DatabaseConfig.TEXT_LENGTH).nullable()
     val description = varchar("description", DatabaseConfig.DESCRIPTION_LENGTH).nullable()
     val startDate = datetime("start_date").nullable()
     val endDate = datetime("end_date").nullable()
@@ -26,5 +26,5 @@ object TransportTable : IntIdTable("transports") {
         return list?.joinToString(ARRAY_SEPARATOR)
     }
 
-    const val ARRAY_SEPARATOR = "$"
+    const val ARRAY_SEPARATOR = "\\"
 }
