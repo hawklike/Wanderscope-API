@@ -13,6 +13,8 @@ object FailureMessages {
     const val REFRESH_TOKEN_INVALID = "The refresh token is invalid."
     const val REFRESH_TOKEN_EXPIRED = "The refresh token has expired."
 
+    const val REFRESH_TOKEN_FAILED = "Creating the refresh token failed. Please try again later."
+
     const val END_DATE_BEFORE_START_DATE_ERROR =
         "The time of the 'endDate' parameter cannot be before the time of the 'startDate' parameter."
 

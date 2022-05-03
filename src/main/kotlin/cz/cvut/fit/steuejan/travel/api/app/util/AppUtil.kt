@@ -5,6 +5,7 @@ package cz.cvut.fit.steuejan.travel.api.app.util
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.NotFoundException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import kotlinx.coroutines.delay
 
 
 inline fun <T> parseBody(func: () -> T, crossinline onError: () -> Nothing): T {
@@ -40,7 +41,7 @@ suspend fun <T> retryOnError(tries: Int = 2, call: suspend () -> T): T? {
         try {
             return call.invoke()
         } catch (e: Exception) {
-            kotlinx.coroutines.delay(it * 100L)
+            delay(it * 100L)
         }
     }
     return null
