@@ -3,9 +3,11 @@
 
 package cz.cvut.fit.steuejan.travel.api.app.route
 
+import cz.cvut.fit.steuejan.travel.api.account.controller.AccountController
 import cz.cvut.fit.steuejan.travel.api.account.model.ChangePassword
 import cz.cvut.fit.steuejan.travel.api.app.bussines.EmailSender
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.AuthControllerFactory
+import cz.cvut.fit.steuejan.travel.api.app.di.factory.ControllerFactory
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.api.app.extension.receive
@@ -33,17 +35,21 @@ private const val PASSWORD_PARAM = "password"
 private const val CONFIRM_PASSWORD_PARAM = "confirmPassword"
 
 fun Routing.authRoutes() {
+    val controllerFactory: ControllerFactory by inject()
     val authFactory: AuthControllerFactory by inject()
     val emailSender: EmailSender by inject()
 
-    register(authFactory.emailPasswordController)
-    login(authFactory.emailPasswordController)
+    with(authFactory) {
+        register(emailPasswordController)
+        login(emailPasswordController)
+        refreshToken(refreshTokenController)
 
-    refreshToken(authFactory.refreshTokenController)
+        sendForgotPasswordEmail(emailPasswordController, emailSender)
+        showForgotPasswordForm()
+        resetPassword(emailPasswordController)
+    }
 
-    sendForgotPasswordEmail(authFactory.emailPasswordController, emailSender)
-    showForgotPasswordForm()
-    resetPassword(authFactory.emailPasswordController)
+    logout(controllerFactory.accountController)
 }
 
 private fun Route.register(emailController: EmailPasswordController) {
@@ -71,6 +77,13 @@ private fun Route.login(emailController: EmailPasswordController) {
                 //do nothing for now
             }
         }
+    }
+}
+
+private fun Route.logout(accountController: AccountController) {
+    post<Auth.Logout> {
+        val request = receive<RefreshTokenRequest>(RefreshTokenRequest.MISSING_PARAM)
+        respond(accountController.logout(request.refreshToken))
     }
 }
 

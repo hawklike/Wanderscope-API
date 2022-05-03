@@ -16,13 +16,6 @@ object Account {
         }
     }
 
-    @Location(Logout.URL)
-    class Logout {
-        companion object {
-            const val URL = "/logout"
-        }
-    }
-
     @Location(LogoutAll.URL)
     class LogoutAll {
         companion object {
