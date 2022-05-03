@@ -22,6 +22,13 @@ object Auth {
         }
     }
 
+    @Location(Logout.URL)
+    class Logout {
+        companion object {
+            const val URL = "/logout"
+        }
+    }
+
     @Location(Refresh.URL)
     class Refresh {
         companion object {

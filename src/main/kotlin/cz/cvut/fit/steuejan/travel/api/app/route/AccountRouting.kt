@@ -12,7 +12,6 @@ import cz.cvut.fit.steuejan.travel.api.app.extension.receive
 import cz.cvut.fit.steuejan.travel.api.app.extension.respond
 import cz.cvut.fit.steuejan.travel.api.app.location.Account
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig.Companion.JWT_AUTHENTICATION
-import cz.cvut.fit.steuejan.travel.api.auth.request.RefreshTokenRequest
 import io.ktor.auth.*
 import io.ktor.locations.*
 import io.ktor.locations.post
@@ -23,8 +22,6 @@ import org.koin.ktor.ext.inject
 fun Routing.accountRoutes() {
     val controllerFactory: ControllerFactory by inject()
 
-    logout(controllerFactory.accountController)
-
     authenticate(JWT_AUTHENTICATION) {
         val accountController = controllerFactory.accountController
 
@@ -32,13 +29,6 @@ fun Routing.accountRoutes() {
         changePassword(accountController)
         deleteAccount(accountController)
         setDisplayName(accountController)
-    }
-}
-
-private fun Route.logout(accountController: AccountController) {
-    post<Account.Logout> {
-        val request = receive<RefreshTokenRequest>(RefreshTokenRequest.MISSING_PARAM)
-        respond(accountController.logout(request.refreshToken))
     }
 }
 
