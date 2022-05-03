@@ -149,6 +149,10 @@ private fun Route.showUserTrips(userController: UserController) {
                 val date = it.date.throwIfMissing(it::date.name)
                 userController.showPastTrips(getUserId(), date)
             }
+            GetTripsType.RECOMMENDED -> {
+                val date = it.date.throwIfMissing(it::date.name)
+                userController.getRecommendedTrip(getUserId(), date)
+            }
         }
         respond(response)
     }
