@@ -88,6 +88,8 @@ object FailureMessages {
     const val MULTIPART_FORM_FILE_EXTENSION_PROHIBITED =
         "File with this extension is not permitted. Permitted files are ${Validator.ALLOWED_EXTENSIONS}."
 
+    const val RECOMMENDED_TRIP_ERROR = "The entered date is too big or small."
+
     fun missingQueryParam(param: String): String {
         return "Missing query parameter '$param'."
     }
