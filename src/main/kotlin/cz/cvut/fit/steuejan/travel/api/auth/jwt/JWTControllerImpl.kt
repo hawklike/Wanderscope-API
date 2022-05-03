@@ -3,6 +3,10 @@ package cz.cvut.fit.steuejan.travel.api.auth.jwt
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import cz.cvut.fit.steuejan.travel.api.app.exception.InternalServerErrorException
+import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
+import cz.cvut.fit.steuejan.travel.api.app.util.getRandomString
+import cz.cvut.fit.steuejan.travel.api.app.util.retryOnError
 import cz.cvut.fit.steuejan.travel.api.auth.token.AccessToken
 import cz.cvut.fit.steuejan.travel.api.auth.token.RefreshToken
 import cz.cvut.fit.steuejan.travel.api.auth.token.TokenHolder
@@ -27,18 +31,27 @@ class JWTControllerImpl(
             .withAudience(config.audience)
             .withIssuer(config.issuer)
             .withSubject(data)
+            .withClaim(RANDOM, getRandomString(5))
             .withExpiresAt(Date(System.currentTimeMillis() + tokenType.expiration))
             .sign(getAlgorithm(tokenType))
     }
 
     override suspend fun createTokens(userId: Int, addToDatabase: Boolean): TokenHolder {
+        return if (addToDatabase) {
+            var tokens: TokenHolder? = null
+            retryOnError(5) {
+                tokens = createTokens(userId)
+                tokenDao.addRefreshToken(userId, tokens!!.refreshToken)
+            } ?: throw InternalServerErrorException(FailureMessages.REFRESH_TOKEN_FAILED)
+            tokens!!
+        } else {
+            createTokens(userId)
+        }
+    }
+
+    private fun createTokens(userId: Int): TokenHolder {
         val accessToken = create(userId.toString(), tokenType = AccessToken())
         val refreshToken = create(userId.toString(), tokenType = RefreshToken())
-
-        if (addToDatabase) {
-            tokenDao.addRefreshToken(userId, refreshToken)
-        }
-
         return TokenHolder(accessToken, refreshToken)
     }
 
@@ -49,5 +62,9 @@ class JWTControllerImpl(
             config.refreshSecretKey
         }
         return Algorithm.HMAC256(secretKey)
+    }
+
+    companion object {
+        private const val RANDOM = "random"
     }
 }

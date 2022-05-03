@@ -13,6 +13,8 @@ object FailureMessages {
     const val REFRESH_TOKEN_INVALID = "The refresh token is invalid."
     const val REFRESH_TOKEN_EXPIRED = "The refresh token has expired."
 
+    const val REFRESH_TOKEN_FAILED = "Creating the refresh token failed. Please try again later."
+
     const val END_DATE_BEFORE_START_DATE_ERROR =
         "The time of the 'endDate' parameter cannot be before the time of the 'startDate' parameter."
 
@@ -85,6 +87,8 @@ object FailureMessages {
     const val MULTIPART_FORM_MISSING_FILE_NAME = "Missing file name."
     const val MULTIPART_FORM_FILE_EXTENSION_PROHIBITED =
         "File with this extension is not permitted. Permitted files are ${Validator.ALLOWED_EXTENSIONS}."
+
+    const val RECOMMENDED_TRIP_ERROR = "The entered date is too big or small."
 
     fun missingQueryParam(param: String): String {
         return "Missing query parameter '$param'."

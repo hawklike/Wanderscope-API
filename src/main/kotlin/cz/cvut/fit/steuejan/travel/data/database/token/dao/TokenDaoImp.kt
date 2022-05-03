@@ -11,7 +11,7 @@ import org.joda.time.DateTime
 
 class TokenDaoImp : TokenDao {
 
-    override suspend fun addRefreshToken(userId: Int, refreshToken: String) {
+    override suspend fun addRefreshToken(userId: Int, refreshToken: String): String {
         transaction {
             TokenTable.insert {
                 it[this.user] = userId
@@ -19,6 +19,7 @@ class TokenDaoImp : TokenDao {
                 it[this.created] = DateTime.now()
             }
         }
+        return refreshToken
     }
 
     override suspend fun findToken(refreshToken: String) = transaction {
