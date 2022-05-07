@@ -15,9 +15,10 @@ Wanderscope is a mobile app that allows organizing trips with other travelers. W
 
 ### Build with 🛠️
 * **Ktor** -- Ktor is an asynchronous framework for creating microservices, web applications and more. Written in Kotlin from the ground up.
-* **Exposed + PostgreSQL** -- ORM framework for Kotlin. Offers two levels of database access: typesafe SQL wrapping DSL and lightweight data access objects. 
-* **HikariCP** -- Fast, simple, reliable. HikariCP is a "zero-overhead" production ready JDBC connection pool.
-* **AWS-S3** -- Amazon Simple Storage Service (Amazon S3) is an object storage service offering industry-leading scalability, data availability, security, and performance. 
+* **Exposed + PostgreSQL** -- Exposed is an ORM framework for Kotlin. Offers two levels of database access: typesafe SQL wrapping DSL and lightweight data access objects. 
+* **HikariCP** -- HikariCP is a "zero-overhead" production ready JDBC connection pool.
+* **AWS-S3** -- Amazon Simple Storage Service (Amazon S3) is an object storage service offering industry-leading scalability, data availability, security, and performance.
+* **kotlinx.serialization** -- Kotlin serialization consists of a compiler plugin, that generates visitor code for serializable classes, runtime library with core serialization API and support libraries with various serialization formats. 
 
 ### Deployment ☁️
 Automatically deployed to Heroku using Github Actions. Runs in *staging* and *production* environment using Heroku pipelines.
