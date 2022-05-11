@@ -35,10 +35,10 @@ class TripController(daoFactory: DaoFactory) : AbstractTripController(daoFactory
     }
 
     suspend fun getTrip(userId: Int, tripId: Int): Response {
-        viewOrThrow(userId, tripId)
+        val role = getUserRole(userId, tripId) //if user is not memeber of this trip, the method will throw
         val trip = daoFactory.tripDao.findById(tripId)
             ?: throw NotFoundException(FailureMessages.TRIP_NOT_FOUND)
-        return TripResponse.success(trip)
+        return TripResponse.success(trip, role)
     }
 
     suspend fun deleteTrip(userId: Int, tripId: Int): Response {
