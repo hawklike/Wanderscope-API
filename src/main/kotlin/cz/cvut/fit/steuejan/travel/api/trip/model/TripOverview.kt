@@ -11,7 +11,8 @@ data class TripOverview(
     val name: String,
     val role: UserRole,
     val duration: Duration,
-    val imageUrl: String?
+    val imageUrl: String?,
+    val description: String?
 ) {
     companion object {
         fun fromDto(dto: TripOverviewDto) = with(dto.trip) {
@@ -20,7 +21,8 @@ data class TripOverview(
                 name = name,
                 role = dto.tripUser.role,
                 duration = duration,
-                imageUrl = imageUrl
+                imageUrl = imageUrl,
+                description = description
             )
         }
     }
