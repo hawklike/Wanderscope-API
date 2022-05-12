@@ -13,7 +13,7 @@ data class ActivityResponse(
     override val tripId: Int,
     override val duration: Duration,
     override val name: String,
-    val type: ActivityType?,
+    val type: ActivityType,
     val address: Address,
     val coordinates: Coordinates,
     val mapLink: String?,

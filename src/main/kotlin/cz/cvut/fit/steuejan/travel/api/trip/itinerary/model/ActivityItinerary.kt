@@ -9,12 +9,12 @@ import kotlinx.serialization.Serializable
 class ActivityItinerary(
     val id: Int,
     val name: String,
-    val activity: ActivityType?,
+    val activity: ActivityType,
     override val duration: Duration,
 ) : CommonItinerary(ItineraryType.ACTIVITY) {
     companion object {
         fun fromDto(dto: ActivityDto) = with(dto) {
-            ActivityItinerary(id, name, type, duration)
+            ActivityItinerary(id, name, type ?: ActivityType.OTHER, duration)
         }
     }
 }

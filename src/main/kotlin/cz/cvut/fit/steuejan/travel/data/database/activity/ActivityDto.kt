@@ -50,7 +50,7 @@ data class ActivityDto(
         tripId = tripId,
         duration = duration,
         name = name,
-        type = type,
+        type = type ?: ActivityType.OTHER,
         address = address,
         coordinates = coordinates,
         mapLink = mapLink,
