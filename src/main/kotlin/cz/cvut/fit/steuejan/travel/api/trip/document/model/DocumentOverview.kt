@@ -19,7 +19,8 @@ data class DocumentOverview(
     val name: String,
     val type: DocumentType,
     @Serializable(with = DateTimeSerializer::class)
-    val updated: DateTime
+    val updated: DateTime,
+    val hasKey: Boolean,
 ) {
     companion object {
         fun fromDto(document: DocumentDto) = with(document) {
@@ -33,7 +34,8 @@ data class DocumentOverview(
                 ownerId = userId,
                 name = name,
                 type = type,
-                updated = updated
+                updated = updated,
+                hasKey = key != null
             )
         }
     }
