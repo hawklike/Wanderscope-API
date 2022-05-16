@@ -32,6 +32,6 @@ data class AccomodationRequest(
 
     companion object {
         const val MISSING_PARAM =
-            "Required 'name': String, 'type': AccomodationType aka [HOTEL, HOSTEL, PENSION, CAMP, OUTDOOR, AIRBNB]."
+            "Required 'name': String, 'type': AccomodationType aka [HOTEL, HOSTEL, PENSION, CAMP, OUTDOOR, AIRBNB, OTHER]."
     }
 }
