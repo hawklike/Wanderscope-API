@@ -35,6 +35,6 @@ data class TransportRequest(
 
     companion object {
         const val MISSING_PARAM =
-            "Required 'name': String, 'type': TransportType aka [WALK, BIKE, CAR, BUS, TRAIN, FERRY, PUBLIC, PLANE]."
+            "Required 'name': String, 'type': TransportType aka [WALK, BIKE, CAR, BUS, TRAIN, FERRY, PUBLIC, PLANE, OTHER]."
     }
 }

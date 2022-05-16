@@ -2,7 +2,7 @@ package cz.cvut.fit.steuejan.travel.data.model
 
 @Suppress("unused") // used in DB
 enum class TransportType {
-    WALK, BIKE, CAR, BUS, TRAIN, FERRY, PUBLIC, PLANE;
+    WALK, BIKE, CAR, BUS, TRAIN, FERRY, PUBLIC, PLANE, OTHER;
 
     companion object {
         const val MAX_LENGTH = 6
