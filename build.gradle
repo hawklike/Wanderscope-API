@@ -6,7 +6,7 @@ plugins {
 }
 
 group "cz.cvut.fit.steuejan"
-version "1.2.0"
+version "1.2.1"
 mainClassName = "io.ktor.server.netty.EngineMain"
 
 repositories {
