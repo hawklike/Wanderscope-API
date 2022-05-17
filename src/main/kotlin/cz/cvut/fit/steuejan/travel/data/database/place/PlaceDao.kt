@@ -22,6 +22,7 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
             it[email] = dto.contact.email
             it[website] = dto.contact.website
             it[wikiBrief] = truncateWiki(dto.wikiBrief)
+            it[wikiBriefCzech] = truncateWiki(dto.wikiBriefCzech)
             it[imageUrl] = dto.imageUrl
             it[description] = dto.description
             it[startDate] = dto.duration.startDate
@@ -43,6 +44,7 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
             it[email] = dto.contact.email
             it[website] = dto.contact.website
             it[wikiBrief] = truncateWiki(dto.wikiBrief)
+            it[wikiBriefCzech] = truncateWiki(dto.wikiBriefCzech)
             it[imageUrl] = dto.imageUrl
             it[description] = dto.description
             it[startDate] = dto.duration.startDate
@@ -71,7 +73,12 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
     }
 
     private fun truncateWiki(wikiBrief: String?): String? {
-        return wikiBrief?.take(cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig.WIKI_LENGTH)?.plus("…")
+        val truncated = wikiBrief?.take(cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig.WIKI_LENGTH)
+        return if ((truncated?.length ?: 0) < (wikiBrief?.length ?: 0)) {
+            truncated?.plus("…")
+        } else {
+            truncated
+        }
     }
 
     companion object {

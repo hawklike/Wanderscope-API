@@ -17,6 +17,7 @@ data class PlaceResponse(
     val address: Address,
     val contact: Contact,
     val wikiBrief: String?,
+    val wikiBriefCzech: String?,
     val imageUrl: String?,
     val description: String?
 ) : AbstractPointOfInterestResponse()

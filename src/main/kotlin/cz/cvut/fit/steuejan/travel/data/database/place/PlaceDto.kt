@@ -19,6 +19,7 @@ data class PlaceDto(
     val address: Address,
     val contact: Contact,
     val wikiBrief: String?,
+    val wikiBriefCzech: String?,
     val imageUrl: String?,
     val description: String?
 ) : PointOfInterestDto, Dto() {
@@ -43,6 +44,7 @@ data class PlaceDto(
                 website = resultRow[PlaceTable.website]
             ),
             wikiBrief = resultRow[PlaceTable.wikiBrief],
+            wikiBriefCzech = resultRow[PlaceTable.wikiBriefCzech],
             imageUrl = resultRow[PlaceTable.imageUrl],
             description = resultRow[PlaceTable.description]
         )
@@ -57,6 +59,7 @@ data class PlaceDto(
         address = address,
         contact = contact,
         wikiBrief = wikiBrief,
+        wikiBriefCzech = wikiBriefCzech,
         imageUrl = imageUrl,
         description = description
     )

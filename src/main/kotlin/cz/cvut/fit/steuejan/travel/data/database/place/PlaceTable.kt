@@ -18,6 +18,7 @@ object PlaceTable : IntIdTable("places") {
     val email = varchar("email", DatabaseConfig.EMAIL_LENGTH).nullable()
     val website = varchar("website", DatabaseConfig.TEXT_LENGTH).nullable()
     val wikiBrief = varchar("wiki_brief", DatabaseConfig.WIKI_LENGTH).nullable()
+    val wikiBriefCzech = varchar("wiki_brief_cs", DatabaseConfig.WIKI_LENGTH).nullable()
     val imageUrl = varchar("image_url", DatabaseConfig.TEXT_LENGTH).nullable()
     val description = varchar("description", DatabaseConfig.DESCRIPTION_LENGTH).nullable()
     val startDate = datetime("start_date").nullable()
