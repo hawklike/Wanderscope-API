@@ -15,5 +15,6 @@ data class ActivityResponse(
     val type: ActivityType,
     val address: Address,
     val mapLink: String?,
-    val description: String?
+    val description: String?,
+    val website: String?
 ) : AbstractPointOfInterestResponse()

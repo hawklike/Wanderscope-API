@@ -15,6 +15,7 @@ object ActivityTable : IntIdTable("activities") {
     val googlePlaceId = varchar("google_place_id", DatabaseConfig.TEXT_LENGTH).nullable()
     val address = varchar("address", DatabaseConfig.TEXT_LENGTH).nullable()
     val mapLink = varchar("map_link", DatabaseConfig.TEXT_LENGTH).nullable()
+    val website = varchar("website", DatabaseConfig.TEXT_LENGTH).nullable()
     val description = varchar("description", DatabaseConfig.DESCRIPTION_LENGTH).nullable()
     val startDate = datetime("start_date").nullable()
     val endDate = datetime("end_date").nullable()

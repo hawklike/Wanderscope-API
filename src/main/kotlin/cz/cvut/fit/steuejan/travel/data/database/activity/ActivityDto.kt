@@ -17,7 +17,8 @@ data class ActivityDto(
     val type: ActivityType?,
     val address: Address,
     val mapLink: String?,
-    val description: String?
+    val description: String?,
+    val website: String?
 ) : PointOfInterestDto, Dto() {
 
     companion object {
@@ -35,7 +36,8 @@ data class ActivityDto(
                 address = resultRow[ActivityTable.address]
             ),
             mapLink = resultRow[ActivityTable.mapLink],
-            description = resultRow[ActivityTable.description]
+            description = resultRow[ActivityTable.description],
+            website = resultRow[ActivityTable.website]
         )
     }
 
@@ -47,6 +49,7 @@ data class ActivityDto(
         type = type ?: ActivityType.OTHER,
         address = address,
         mapLink = mapLink,
-        description = description
+        description = description,
+        website = website
     )
 }

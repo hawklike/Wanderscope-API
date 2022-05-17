@@ -22,6 +22,7 @@ class ActivityDao : PointOfInterestDao<ActivityDto> {
             it[description] = dto.description
             it[startDate] = dto.duration.startDate
             it[endDate] = dto.duration.endDate
+            it[website] = dto.website
         }?.value ?: throw BadRequestException(FailureMessages.poiDbInsertionFailure(RESOURCE_NAME))
     }
 
@@ -39,6 +40,7 @@ class ActivityDao : PointOfInterestDao<ActivityDto> {
             it[description] = dto.description
             it[startDate] = dto.duration.startDate
             it[endDate] = dto.duration.endDate
+            it[website] = dto.website
         } ?: throw BadRequestException(FailureMessages.poiDbInsertionFailure(RESOURCE_NAME))
     }.isUpdated()
 

@@ -15,7 +15,8 @@ data class ActivityRequest(
     val type: ActivityType?,
     val address: Address?,
     val mapLink: String?,
-    val description: String?
+    val description: String?,
+    val website: String?
 ) : PointOfInterestRequest<ActivityDto>() {
 
     override fun toDto() = ActivityDto(
@@ -26,11 +27,12 @@ data class ActivityRequest(
         type = type,
         address = address ?: Address(),
         mapLink = mapLink,
-        description = description
+        description = description,
+        website = website
     )
 
     companion object {
         const val MISSING_PARAM =
-            "Required 'name': String, optional param 'type' is of type ActivityType aka [HIKING, CYCLING, SKIING, RUNNING, KAYAK, SWIMMING, CLIMBING, CROSS_COUNTRY]."
+            "Required 'name': String, optional param 'type' is of type ActivityType aka [HIKING, CYCLING, SKIING, RUNNING, KAYAK, SWIMMING, CLIMBING, CROSS_COUNTRY, OTHER]."
     }
 }
