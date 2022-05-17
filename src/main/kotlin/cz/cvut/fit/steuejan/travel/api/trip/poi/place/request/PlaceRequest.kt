@@ -3,10 +3,7 @@ package cz.cvut.fit.steuejan.travel.api.trip.poi.place.request
 import cz.cvut.fit.steuejan.travel.api.trip.poi.request.PointOfInterestRequest
 import cz.cvut.fit.steuejan.travel.data.database.place.PlaceDto
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
-import cz.cvut.fit.steuejan.travel.data.model.Address
-import cz.cvut.fit.steuejan.travel.data.model.Contact
-import cz.cvut.fit.steuejan.travel.data.model.Duration
-import cz.cvut.fit.steuejan.travel.data.model.PlaceType
+import cz.cvut.fit.steuejan.travel.data.model.*
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,6 +13,7 @@ data class PlaceRequest(
     val type: PlaceType = PlaceType.OTHER,
     val address: Address?,
     val contact: Contact?,
+    val coordinates: Coordinates?,
     val wikiBrief: String?,
     val wikiBriefCzech: String?,
     val imageUrl: String?,
@@ -33,7 +31,8 @@ data class PlaceRequest(
         wikiBrief = wikiBrief,
         wikiBriefCzech = wikiBriefCzech,
         imageUrl = imageUrl,
-        description = description
+        description = description,
+        coordinates = coordinates ?: Coordinates()
     )
 
     companion object {
