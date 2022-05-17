@@ -8,10 +8,12 @@ import cz.cvut.fit.steuejan.travel.api.trip.poi.transport.response.ShowTransport
 import cz.cvut.fit.steuejan.travel.api.trip.poi.transport.response.TransportResponse
 import cz.cvut.fit.steuejan.travel.data.database.transport.TransportDto
 import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
+import io.ktor.client.*
 
 class TransportController(
-    daoFactory: DaoFactory
-) : PointOfInterestController<TransportDto>(daoFactory, daoFactory.transportDao) {
+    daoFactory: DaoFactory,
+    client: HttpClient
+) : PointOfInterestController<TransportDto>(daoFactory, client, daoFactory.transportDao) {
     override val notFound: String = FailureMessages.TRANSPORT_NOT_FOUND
     override val type = PointOfInterestType.TRANSPORT
 

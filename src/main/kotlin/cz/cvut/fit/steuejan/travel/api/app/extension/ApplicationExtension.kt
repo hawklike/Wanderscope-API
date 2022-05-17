@@ -53,9 +53,8 @@ fun PipelineContext<*, ApplicationCall>.getUserId(): Int {
     }
 }
 
-fun PipelineContext<*, ApplicationCall>.getQuery(queryParam: String): String {
+fun PipelineContext<*, ApplicationCall>.getQuery(queryParam: String): String? {
     return call.request.queryParameters[queryParam]
-        ?: throw BadRequestException(FailureMessages.missingQueryParam(queryParam))
 }
 
 suspend fun PipelineContext<*, ApplicationCall>.getFile(): FileWrapper {

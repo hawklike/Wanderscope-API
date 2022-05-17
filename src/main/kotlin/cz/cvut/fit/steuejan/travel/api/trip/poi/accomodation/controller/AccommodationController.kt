@@ -8,10 +8,12 @@ import cz.cvut.fit.steuejan.travel.api.trip.poi.accomodation.response.ShowAccomm
 import cz.cvut.fit.steuejan.travel.api.trip.poi.controller.PointOfInterestController
 import cz.cvut.fit.steuejan.travel.data.database.accomodation.AccommodationDto
 import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
+import io.ktor.client.*
 
 class AccommodationController(
-    daoFactory: DaoFactory
-) : PointOfInterestController<AccommodationDto>(daoFactory, daoFactory.accommodationDao) {
+    daoFactory: DaoFactory,
+    client: HttpClient
+) : PointOfInterestController<AccommodationDto>(daoFactory, client, daoFactory.accommodationDao) {
     override val notFound = FailureMessages.ACCOMMODATION_NOT_FOUND
     override val type = PointOfInterestType.ACCOMMODATION
 

@@ -19,10 +19,10 @@ val controllerModule = module {
     single { TripController(get()) }
     single { UserController(get()) }
 
-    single { TransportController(get()) }
-    single { AccommodationController(get()) }
-    single { ActivityController(get()) }
-    single { PlaceController(get()) }
+    single { TransportController(get(), get()) }
+    single { AccommodationController(get(), get()) }
+    single { ActivityController(get(), get()) }
+    single { PlaceController(get(), get()) }
     single { DocumentController(get(), get(), get(), get()) }
 
     single { ItineraryController(get()) }

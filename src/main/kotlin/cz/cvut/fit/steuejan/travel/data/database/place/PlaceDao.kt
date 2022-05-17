@@ -3,6 +3,7 @@ package cz.cvut.fit.steuejan.travel.data.database.place
 import cz.cvut.fit.steuejan.travel.api.app.exception.BadRequestException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.api.trip.itinerary.model.PlaceItinerary
+import cz.cvut.fit.steuejan.travel.api.trip.model.Language
 import cz.cvut.fit.steuejan.travel.data.database.dao.PointOfInterestDao
 import cz.cvut.fit.steuejan.travel.data.extension.*
 import cz.cvut.fit.steuejan.travel.data.util.transaction
@@ -70,6 +71,15 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
         PlaceTable.select { PlaceTable.trip eq tripId }
             .map(PlaceDto::fromDb)
             .map(PlaceItinerary::fromDto)
+    }
+
+    suspend fun updateWiki(tripId: Int, poiId: Int, language: Language, wikiBrief: String) = transaction {
+        PlaceTable.updateOrNull({ findById(tripId, poiId) }) {
+            when (language) {
+                Language.CS -> it[this.wikiBriefCzech] = truncateWiki(wikiBrief)
+                Language.EN -> it[this.wikiBrief] = truncateWiki(wikiBrief)
+            }
+        }?.isUpdated()
     }
 
     private fun findById(tripId: Int, placeId: Int): Op<Boolean> {

@@ -8,10 +8,12 @@ import cz.cvut.fit.steuejan.travel.api.trip.poi.place.response.PlaceResponse
 import cz.cvut.fit.steuejan.travel.api.trip.poi.place.response.ShowPlacesInTripResponse
 import cz.cvut.fit.steuejan.travel.data.database.place.PlaceDto
 import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
+import io.ktor.client.*
 
 class PlaceController(
-    daoFactory: DaoFactory
-) : PointOfInterestController<PlaceDto>(daoFactory, daoFactory.placeDao) {
+    daoFactory: DaoFactory,
+    client: HttpClient
+) : PointOfInterestController<PlaceDto>(daoFactory, client, daoFactory.placeDao) {
     override val notFound: String = FailureMessages.PLACE_NOT_FOUND
     override val type = PointOfInterestType.PLACE
 
