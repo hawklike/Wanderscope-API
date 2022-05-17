@@ -8,10 +8,12 @@ import cz.cvut.fit.steuejan.travel.api.trip.poi.activity.response.ShowActivities
 import cz.cvut.fit.steuejan.travel.api.trip.poi.controller.PointOfInterestController
 import cz.cvut.fit.steuejan.travel.data.database.activity.ActivityDto
 import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
+import io.ktor.client.*
 
 class ActivityController(
-    daoFactory: DaoFactory
-) : PointOfInterestController<ActivityDto>(daoFactory, daoFactory.activityDao) {
+    daoFactory: DaoFactory,
+    client: HttpClient
+) : PointOfInterestController<ActivityDto>(daoFactory, client, daoFactory.activityDao) {
     override val notFound: String = FailureMessages.ACTIVITY_NOT_FOUND
     override val type = PointOfInterestType.ACTIVITY
 
