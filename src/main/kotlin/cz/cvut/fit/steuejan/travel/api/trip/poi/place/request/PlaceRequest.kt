@@ -17,6 +17,7 @@ data class PlaceRequest(
     val address: Address?,
     val contact: Contact?,
     val wikiBrief: String?,
+    val wikiBriefCzech: String?,
     val imageUrl: String?,
     val description: String?
 ) : PointOfInterestRequest<PlaceDto>() {
@@ -30,6 +31,7 @@ data class PlaceRequest(
         address = address ?: Address(),
         contact = contact ?: Contact(),
         wikiBrief = wikiBrief,
+        wikiBriefCzech = wikiBriefCzech,
         imageUrl = imageUrl,
         description = description
     )
