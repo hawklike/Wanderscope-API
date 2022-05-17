@@ -11,55 +11,22 @@ import cz.cvut.fit.steuejan.travel.api.app.response.Success
 import cz.cvut.fit.steuejan.travel.api.trip.controller.AbstractTripController
 import cz.cvut.fit.steuejan.travel.api.trip.document.model.DocumentOverview
 import cz.cvut.fit.steuejan.travel.api.trip.document.response.DocumentOverviewListResponse
+import cz.cvut.fit.steuejan.travel.api.trip.model.Language
+import cz.cvut.fit.steuejan.travel.api.trip.poi.place.wiki.WikiArticleExtract
+import cz.cvut.fit.steuejan.travel.api.trip.poi.place.wiki.WikiSearch
+import cz.cvut.fit.steuejan.travel.api.trip.poi.place.wiki.WikiSearchBundle
 import cz.cvut.fit.steuejan.travel.data.config.DatabaseConfig
 import cz.cvut.fit.steuejan.travel.data.database.dao.PointOfInterestDao
+import cz.cvut.fit.steuejan.travel.data.database.place.PlaceDao
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
 import cz.cvut.fit.steuejan.travel.data.model.PointOfInterestType
 import io.ktor.client.*
 import io.ktor.client.request.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-
-@Serializable
-data class WikiSearch(
-    val query: Query
-)
-
-@Serializable
-data class Query(
-    val search: List<Search>
-)
-
-@Serializable
-data class Search(
-    val title: String,
-    val pageid: Int
-)
-
-@Serializable
-data class WikiArticle(
-    val query: WikiArticleQuery
-)
-
-@Serializable
-data class WikiArticleQuery(
-    val pages: Map<Int, WikiArticleExtract>
-)
-
-@Serializable
-data class WikiArticleExtract(
-    val extract: String
-)
-
-data class WikiSearchBundle(
-    val scope: CoroutineScope,
-    val searchTerm: String
-)
 
 abstract class PointOfInterestController<T : PointOfInterestDto>(
     daoFactory: DaoFactory,
@@ -74,11 +41,11 @@ abstract class PointOfInterestController<T : PointOfInterestDto>(
         val poiId = upsert(userId, tripId, dto) {
             dao.add(tripId, dto)
         }
-        wiki?.let { findWikipediaArticle(it) }
+        wiki?.let { findWikipediaArticle(it, tripId, poiId) }
         return CreatedResponse.success(poiId)
     }
 
-    private fun findWikipediaArticle(wiki: WikiSearchBundle) {
+    private fun findWikipediaArticle(wiki: WikiSearchBundle, tripId: Int, poiId: Int) {
         if (type != PointOfInterestType.PLACE) return
 
         val enUrl = "https://en.wikipedia.org/w/api.php"
@@ -99,8 +66,8 @@ abstract class PointOfInterestController<T : PointOfInterestDto>(
             val extractEn = extractRequestEn.await()
             val extractCs = extractRequestCs.await()
 
-            extractEn
-            extractCs
+            extractEn?.let { (dao as? PlaceDao)?.updateWiki(tripId, poiId, Language.EN, it) }
+            extractCs?.let { (dao as? PlaceDao)?.updateWiki(tripId, poiId, Language.CS, it) }
         }
     }
 
@@ -146,12 +113,13 @@ abstract class PointOfInterestController<T : PointOfInterestDto>(
         return Success(Status.NO_CONTENT)
     }
 
-    suspend fun edit(userId: Int, tripId: Int, poiId: Int, dto: T): Response {
+    suspend fun edit(userId: Int, tripId: Int, poiId: Int, dto: T, wiki: WikiSearchBundle? = null): Response {
         upsert(userId, tripId, dto) {
             if (!dao.edit(tripId, poiId, dto)) {
                 throw NotFoundException(notFound)
             }
         }
+        wiki?.let { findWikipediaArticle(it, tripId, poiId) }
         return Success(Status.NO_CONTENT)
     }
 
