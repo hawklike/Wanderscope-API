@@ -5,7 +5,6 @@ import cz.cvut.fit.steuejan.travel.data.database.activity.ActivityDto
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.model.ActivityType
 import cz.cvut.fit.steuejan.travel.data.model.Address
-import cz.cvut.fit.steuejan.travel.data.model.Coordinates
 import cz.cvut.fit.steuejan.travel.data.model.Duration
 import kotlinx.serialization.Serializable
 
@@ -15,7 +14,6 @@ data class ActivityRequest(
     override val duration: Duration?,
     val type: ActivityType?,
     val address: Address?,
-    val coordinates: Coordinates?,
     val mapLink: String?,
     val description: String?
 ) : PointOfInterestRequest<ActivityDto>() {
@@ -27,7 +25,6 @@ data class ActivityRequest(
         name = name,
         type = type,
         address = address ?: Address(),
-        coordinates = coordinates ?: Coordinates(),
         mapLink = mapLink,
         description = description
     )

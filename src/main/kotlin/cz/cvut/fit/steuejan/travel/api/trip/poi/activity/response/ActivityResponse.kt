@@ -3,7 +3,6 @@ package cz.cvut.fit.steuejan.travel.api.trip.poi.activity.response
 import cz.cvut.fit.steuejan.travel.api.trip.poi.response.AbstractPointOfInterestResponse
 import cz.cvut.fit.steuejan.travel.data.model.ActivityType
 import cz.cvut.fit.steuejan.travel.data.model.Address
-import cz.cvut.fit.steuejan.travel.data.model.Coordinates
 import cz.cvut.fit.steuejan.travel.data.model.Duration
 import kotlinx.serialization.Serializable
 
@@ -15,7 +14,6 @@ data class ActivityResponse(
     override val name: String,
     val type: ActivityType,
     val address: Address,
-    val coordinates: Coordinates,
     val mapLink: String?,
     val description: String?
 ) : AbstractPointOfInterestResponse()

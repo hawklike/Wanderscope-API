@@ -18,8 +18,6 @@ class ActivityDao : PointOfInterestDao<ActivityDto> {
             it[type] = dto.type
             it[googlePlaceId] = dto.address.googlePlaceId
             it[address] = dto.address.address
-            it[longitude] = dto.coordinates.longitude
-            it[latitude] = dto.coordinates.latitude
             it[mapLink] = dto.mapLink
             it[description] = dto.description
             it[startDate] = dto.duration.startDate
@@ -37,8 +35,6 @@ class ActivityDao : PointOfInterestDao<ActivityDto> {
             it[type] = dto.type
             it[googlePlaceId] = dto.address.googlePlaceId
             it[address] = dto.address.address
-            it[longitude] = dto.coordinates.longitude
-            it[latitude] = dto.coordinates.latitude
             it[mapLink] = dto.mapLink
             it[description] = dto.description
             it[startDate] = dto.duration.startDate
