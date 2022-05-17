@@ -25,8 +25,6 @@ import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 abstract class PointOfInterestController<T : PointOfInterestDto>(
     daoFactory: DaoFactory,
@@ -73,9 +71,8 @@ abstract class PointOfInterestController<T : PointOfInterestDto>(
 
     private suspend fun getExtract(title: String?, url: String): String? {
         title ?: return null
-        val encodedTitle = URLEncoder.encode(title, StandardCharsets.UTF_8)
         return kotlin.runCatching {
-            client.get<WikiArticleExtract>("$url/$encodedTitle") {
+            client.get<WikiArticleExtract>("$url/$title") {
             }.extract
         }.getOrNull()
     }
