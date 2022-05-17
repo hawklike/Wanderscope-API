@@ -4,10 +4,7 @@ import cz.cvut.fit.steuejan.travel.api.trip.poi.place.response.PlaceResponse
 import cz.cvut.fit.steuejan.travel.api.trip.poi.response.AbstractPointOfInterestResponse
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
-import cz.cvut.fit.steuejan.travel.data.model.Address
-import cz.cvut.fit.steuejan.travel.data.model.Contact
-import cz.cvut.fit.steuejan.travel.data.model.Duration
-import cz.cvut.fit.steuejan.travel.data.model.PlaceType
+import cz.cvut.fit.steuejan.travel.data.model.*
 import org.jetbrains.exposed.sql.ResultRow
 
 data class PlaceDto(
@@ -18,6 +15,7 @@ data class PlaceDto(
     val type: PlaceType,
     val address: Address,
     val contact: Contact,
+    val coordinates: Coordinates,
     val wikiBrief: String?,
     val wikiBriefCzech: String?,
     val imageUrl: String?,
@@ -46,7 +44,11 @@ data class PlaceDto(
             wikiBrief = resultRow[PlaceTable.wikiBrief],
             wikiBriefCzech = resultRow[PlaceTable.wikiBriefCzech],
             imageUrl = resultRow[PlaceTable.imageUrl],
-            description = resultRow[PlaceTable.description]
+            description = resultRow[PlaceTable.description],
+            coordinates = Coordinates(
+                longitude = resultRow[PlaceTable.longitude],
+                latitude = resultRow[PlaceTable.latitude]
+            )
         )
     }
 
@@ -61,6 +63,7 @@ data class PlaceDto(
         wikiBrief = wikiBrief,
         wikiBriefCzech = wikiBriefCzech,
         imageUrl = imageUrl,
-        description = description
+        description = description,
+        coordinates = coordinates
     )
 }

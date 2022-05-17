@@ -1,10 +1,7 @@
 package cz.cvut.fit.steuejan.travel.api.trip.poi.place.response
 
 import cz.cvut.fit.steuejan.travel.api.trip.poi.response.AbstractPointOfInterestResponse
-import cz.cvut.fit.steuejan.travel.data.model.Address
-import cz.cvut.fit.steuejan.travel.data.model.Contact
-import cz.cvut.fit.steuejan.travel.data.model.Duration
-import cz.cvut.fit.steuejan.travel.data.model.PlaceType
+import cz.cvut.fit.steuejan.travel.data.model.*
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -19,5 +16,6 @@ data class PlaceResponse(
     val wikiBrief: String?,
     val wikiBriefCzech: String?,
     val imageUrl: String?,
-    val description: String?
+    val description: String?,
+    val coordinates: Coordinates
 ) : AbstractPointOfInterestResponse()

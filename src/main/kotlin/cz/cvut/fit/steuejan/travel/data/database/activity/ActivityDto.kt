@@ -6,7 +6,6 @@ import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
 import cz.cvut.fit.steuejan.travel.data.model.ActivityType
 import cz.cvut.fit.steuejan.travel.data.model.Address
-import cz.cvut.fit.steuejan.travel.data.model.Coordinates
 import cz.cvut.fit.steuejan.travel.data.model.Duration
 import org.jetbrains.exposed.sql.ResultRow
 
@@ -17,9 +16,9 @@ data class ActivityDto(
     override val name: String,
     val type: ActivityType?,
     val address: Address,
-    val coordinates: Coordinates,
     val mapLink: String?,
-    val description: String?
+    val description: String?,
+    val website: String?
 ) : PointOfInterestDto, Dto() {
 
     companion object {
@@ -36,12 +35,9 @@ data class ActivityDto(
                 googlePlaceId = resultRow[ActivityTable.googlePlaceId],
                 address = resultRow[ActivityTable.address]
             ),
-            coordinates = Coordinates(
-                longitude = resultRow[ActivityTable.longitude],
-                latitude = resultRow[ActivityTable.latitude]
-            ),
             mapLink = resultRow[ActivityTable.mapLink],
-            description = resultRow[ActivityTable.description]
+            description = resultRow[ActivityTable.description],
+            website = resultRow[ActivityTable.website]
         )
     }
 
@@ -52,8 +48,8 @@ data class ActivityDto(
         name = name,
         type = type ?: ActivityType.OTHER,
         address = address,
-        coordinates = coordinates,
         mapLink = mapLink,
-        description = description
+        description = description,
+        website = website
     )
 }
