@@ -39,7 +39,7 @@ private fun Route.addPlace(placeController: PlaceController) {
     post<Trip.Place> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val place = receive<PlaceRequest>(PlaceRequest.MISSING_PARAM).toDto()
-        val search = getQuery("search")
+        val search = getQuery("wiki")
         val wiki = if (search != null) WikiSearchBundle(this, search) else null
         respond(placeController.add(getUserId(), tripId, place, wiki))
     }
@@ -58,7 +58,7 @@ private fun Route.editPlace(placeController: PlaceController) {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val placeId = it.placeId.throwIfMissing(it::placeId.name)
         val place = receive<PlaceRequest>(PlaceRequest.MISSING_PARAM).toDto()
-        val search = getQuery("search")
+        val search = getQuery("wiki")
         val wiki = if (search != null) WikiSearchBundle(this, search) else null
         respond(placeController.edit(getUserId(), tripId, placeId, place, wiki))
     }
