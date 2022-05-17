@@ -4,12 +4,14 @@
 package cz.cvut.fit.steuejan.travel.api.app.route
 
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.ControllerFactory
+import cz.cvut.fit.steuejan.travel.api.app.extension.getQuery
 import cz.cvut.fit.steuejan.travel.api.app.extension.getUserId
 import cz.cvut.fit.steuejan.travel.api.app.extension.receive
 import cz.cvut.fit.steuejan.travel.api.app.extension.respond
 import cz.cvut.fit.steuejan.travel.api.app.location.Trip
 import cz.cvut.fit.steuejan.travel.api.app.util.throwIfMissing
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig
+import cz.cvut.fit.steuejan.travel.api.trip.poi.controller.WikiSearchBundle
 import cz.cvut.fit.steuejan.travel.api.trip.poi.place.controller.PlaceController
 import cz.cvut.fit.steuejan.travel.api.trip.poi.place.request.PlaceRequest
 import io.ktor.auth.*
@@ -37,7 +39,9 @@ private fun Route.addPlace(placeController: PlaceController) {
     post<Trip.Place> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val place = receive<PlaceRequest>(PlaceRequest.MISSING_PARAM).toDto()
-        respond(placeController.add(getUserId(), tripId, place))
+        val search = getQuery("search")
+        val wiki = if (search != null) WikiSearchBundle(this, search) else null
+        respond(placeController.add(getUserId(), tripId, place, wiki))
     }
 }
 
