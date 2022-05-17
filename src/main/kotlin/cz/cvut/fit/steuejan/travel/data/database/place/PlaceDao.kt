@@ -27,6 +27,8 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
             it[description] = dto.description
             it[startDate] = dto.duration.startDate
             it[endDate] = dto.duration.endDate
+            it[longitude] = dto.coordinates.longitude
+            it[latitude] = dto.coordinates.latitude
         }?.value ?: throw BadRequestException(FailureMessages.poiDbInsertionFailure(RESOURCE_NAME))
     }
 
@@ -49,6 +51,8 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
             it[description] = dto.description
             it[startDate] = dto.duration.startDate
             it[endDate] = dto.duration.endDate
+            it[longitude] = dto.coordinates.longitude
+            it[latitude] = dto.coordinates.latitude
         } ?: throw BadRequestException(FailureMessages.poiDbInsertionFailure(RESOURCE_NAME))
     }.isUpdated()
 
