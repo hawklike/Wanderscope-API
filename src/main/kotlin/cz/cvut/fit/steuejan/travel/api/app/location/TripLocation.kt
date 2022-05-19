@@ -161,6 +161,13 @@ class Trip(val id: Int? = null) {
         }
     }
 
+    @Location(AllAccommodation.URL)
+    class AllAccommodation(val trip: Trip) {
+        companion object {
+            const val URL = "/listAccommodation"
+        }
+    }
+
     @Location("${Accommodation.URL}/{accommodationId?}")
     class Accommodation(val trip: Trip, val accommodationId: Int? = null) {
         companion object {

@@ -11,7 +11,7 @@ import cz.cvut.fit.steuejan.travel.api.app.location.Trip
 import cz.cvut.fit.steuejan.travel.api.app.util.throwIfMissing
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig
 import cz.cvut.fit.steuejan.travel.api.trip.poi.accomodation.controller.AccommodationController
-import cz.cvut.fit.steuejan.travel.api.trip.poi.accomodation.request.AccomodationRequest
+import cz.cvut.fit.steuejan.travel.api.trip.poi.accomodation.request.AccommodationRequest
 import io.ktor.auth.*
 import io.ktor.locations.*
 import io.ktor.locations.post
@@ -36,7 +36,7 @@ fun Routing.accomodationRoutes() {
 private fun Route.addAccomodation(accommodationController: AccommodationController) {
     post<Trip.Accommodation> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
-        val accomodation = receive<AccomodationRequest>(AccomodationRequest.MISSING_PARAM).toDto()
+        val accomodation = receive<AccommodationRequest>(AccommodationRequest.MISSING_PARAM).toDto()
         respond(accommodationController.add(getUserId(), tripId, accomodation))
     }
 }
@@ -53,7 +53,7 @@ private fun Route.editAccomodation(accommodationController: AccommodationControl
     put<Trip.Accommodation> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         val accomodationId = it.accommodationId.throwIfMissing(it::accommodationId.name)
-        val transport = receive<AccomodationRequest>(AccomodationRequest.MISSING_PARAM).toDto()
+        val transport = receive<AccommodationRequest>(AccommodationRequest.MISSING_PARAM).toDto()
         respond(accommodationController.edit(getUserId(), tripId, accomodationId, transport))
     }
 }

@@ -21,6 +21,10 @@ object TransportTable : IntIdTable("transports") {
     val endDate = datetime("end_date").nullable()
     val cars = varchar("cars", DatabaseConfig.DESCRIPTION_LENGTH).nullable()
     val seats = varchar("seats", DatabaseConfig.DESCRIPTION_LENGTH).nullable()
+    val fromLongitude = varchar("fromLongitude", DatabaseConfig.LON_LAT_LENTGH).nullable()
+    val fromLatitude = varchar("fromLatitude", DatabaseConfig.LON_LAT_LENTGH).nullable()
+    val toLongitude = varchar("toLongitude", DatabaseConfig.LON_LAT_LENTGH).nullable()
+    val toLatitude = varchar("toLatitude", DatabaseConfig.LON_LAT_LENTGH).nullable()
 
     fun parseList(list: List<String>?): String? {
         return list?.joinToString(ARRAY_SEPARATOR)

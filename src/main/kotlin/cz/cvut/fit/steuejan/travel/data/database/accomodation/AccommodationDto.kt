@@ -4,10 +4,7 @@ import cz.cvut.fit.steuejan.travel.api.trip.poi.accomodation.response.Accommodat
 import cz.cvut.fit.steuejan.travel.api.trip.poi.response.AbstractPointOfInterestResponse
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
-import cz.cvut.fit.steuejan.travel.data.model.AccommodationType
-import cz.cvut.fit.steuejan.travel.data.model.Address
-import cz.cvut.fit.steuejan.travel.data.model.Contact
-import cz.cvut.fit.steuejan.travel.data.model.Duration
+import cz.cvut.fit.steuejan.travel.data.model.*
 import org.jetbrains.exposed.sql.ResultRow
 
 data class AccommodationDto(
@@ -18,7 +15,8 @@ data class AccommodationDto(
     val type: AccommodationType,
     val address: Address,
     val contact: Contact,
-    val description: String?
+    val description: String?,
+    val coordinates: Coordinates
 ) : PointOfInterestDto, Dto() {
 
     companion object {
@@ -40,7 +38,11 @@ data class AccommodationDto(
                 email = resultRow[AccommodationTable.email],
                 website = resultRow[AccommodationTable.website]
             ),
-            description = resultRow[AccommodationTable.description]
+            description = resultRow[AccommodationTable.description],
+            coordinates = Coordinates(
+                longitude = resultRow[AccommodationTable.longitude],
+                latitude = resultRow[AccommodationTable.latitude]
+            )
         )
     }
 
@@ -52,6 +54,7 @@ data class AccommodationDto(
         address = address,
         contact = contact,
         type = type,
-        description = description
+        description = description,
+        coordinates = coordinates
     )
 }
