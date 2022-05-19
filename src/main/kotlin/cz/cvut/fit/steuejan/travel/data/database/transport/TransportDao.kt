@@ -25,6 +25,10 @@ class TransportDao : PointOfInterestDao<TransportDto> {
             it[endDate] = dto.duration.endDate
             it[cars] = parseList(dto.cars)
             it[seats] = parseList(dto.seats)
+            it[fromLatitude] = dto.fromCoordinates.latitude
+            it[fromLongitude] = dto.fromCoordinates.longitude
+            it[toLatitude] = dto.toCoordinates.latitude
+            it[toLongitude] = dto.toCoordinates.longitude
         }?.value ?: throw BadRequestException(FailureMessages.poiDbInsertionFailure(RESOURCE_NAME))
     }
 
@@ -45,6 +49,10 @@ class TransportDao : PointOfInterestDao<TransportDto> {
             it[endDate] = dto.duration.endDate
             it[cars] = parseList(dto.cars)
             it[seats] = parseList(dto.seats)
+            it[fromLatitude] = dto.fromCoordinates.latitude
+            it[fromLongitude] = dto.fromCoordinates.longitude
+            it[toLatitude] = dto.toCoordinates.latitude
+            it[toLongitude] = dto.toCoordinates.longitude
         } ?: throw BadRequestException(FailureMessages.poiDbInsertionFailure(RESOURCE_NAME))
     }.isUpdated()
 

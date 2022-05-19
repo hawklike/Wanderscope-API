@@ -2,6 +2,7 @@ package cz.cvut.fit.steuejan.travel.api.trip.poi.transport.response
 
 import cz.cvut.fit.steuejan.travel.api.trip.poi.response.AbstractPointOfInterestResponse
 import cz.cvut.fit.steuejan.travel.data.model.Address
+import cz.cvut.fit.steuejan.travel.data.model.Coordinates
 import cz.cvut.fit.steuejan.travel.data.model.Duration
 import cz.cvut.fit.steuejan.travel.data.model.TransportType
 import kotlinx.serialization.Serializable
@@ -17,5 +18,7 @@ data class TransportResponse(
     val to: Address,
     val description: String?,
     val cars: List<String>?,
-    val seats: List<String>?
+    val seats: List<String>?,
+    val fromCoordinates: Coordinates,
+    val toCoordinates: Coordinates
 ) : AbstractPointOfInterestResponse()

@@ -5,6 +5,7 @@ import cz.cvut.fit.steuejan.travel.api.trip.poi.transport.response.TransportResp
 import cz.cvut.fit.steuejan.travel.data.dto.Dto
 import cz.cvut.fit.steuejan.travel.data.dto.PointOfInterestDto
 import cz.cvut.fit.steuejan.travel.data.model.Address
+import cz.cvut.fit.steuejan.travel.data.model.Coordinates
 import cz.cvut.fit.steuejan.travel.data.model.Duration
 import cz.cvut.fit.steuejan.travel.data.model.TransportType
 import org.jetbrains.exposed.sql.ResultRow
@@ -19,7 +20,9 @@ data class TransportDto(
     val type: TransportType,
     val description: String?,
     val cars: List<String>?,
-    val seats: List<String>?
+    val seats: List<String>?,
+    val fromCoordinates: Coordinates,
+    val toCoordinates: Coordinates
 ) : PointOfInterestDto, Dto() {
 
     companion object {
@@ -43,6 +46,14 @@ data class TransportDto(
             description = resultRow[TransportTable.description],
             cars = resultRow[TransportTable.cars]?.split(TransportTable.ARRAY_SEPARATOR),
             seats = resultRow[TransportTable.seats]?.split(TransportTable.ARRAY_SEPARATOR),
+            fromCoordinates = Coordinates(
+                longitude = resultRow[TransportTable.fromLongitude],
+                latitude = resultRow[TransportTable.fromLatitude]
+            ),
+            toCoordinates = Coordinates(
+                longitude = resultRow[TransportTable.toLongitude],
+                latitude = resultRow[TransportTable.toLatitude]
+            )
         )
     }
 
@@ -56,6 +67,8 @@ data class TransportDto(
         to = to,
         description = description,
         cars = cars,
-        seats = seats
+        seats = seats,
+        fromCoordinates = fromCoordinates,
+        toCoordinates = toCoordinates
     )
 }
