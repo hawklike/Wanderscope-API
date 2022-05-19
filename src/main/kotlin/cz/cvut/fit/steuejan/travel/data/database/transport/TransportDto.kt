@@ -42,7 +42,7 @@ data class TransportDto(
             type = resultRow[TransportTable.type],
             description = resultRow[TransportTable.description],
             cars = resultRow[TransportTable.cars]?.split(TransportTable.ARRAY_SEPARATOR),
-            seats = resultRow[TransportTable.cars]?.split(TransportTable.ARRAY_SEPARATOR),
+            seats = resultRow[TransportTable.seats]?.split(TransportTable.ARRAY_SEPARATOR),
         )
     }
 
