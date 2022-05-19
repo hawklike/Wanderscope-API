@@ -19,4 +19,6 @@ object ActivityTable : IntIdTable("activities") {
     val description = varchar("description", DatabaseConfig.DESCRIPTION_LENGTH).nullable()
     val startDate = datetime("start_date").nullable()
     val endDate = datetime("end_date").nullable()
+    val longitude = varchar("longitude", DatabaseConfig.LON_LAT_LENTGH).nullable()
+    val latitude = varchar("latitude", DatabaseConfig.LON_LAT_LENTGH).nullable()
 }

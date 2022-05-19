@@ -1,10 +1,7 @@
 package cz.cvut.fit.steuejan.travel.api.trip.poi.accomodation.response
 
 import cz.cvut.fit.steuejan.travel.api.trip.poi.response.AbstractPointOfInterestResponse
-import cz.cvut.fit.steuejan.travel.data.model.AccommodationType
-import cz.cvut.fit.steuejan.travel.data.model.Address
-import cz.cvut.fit.steuejan.travel.data.model.Contact
-import cz.cvut.fit.steuejan.travel.data.model.Duration
+import cz.cvut.fit.steuejan.travel.data.model.*
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,5 +13,6 @@ data class AccommodationResponse(
     val address: Address,
     val contact: Contact,
     val type: AccommodationType,
-    val description: String?
+    val description: String?,
+    val coordinates: Coordinates
 ) : AbstractPointOfInterestResponse()
