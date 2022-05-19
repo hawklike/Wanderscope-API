@@ -189,7 +189,7 @@ private fun Route.showTransports(transportController: TransportController) {
 }
 
 private fun Route.showAccommodation(accommodationController: AccommodationController) {
-    get<Trip.Accommodation> {
+    get<Trip.AllAccommodation> {
         val tripId = it.trip.id.throwIfMissing(it.trip::id.name)
         respond(accommodationController.showAccommodationInTrip(getUserId(), tripId))
     }
