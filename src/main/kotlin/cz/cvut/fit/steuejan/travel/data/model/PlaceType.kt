@@ -2,9 +2,9 @@ package cz.cvut.fit.steuejan.travel.data.model
 
 @Suppress("unused") // used in DB
 enum class PlaceType {
-    PARKING, FOOD, NATURE, OTHER;
+    PARKING, RESTAURANT, COUNTRYSIDE, CITY, MUSEUM, ZOO, PARK, MONUMENT, CASTLE, OTHER;
 
     companion object {
-        const val MAX_LENGTH = 7
+        const val MAX_LENGTH = 11
     }
 }
