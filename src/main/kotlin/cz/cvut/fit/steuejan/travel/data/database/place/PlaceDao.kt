@@ -22,8 +22,6 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
             it[phone] = dto.contact.phone
             it[email] = dto.contact.email
             it[website] = dto.contact.website
-            it[wikiBrief] = truncateWiki(dto.wikiBrief)
-            it[wikiBriefCzech] = truncateWiki(dto.wikiBriefCzech)
             it[imageUrl] = dto.imageUrl
             it[description] = dto.description
             it[startDate] = dto.duration.startDate
@@ -46,8 +44,6 @@ class PlaceDao : PointOfInterestDao<PlaceDto> {
             it[phone] = dto.contact.phone
             it[email] = dto.contact.email
             it[website] = dto.contact.website
-            it[wikiBrief] = truncateWiki(dto.wikiBrief)
-            it[wikiBriefCzech] = truncateWiki(dto.wikiBriefCzech)
             it[imageUrl] = dto.imageUrl
             it[description] = dto.description
             it[startDate] = dto.duration.startDate
