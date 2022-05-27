@@ -1,11 +1,13 @@
 package cz.cvut.fit.steuejan.travel.api.user.controller
 
 import cz.cvut.fit.steuejan.travel.api.app.di.factory.DaoFactory
+import cz.cvut.fit.steuejan.travel.api.app.exception.NotFoundException
 import cz.cvut.fit.steuejan.travel.api.app.exception.message.FailureMessages
 import cz.cvut.fit.steuejan.travel.api.app.response.Response
 import cz.cvut.fit.steuejan.travel.api.app.util.parseBodyOrBadRequest
 import cz.cvut.fit.steuejan.travel.api.trip.model.TripOverview
 import cz.cvut.fit.steuejan.travel.api.trip.response.TripOverviewListResponse
+import cz.cvut.fit.steuejan.travel.api.user.response.UserResponse
 import org.joda.time.DateTime
 import org.joda.time.Duration
 
@@ -38,5 +40,11 @@ class UserController(private val daoFactory: DaoFactory) {
         }
         val recommended = trip?.let { listOf(TripOverview.fromDto(it)) } ?: emptyList()
         return TripOverviewListResponse.success(recommended)
+    }
+
+    suspend fun getUser(userId: Int): Response {
+        val user = daoFactory.userDao.findById(userId)
+            ?: throw NotFoundException(FailureMessages.USER_NOT_FOUND)
+        return UserResponse.success(user)
     }
 }
