@@ -12,6 +12,7 @@ import cz.cvut.fit.steuejan.travel.api.app.extension.receive
 import cz.cvut.fit.steuejan.travel.api.app.extension.respond
 import cz.cvut.fit.steuejan.travel.api.app.location.Account
 import cz.cvut.fit.steuejan.travel.api.auth.jwt.JWTConfig.Companion.JWT_AUTHENTICATION
+import cz.cvut.fit.steuejan.travel.api.user.controller.UserController
 import io.ktor.auth.*
 import io.ktor.locations.*
 import io.ktor.locations.post
@@ -25,6 +26,7 @@ fun Routing.accountRoutes() {
     authenticate(JWT_AUTHENTICATION) {
         val accountController = controllerFactory.accountController
 
+        getAccount(controllerFactory.userController)
         logoutAll(accountController)
         changePassword(accountController)
         deleteAccount(accountController)
@@ -55,5 +57,11 @@ private fun Route.setDisplayName(accountController: AccountController) {
     put<Account.DisplayName> {
         val request = receive<ChangeDisplayNameRequest>(ChangeDisplayNameRequest.MISSING_PARAM)
         respond(accountController.setDisplayName(getUserId(), request.displayName))
+    }
+}
+
+private fun Route.getAccount(userController: UserController) {
+    get<Account> {
+        respond(userController.getUser(getUserId()))
     }
 }
