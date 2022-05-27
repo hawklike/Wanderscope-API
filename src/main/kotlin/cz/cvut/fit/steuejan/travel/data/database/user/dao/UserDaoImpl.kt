@@ -59,7 +59,7 @@ class UserDaoImpl : UserDao {
         UserTable.updateById(userId) { it[password] = newPassword }
     }.isUpdated()
 
-    override suspend fun changeDisplayName(userId: Int, displayName: String) = transaction {
+    override suspend fun changeDisplayName(userId: Int, displayName: String?) = transaction {
         UserTable.updateById(userId) { it[UserTable.displayName] = displayName }
     }.isUpdated()
 

@@ -41,8 +41,8 @@ class AccountController(
         return Success(Status.NO_CONTENT)
     }
 
-    suspend fun setDisplayName(userId: Int, displayName: String): Response {
-        validator.validateName(displayName, "display name")
+    suspend fun setDisplayName(userId: Int, displayName: String?): Response {
+        displayName?.let { validator.validateName(it, "display name") }
         if (!daoFactory.userDao.changeDisplayName(userId, displayName)) {
             throw NotFoundException(FailureMessages.USER_NOT_FOUND)
         }
