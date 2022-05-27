@@ -5,9 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ChangeDisplayNameRequest(
-    val displayName: String
+    val displayName: String?
 ) : Request {
     companion object {
-        const val MISSING_PARAM = "Required 'displayName': String."
+        const val MISSING_PARAM = "Required 'displayName': String or null if remove display name."
     }
 }
