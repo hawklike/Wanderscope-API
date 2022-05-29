@@ -48,9 +48,13 @@ class DocumentController(
     }
 
     suspend fun saveData(userId: Int, tripId: Int, documentId: Int, file: FileWrapper): Response {
-        return saveData(userId, tripId, file) {
+        val dbCall: suspend () -> DocumentDto? = {
             daoFactory.documentDao.getDocument(tripId, documentId)
         }
+        val dbCallOnFailure: suspend () -> Unit = {
+            daoFactory.documentDao.deleteDocument(tripId, documentId)
+        }
+        return saveData(userId, tripId, file, dbCall, dbCallOnFailure)
     }
 
     suspend fun saveData(
@@ -61,9 +65,13 @@ class DocumentController(
         file: FileWrapper,
         poiType: PointOfInterestType
     ): Response {
-        return saveData(userId, tripId, file) {
+        val dbCall: suspend () -> DocumentDto? = {
             daoFactory.documentDao.getDocument(tripId, poiId, documentId, poiType)
         }
+        val dbCallOnFailure: suspend () -> Unit = {
+            daoFactory.documentDao.deleteDocument(tripId, poiId, documentId, poiType)
+        }
+        return saveData(userId, tripId, file, dbCall, dbCallOnFailure)
     }
 
     suspend fun getData(userId: Int, tripId: Int, documentId: Int, key: String?): FileWrapper {
@@ -196,7 +204,8 @@ class DocumentController(
         userId: Int,
         tripId: Int,
         file: FileWrapper,
-        dbCall: suspend () -> DocumentDto?
+        dbCall: suspend () -> DocumentDto?,
+        dbCallOnFailure: suspend () -> Unit
     ): Response {
         editOrThrow(userId, tripId)
         validator.validateFileSize(file)
@@ -212,6 +221,7 @@ class DocumentController(
             daoFactory.documentDao.updateTime(document.id)
             Success(Status.NO_CONTENT)
         } else {
+            dbCallOnFailure.invoke()
             Failure(Status.INTERNAL_ERROR, FailureMessages.DOCUMENT_UPLOAD_FAILED)
         }
     }
