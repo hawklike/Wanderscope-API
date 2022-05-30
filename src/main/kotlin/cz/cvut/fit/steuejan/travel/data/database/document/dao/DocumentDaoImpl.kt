@@ -45,7 +45,9 @@ class DocumentDaoImpl : DocumentDao {
         }?.let(DocumentDto::fromDb)
 
     override suspend fun getDocuments(tripId: Int) = transaction {
-        DocumentTable.select { DocumentTable.trip eq tripId }.map(DocumentDto::fromDb)
+        DocumentTable.select { DocumentTable.trip eq tripId }
+            .orderBy(DocumentTable.id, SortOrder.DESC)
+            .map(DocumentDto::fromDb)
     }
 
     override suspend fun getDocuments(tripId: Int, poiId: Int, poiType: PointOfInterestType) = transaction {
