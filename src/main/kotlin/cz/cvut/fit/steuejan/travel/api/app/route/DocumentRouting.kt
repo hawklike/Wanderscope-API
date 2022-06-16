@@ -86,7 +86,7 @@ private fun Route.getDataInTrip(documentController: DocumentController) {
         val tripId = it.document.trip.id.throwIfMissing(it.document.trip::id.name)
         val documentId = it.document.documentId.throwIfMissing(it.document::documentId.name)
         val key = call.request.header(DOCUMENT_KEY_HEADER)
-        val file = documentController.getData(getUserId(), tripId, documentId, key)
+        val file = documentController.getData(getUserId(), tripId, documentId, key?.fromBase64())
         respondFile(file)
     }
 }
@@ -140,7 +140,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.getDataInPoi(
     poiType: PointOfInterestType
 ) {
     val key = call.request.header(DOCUMENT_KEY_HEADER)
-    val file = documentController.getData(getUserId(), tripId, poiId, documentId, key, poiType)
+    val file = documentController.getData(getUserId(), tripId, poiId, documentId, key?.fromBase64(), poiType)
     respondFile(file)
 }
 
