@@ -72,8 +72,7 @@ abstract class PointOfInterestController<T : PointOfInterestDto>(
     private suspend fun getExtract(title: String?, url: String): String? {
         title ?: return null
         return kotlin.runCatching {
-            client.get<WikiArticleExtract>("$url/$title") {
-            }.extract
+            client.get<WikiArticleExtract>("$url/$title").extract
         }.getOrNull()
     }
 
